@@ -78,6 +78,8 @@ func (s *WorkerService) GetAll(c *gin.Context) {
 	var usedStorage *int
 	var maxStorage *int
 	var location *string
+	var fromDeparture *int
+	var toArrival *int
 
 	if q := c.Query(`usedStorage`); q != `` {
 		n, _ := strconv.Atoi(q)
@@ -90,8 +92,16 @@ func (s *WorkerService) GetAll(c *gin.Context) {
 	if q := c.Query(`location`); q != `` {
 		location = &q
 	}
+	if q := c.Query(`fromDeparture`); q != `` {
+		n, _ := strconv.Atoi(q)
+		fromDeparture = &n
+	}
+	if q := c.Query(`toArrival`); q != `` {
+		n, _ := strconv.Atoi(q)
+		toArrival = &n
+	}
 
-	workers := s.wRep.GetAll(accountID, usedStorage, maxStorage, location)
+	workers := s.wRep.GetAll(accountID, usedStorage, maxStorage, location, fromDeparture, toArrival)
 
 	c.JSON(200, gin.H{
 		`error`:   ``,

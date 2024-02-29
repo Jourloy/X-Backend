@@ -98,7 +98,7 @@ type IWorkerRepository interface {
 	// GetOne возвращает первого рабочего, попавшего под условие
 	GetOne(id string, accountID string) Worker
 	// GetAll возвращает всех рабочих
-	GetAll(accountID string, usedStorage *int, maxStorage *int, location *string) []Worker
+	GetAll(accountID string, usedStorage *int, maxStorage *int, location *string, fromDeparture *int, toArrival *int) []Worker
 	// UpdateOne обновляет рабочего
 	UpdateOne(worker *Worker)
 	// DeleteOne удаляет рабочего
