@@ -44,14 +44,14 @@ func (s *AccountService) Create(c *gin.Context, accountID string) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	s.db.Create(&body, accountID)
+	s.db.Create(&body)
 
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // GetOne получает аккаунт по id
 func (s *AccountService) GetOne(c *gin.Context, accountID string) {
-	s.db.GetOne(c.Param(`id`), accountID)
+	s.db.GetOne(c.Param(`id`))
 }
 
 // UpdateOne обновляет аккаунт
@@ -62,7 +62,7 @@ func (s *AccountService) UpdateOne(c *gin.Context, accountID string) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID, accountID)
+	model := s.db.GetOne(body.ID)
 	if model.ID != body.ID {
 		logger.Error(`Model not found`)
 		c.JSON(404, gin.H{`error`: `Model not found`})
@@ -80,7 +80,7 @@ func (s *AccountService) UpdateDelete(c *gin.Context, accountID string) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID, accountID)
+	model := s.db.GetOne(body.ID)
 	if model.ID != body.ID {
 		logger.Error(`Model not found`)
 		c.JSON(404, gin.H{`error`: `Model not found`})

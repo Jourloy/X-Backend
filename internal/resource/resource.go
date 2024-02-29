@@ -37,35 +37,41 @@ func InitResourceService(db repositories.IResourceRepository, cache redis.Client
 }
 
 // Create создает ресурс
-func (s *ResourceService) Create(c *gin.Context, accountID string) {
+func (s *ResourceService) Create(c *gin.Context) {
+	// Парсинг body
 	var body repositories.Resource
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	s.db.Create(&body, accountID)
+	// Получение placeID
+	q := c.Query(`placeID`)
+	if q == `` {
+		logger.Error(`placeID is required`)
+		c.JSON(400, gin.H{`error`: `placeID is required`})
+	}
+
+	// Создание
+	s.db.Create(&body, q)
 
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // GetOne получает ресурс по id
-func (s *ResourceService) GetOne(c *gin.Context, accountID string) {
+func (s *ResourceService) GetOne(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
+
 	s.db.GetOne(c.Param(`id`), accountID)
 }
 
 // UpdateOne обновляет ресурс
-func (s *ResourceService) UpdateOne(c *gin.Context, accountID string) {
+func (s *ResourceService) UpdateOne(c *gin.Context) {
+	// Парсинг body
 	var body repositories.Resource
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
-	}
-
-	model := s.db.GetOne(body.ID, accountID)
-	if model.ID != body.ID {
-		logger.Error(`Model not found`)
-		c.JSON(404, gin.H{`error`: `Model not found`})
 	}
 
 	s.db.UpdateOne(&body)
@@ -73,17 +79,12 @@ func (s *ResourceService) UpdateOne(c *gin.Context, accountID string) {
 }
 
 // DeleteOne удаляет ресурс
-func (s *ResourceService) DeleteOne(c *gin.Context, accountID string) {
+func (s *ResourceService) DeleteOne(c *gin.Context) {
+	// Парсинг body
 	var body repositories.Resource
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
-	}
-
-	model := s.db.GetOne(body.ID, accountID)
-	if model.ID != body.ID {
-		logger.Error(`Model not found`)
-		c.JSON(404, gin.H{`error`: `Model not found`})
 	}
 
 	s.db.DeleteOne(&body)

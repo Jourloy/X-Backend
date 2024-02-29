@@ -38,7 +38,7 @@ func (r *ColonyRepository) Create(colony *repositories.Colony, accountID string,
 	r.db.Create(&repositories.Colony{
 		ID:         uuid.NewString(),
 		Balance:    colony.Balance,
-		MaxStorage: colony.MaxStorage,
+		MaxStorage: 1000000,
 		AccountID:  accountID,
 		PlaceID:    placeID,
 	})
