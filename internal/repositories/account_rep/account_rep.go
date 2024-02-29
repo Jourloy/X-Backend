@@ -33,7 +33,7 @@ func InitAccountRepository(db gorm.DB) repositories.IAccountRepository {
 	}
 }
 
-// Create создает объект в БД
+// Create создает аккаунт
 func (r *AccountRepository) Create(account *repositories.Account) {
 	r.db.Create(&repositories.Account{
 		ID:     uuid.NewString(),
@@ -41,7 +41,7 @@ func (r *AccountRepository) Create(account *repositories.Account) {
 	})
 }
 
-// GetOne возвращает первый объект, попавший под условие
+// GetOne возвращает первый аккаунт, попавший под условие
 func (r *AccountRepository) GetOne(apiKey string) repositories.Account {
 	var account = repositories.Account{
 		ApiKey: apiKey,
@@ -50,12 +50,12 @@ func (r *AccountRepository) GetOne(apiKey string) repositories.Account {
 	return account
 }
 
-// UpdateOne обновляет объект в БД
+// UpdateOne обновляет аккаунт
 func (r *AccountRepository) UpdateOne(account *repositories.Account) {
 	r.db.Save(&account)
 }
 
-// DeleteOne удаляет объект из БД
+// DeleteOne удаляет аккаунт
 func (r *AccountRepository) DeleteOne(account *repositories.Account) {
 	r.db.Delete(&account)
 }
