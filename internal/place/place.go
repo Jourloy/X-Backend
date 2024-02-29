@@ -25,7 +25,7 @@ type PlaceService struct {
 	cache redis.Client
 }
 
-// InitPlaceService создает сервис колоний
+// InitPlaceService создает сервис места
 func InitPlaceService(db repositories.IPlaceRepository, cache redis.Client) *PlaceService {
 	return &PlaceService{
 		db:    db,
@@ -33,6 +33,7 @@ func InitPlaceService(db repositories.IPlaceRepository, cache redis.Client) *Pla
 	}
 }
 
+// Create создает место
 func (s *PlaceService) Create(c *gin.Context) {
 	var body repositories.Place
 	if err := s.parseBody(c, &body); err != nil {
@@ -45,10 +46,12 @@ func (s *PlaceService) Create(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
+// GetOne получает место по id
 func (s *PlaceService) GetOne(c *gin.Context) {
 	s.db.GetOne(c.Param(`id`))
 }
 
+// UpdateOne обновляет место
 func (s *PlaceService) UpdateOne(c *gin.Context) {
 	var body repositories.Place
 	if err := s.parseBody(c, &body); err != nil {
@@ -66,6 +69,7 @@ func (s *PlaceService) UpdateOne(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
+// DeleteOne удаляет место
 func (s *PlaceService) DeleteOne(c *gin.Context) {
 	var body repositories.Place
 	if err := s.parseBody(c, &body); err != nil {

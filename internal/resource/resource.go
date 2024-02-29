@@ -25,7 +25,7 @@ type ResourceService struct {
 	cache redis.Client
 }
 
-// InitResourceService создает сервис колоний
+// InitResourceService создает сервис ресурса
 func InitResourceService(db repositories.IResourceRepository, cache redis.Client) *ResourceService {
 	return &ResourceService{
 		db:    db,
@@ -33,6 +33,7 @@ func InitResourceService(db repositories.IResourceRepository, cache redis.Client
 	}
 }
 
+// Create создает ресурс
 func (s *ResourceService) Create(c *gin.Context, accountID string) {
 	var body repositories.Resource
 	if err := s.parseBody(c, &body); err != nil {
@@ -45,10 +46,12 @@ func (s *ResourceService) Create(c *gin.Context, accountID string) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
+// GetOne получает ресурс по id
 func (s *ResourceService) GetOne(c *gin.Context, accountID string) {
 	s.db.GetOne(c.Param(`id`), accountID)
 }
 
+// UpdateOne обновляет ресурс
 func (s *ResourceService) UpdateOne(c *gin.Context, accountID string) {
 	var body repositories.Resource
 	if err := s.parseBody(c, &body); err != nil {
@@ -66,6 +69,7 @@ func (s *ResourceService) UpdateOne(c *gin.Context, accountID string) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
+// DeleteOne удаляет ресурс
 func (s *ResourceService) DeleteOne(c *gin.Context, accountID string) {
 	var body repositories.Resource
 	if err := s.parseBody(c, &body); err != nil {

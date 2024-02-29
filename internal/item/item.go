@@ -26,7 +26,7 @@ type ItemService struct {
 	cache redis.Client
 }
 
-// InitItemService создает сервис колоний
+// InitItemService создает сервис вещи
 func InitItemService(iRep repositories.IItemRepository, wRep repositories.IWorkerRepository, cache redis.Client) *ItemService {
 	return &ItemService{
 		iRep:  iRep,
@@ -35,6 +35,7 @@ func InitItemService(iRep repositories.IItemRepository, wRep repositories.IWorke
 	}
 }
 
+// Create создает вещь
 func (s *ItemService) Create(c *gin.Context) {
 	var body repositories.Item
 	if err := s.parseBody(c, &body); err != nil {
@@ -45,10 +46,12 @@ func (s *ItemService) Create(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
+// GetOne получает вещь по id
 func (s *ItemService) GetOne(c *gin.Context) {
 	s.iRep.GetOne(c.Param(`id`), c.Param(`parentId`))
 }
 
+// UpdateOne обновляет вещь
 func (s *ItemService) UpdateOne(c *gin.Context, accountID string) {
 	var body repositories.Item
 	if err := s.parseBody(c, &body); err != nil {
@@ -66,6 +69,7 @@ func (s *ItemService) UpdateOne(c *gin.Context, accountID string) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
+// DeleteOne удаляет вещь
 func (s *ItemService) DeleteOne(c *gin.Context, accountID string) {
 	var body repositories.Item
 	if err := s.parseBody(c, &body); err != nil {

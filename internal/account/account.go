@@ -25,7 +25,7 @@ type AccountService struct {
 	cache redis.Client
 }
 
-// InitAccountService создает сервис колоний
+// InitAccountService создает сервис аккаунта
 func InitAccountService(db repositories.IAccountRepository, cache redis.Client) *AccountService {
 	return &AccountService{
 		db:    db,
@@ -33,6 +33,7 @@ func InitAccountService(db repositories.IAccountRepository, cache redis.Client) 
 	}
 }
 
+// Create создает аккаунт
 func (s *AccountService) Create(c *gin.Context, accountID string) {
 	var body repositories.Account
 	if err := s.parseBody(c, &body); err != nil {
@@ -45,10 +46,12 @@ func (s *AccountService) Create(c *gin.Context, accountID string) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
+// GetOne получает аккаунт по id
 func (s *AccountService) GetOne(c *gin.Context, accountID string) {
 	s.db.GetOne(c.Param(`id`), accountID)
 }
 
+// UpdateOne обновляет аккаунт
 func (s *AccountService) UpdateOne(c *gin.Context, accountID string) {
 	var body repositories.Account
 	if err := s.parseBody(c, &body); err != nil {
@@ -66,6 +69,7 @@ func (s *AccountService) UpdateOne(c *gin.Context, accountID string) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
+// DeleteOne удаляет аккаунт
 func (s *AccountService) UpdateDelete(c *gin.Context, accountID string) {
 	var body repositories.Account
 	if err := s.parseBody(c, &body); err != nil {
