@@ -96,6 +96,10 @@ func (s *WorkerService) GetAll(c *gin.Context) {
 		n, _ := strconv.Atoi(q)
 		query.ToArrival = &n
 	}
+	if q := c.Query(`limit`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Limit = &n
+	}
 
 	workers := s.wRep.GetAll(accountID, query)
 
