@@ -55,11 +55,12 @@ func (r *WorkerRepository) GetOne(id string, accountID string) repositories.Work
 }
 
 // GetAll возвращает всех рабочих
-func (r *WorkerRepository) GetAll(accountID string, usedStorage *int, maxStorage *int) []repositories.Worker {
+func (r *WorkerRepository) GetAll(accountID string, usedStorage *int, maxStorage *int, location *string) []repositories.Worker {
 	var worker = repositories.Worker{
 		AccountID:   accountID,
 		UsedStorage: *usedStorage,
 		MaxStorage:  *maxStorage,
+		Location:    *location,
 	}
 	var workers = []repositories.Worker{}
 	r.db.Model(worker).Find(&workers)

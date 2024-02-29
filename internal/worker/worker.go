@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"strconv"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,9 @@ type WorkerService struct {
 
 // InitWorkerService создает сервис колоний
 func InitWorkerService(wRep repositories.IWorkerRepository, cRep repositories.IColonyRepository, cache redis.Client) *WorkerService {
+
+	logger.Info(`WorkerServer initialized`)
+
 	return &WorkerService{
 		wRep:  wRep,
 		cRep:  cRep,
@@ -36,7 +40,9 @@ func InitWorkerService(wRep repositories.IWorkerRepository, cRep repositories.IC
 }
 
 // Create создает рабочего
-func (s *WorkerService) Create(c *gin.Context, accountID string) {
+func (s *WorkerService) Create(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
+
 	// Парсинг body
 	var body repositories.Worker
 	if err := s.parseBody(c, &body); err != nil {
@@ -59,12 +65,45 @@ func (s *WorkerService) Create(c *gin.Context, accountID string) {
 }
 
 // GetOne получает рабочего по его ID
-func (s *WorkerService) GetOne(c *gin.Context, accountID string) {
+func (s *WorkerService) GetOne(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
+
 	s.wRep.GetOne(c.Query(`id`), accountID)
 }
 
+// GetAll возвращает всех рабочих
+func (s *WorkerService) GetAll(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
+
+	var usedStorage *int
+	var maxStorage *int
+	var location *string
+
+	if q := c.Query(`usedStorage`); q != `` {
+		n, _ := strconv.Atoi(q)
+		usedStorage = &n
+	}
+	if q := c.Query(`maxStorage`); q != `` {
+		n, _ := strconv.Atoi(q)
+		maxStorage = &n
+	}
+	if q := c.Query(`location`); q != `` {
+		location = &q
+	}
+
+	workers := s.wRep.GetAll(accountID, usedStorage, maxStorage, location)
+
+	c.JSON(200, gin.H{
+		`error`:   ``,
+		`workers`: workers,
+		`count`:   len(workers),
+	})
+}
+
 // UpdateOne обновляет рабочего
-func (s *WorkerService) UpdateOne(c *gin.Context, accountID string) {
+func (s *WorkerService) UpdateOne(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
+
 	// Парсинг body
 	var body repositories.Worker
 	if err := s.parseBody(c, &body); err != nil {
@@ -79,7 +118,10 @@ func (s *WorkerService) UpdateOne(c *gin.Context, accountID string) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-func (s *WorkerService) DeleteOne(c *gin.Context, accountID string) {
+// DeleteOne удаляет рабочего
+func (s *WorkerService) DeleteOne(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
+
 	// Парсинг body
 	var body repositories.Worker
 	if err := s.parseBody(c, &body); err != nil {
