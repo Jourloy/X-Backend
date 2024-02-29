@@ -33,7 +33,7 @@ func InitResourceRepository(db gorm.DB) repositories.IResourceRepository {
 	}
 }
 
-// Create создает объект в БД
+// Create создает ресурс
 func (r *ResourceRepository) Create(resource *repositories.Resource, placeID string) {
 	r.db.Create(&repositories.Resource{
 		ID:      uuid.NewString(),
@@ -44,7 +44,7 @@ func (r *ResourceRepository) Create(resource *repositories.Resource, placeID str
 	})
 }
 
-// GetOne возвращает первый объект, попавший под условие
+// GetOne возвращает первый ресурс, попавший под условие
 func (r *ResourceRepository) GetOne(id string, placeID string) repositories.Resource {
 	var resource = repositories.Resource{
 		PlaceID: placeID,
@@ -54,12 +54,12 @@ func (r *ResourceRepository) GetOne(id string, placeID string) repositories.Reso
 	return resource
 }
 
-// UpdateOne обновляет объект в БД
+// UpdateOne обновляет ресурс
 func (r *ResourceRepository) UpdateOne(resource *repositories.Resource) {
 	r.db.Save(&resource)
 }
 
-// DeleteOne удаляет объект из БД
+// DeleteOne удаляет ресурс
 func (r *ResourceRepository) DeleteOne(resource *repositories.Resource) {
 	r.db.Delete(&resource)
 }

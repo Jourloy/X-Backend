@@ -10,13 +10,13 @@ type Account struct {
 }
 
 type IAccountRepository interface {
-	// Create создает объект в БД
+	// Create создает аккаунт
 	Create(account *Account)
-	// GetOne возвращает первый объект, попавший под условие
+	// GetOne возвращает первый аккаунт, попавший под условие
 	GetOne(apiKey string) Account
-	// UpdateOne обновляет объект в БД
+	// UpdateOne обновляет аккаунт
 	UpdateOne(account *Account)
-	// DeleteOne удаляет объект из БД
+	// DeleteOne удаляет аккаунт
 	DeleteOne(account *Account)
 }
 
@@ -27,13 +27,13 @@ type Place struct {
 }
 
 type IPlaceRepository interface {
-	// Create создает объект в БД
+	// Create создает место
 	Create(place *Place)
-	// GetOne возвращает первый объект, попавший под условие
+	// GetOne возвращает первое место, попавшее под условие
 	GetOne(id string) Place
-	// UpdateOne обновляет объект в БД
+	// UpdateOne обновляет место
 	UpdateOne(place *Place)
-	// DeleteOne удаляет объект из БД
+	// DeleteOne удаляет место
 	DeleteOne(place *Place)
 }
 
@@ -47,13 +47,13 @@ type Resource struct {
 }
 
 type IResourceRepository interface {
-	// Create создает объект в БД
+	// Create создает ресурс
 	Create(resource *Resource, placeID string)
-	// GetOne возвращает первый объект, попавший под условие
+	// GetOne возвращает первый ресурс, попавший под условие
 	GetOne(id string, placeID string) Resource
-	// UpdateOne обновляет объект в БД
+	// UpdateOne обновляет ресурс
 	UpdateOne(resource *Resource)
-	// DeleteOne удаляет объект из БД
+	// DeleteOne удаляет ресурс
 	DeleteOne(resource *Resource)
 }
 
@@ -69,13 +69,13 @@ type Colony struct {
 }
 
 type IColonyRepository interface {
-	// Create создает объект в БД
+	// Create создает колонию
 	Create(colony *Colony, accountID string, placeID string)
-	// GetOne возвращает первый объект, попавший под условие
+	// GetOne возвращает первую колонию, попавшую под условие
 	GetOne(id string, accountID string) Colony
-	// UpdateOne обновляет объект в БД
+	// UpdateOne обновляет колонию
 	UpdateOne(colony *Colony)
-	// DeleteOne удаляет объект из БД
+	// DeleteOne удаляет колонию
 	DeleteOne(colony *Colony)
 }
 
@@ -91,13 +91,13 @@ type Worker struct {
 }
 
 type IWorkerRepository interface {
-	// Create создает объект в БД
+	// Create создает рабочего
 	Create(worker *Worker, colonyID string, accountID string)
-	// GetOne возвращает первый объект, попавший под условие
+	// GetOne возвращает первого рабочего, попавшего под условие
 	GetOne(id string, accountID string) Worker
-	// UpdateOne обновляет объект в БД
+	// UpdateOne обновляет рабочего
 	UpdateOne(worker *Worker)
-	// DeleteOne удаляет объект из БД
+	// DeleteOne удаляет рабочего
 	DeleteOne(worker *Worker)
 }
 
@@ -109,12 +109,12 @@ type Item struct {
 }
 
 type IItemRepository interface {
-	// Create создает объект в БД
+	// Create создает вещь
 	Create(item *Item, parentID string)
-	// GetOne возвращает первый объект, попавший под условие
+	// GetOne возвращает первую вещь, попавшую под условие
 	GetOne(id string, parentID string) Item
-	// UpdateOne обновляет объект в БД
+	// UpdateOne обновляет вещь
 	UpdateOne(item *Item)
-	// DeleteOne удаляет объект из БД
+	// DeleteOne удаляет вещь
 	DeleteOne(item *Item)
 }

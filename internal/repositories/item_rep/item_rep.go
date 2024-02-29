@@ -33,7 +33,7 @@ func InitItemRepository(db gorm.DB) repositories.IItemRepository {
 	}
 }
 
-// Create создает объект в БД
+// Create создает вещь
 func (r *ItemRepository) Create(item *repositories.Item, parentID string) {
 	r.db.Create(&repositories.Item{
 		ID:       uuid.NewString(),
@@ -42,7 +42,7 @@ func (r *ItemRepository) Create(item *repositories.Item, parentID string) {
 	})
 }
 
-// GetOne возвращает первый объект, попавший под условие
+// GetOne возвращает первую вещь, попавшую под условие
 func (r *ItemRepository) GetOne(id string, parentID string) repositories.Item {
 	var item = repositories.Item{
 		ParentID: parentID,
@@ -52,12 +52,12 @@ func (r *ItemRepository) GetOne(id string, parentID string) repositories.Item {
 	return item
 }
 
-// UpdateOne обновляет объект в БД
+// UpdateOne обновляет вещь
 func (r *ItemRepository) UpdateOne(item *repositories.Item) {
 	r.db.Save(&item)
 }
 
-// DeleteOne удаляет объект из БД
+// DeleteOne удаляет вещь
 func (r *ItemRepository) DeleteOne(item *repositories.Item) {
 	r.db.Delete(&item)
 }

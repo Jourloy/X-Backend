@@ -33,7 +33,7 @@ func InitColonyRepository(db gorm.DB) repositories.IColonyRepository {
 	}
 }
 
-// Create создает объект в БД
+// Create создает колонию
 func (r *ColonyRepository) Create(colony *repositories.Colony, accountID string, placeID string) {
 	r.db.Create(&repositories.Colony{
 		ID:         uuid.NewString(),
@@ -44,7 +44,7 @@ func (r *ColonyRepository) Create(colony *repositories.Colony, accountID string,
 	})
 }
 
-// GetOne возвращает первый объект, попавший под условие
+// GetOne возвращает первую колонию, попавшую под условие
 func (r *ColonyRepository) GetOne(id string, accountID string) repositories.Colony {
 	var colony = repositories.Colony{
 		AccountID: accountID,
@@ -54,12 +54,12 @@ func (r *ColonyRepository) GetOne(id string, accountID string) repositories.Colo
 	return colony
 }
 
-// UpdateOne обновляет объект в БД
+// UpdateOne обновляет колонию
 func (r *ColonyRepository) UpdateOne(colony *repositories.Colony) {
 	r.db.Save(&colony)
 }
 
-// DeleteOne удаляет объект из БД
+// DeleteOne удаляет колонию
 func (r *ColonyRepository) DeleteOne(colony *repositories.Colony) {
 	r.db.Delete(&colony)
 }

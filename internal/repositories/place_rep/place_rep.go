@@ -33,14 +33,14 @@ func InitPlaceRepository(db gorm.DB) repositories.IPlaceRepository {
 	}
 }
 
-// Create создает объект в БД
+// Create создает место
 func (r *PlaceRepository) Create(place *repositories.Place) {
 	r.db.Create(&repositories.Place{
 		ID: uuid.NewString(),
 	})
 }
 
-// GetOne возвращает первый объект, попавший под условие
+// GetOne возвращает первое место, попавшее под условие
 func (r *PlaceRepository) GetOne(id string) repositories.Place {
 	var place = repositories.Place{
 		ID: id,
@@ -49,12 +49,12 @@ func (r *PlaceRepository) GetOne(id string) repositories.Place {
 	return place
 }
 
-// UpdateOne обновляет объект в БД
+// UpdateOne обновляет место
 func (r *PlaceRepository) UpdateOne(place *repositories.Place) {
 	r.db.Save(&place)
 }
 
-// DeleteOne удаляет объект из БД
+// DeleteOne удаляет место
 func (r *PlaceRepository) DeleteOne(place *repositories.Place) {
 	r.db.Delete(&place)
 }
