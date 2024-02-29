@@ -30,7 +30,7 @@ type WorkerService struct {
 // InitWorkerService создает сервис колоний
 func InitWorkerService(wRep repositories.IWorkerRepository, cRep repositories.IColonyRepository, cache redis.Client) *WorkerService {
 
-	logger.Info(`WorkerServer initialized`)
+	logger.Info(`WorkerService initialized`)
 
 	return &WorkerService{
 		wRep:  wRep,

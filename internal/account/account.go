@@ -27,6 +27,9 @@ type AccountService struct {
 
 // InitAccountService создает сервис аккаунта
 func InitAccountService(db repositories.IAccountRepository, cache redis.Client) *AccountService {
+
+	logger.Info(`AccountService initialized`)
+
 	return &AccountService{
 		db:    db,
 		cache: cache,

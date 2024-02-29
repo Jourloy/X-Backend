@@ -27,6 +27,9 @@ type ColonyService struct {
 
 // InitColonyService создает сервис колонии
 func InitColonyService(db repositories.IColonyRepository, cache redis.Client) *ColonyService {
+
+	logger.Info(`ColonyService initialized`)
+
 	return &ColonyService{
 		db:    db,
 		cache: cache,

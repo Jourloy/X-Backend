@@ -28,6 +28,9 @@ type ItemService struct {
 
 // InitItemService создает сервис вещи
 func InitItemService(iRep repositories.IItemRepository, wRep repositories.IWorkerRepository, cache redis.Client) *ItemService {
+
+	logger.Info(`ItemService initialized`)
+
 	return &ItemService{
 		iRep:  iRep,
 		wRep:  wRep,

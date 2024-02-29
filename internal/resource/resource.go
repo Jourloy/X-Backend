@@ -27,6 +27,9 @@ type ResourceService struct {
 
 // InitResourceService создает сервис ресурса
 func InitResourceService(db repositories.IResourceRepository, cache redis.Client) *ResourceService {
+
+	logger.Info(`ResourceService initialized`)
+
 	return &ResourceService{
 		db:    db,
 		cache: cache,

@@ -27,6 +27,9 @@ type PlaceService struct {
 
 // InitPlaceService создает сервис места
 func InitPlaceService(db repositories.IPlaceRepository, cache redis.Client) *PlaceService {
+
+	logger.Info(`PlaceService initialized`)
+
 	return &PlaceService{
 		db:    db,
 		cache: cache,
