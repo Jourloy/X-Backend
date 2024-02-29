@@ -27,7 +27,7 @@ type WorkerService struct {
 	cache redis.Client
 }
 
-// InitWorkerService создает сервис колоний
+// InitWorkerService создает сервис рабочего
 func InitWorkerService(wRep repositories.IWorkerRepository, cRep repositories.IColonyRepository, cache redis.Client) *WorkerService {
 
 	logger.Info(`WorkerService initialized`)

@@ -81,13 +81,15 @@ type IColonyRepository interface {
 
 type Worker struct {
 	gorm.Model
-	ID          string `json:"id"`
-	MaxStorage  int    `json:"maxStorage"`
-	UsedStorage int    `json:"usedStorage"`
-	Storage     []Item `json:"storage"`
-	Location    string `json:"location"`
-	ColonyID    string `json:"colonyId"`
-	AccountID   string `json:"accountId"`
+	ID            string `json:"id"`
+	MaxStorage    int    `json:"maxStorage"`
+	UsedStorage   int    `json:"usedStorage"`
+	Location      string `json:"location"`
+	ToArrival     int    `json:"toTarget"`
+	FromDeparture int    `json:"fromDeparture"`
+	Storage       []Item `json:"storage"`
+	ColonyID      string `json:"colonyId"`
+	AccountID     string `json:"accountId"`
 }
 
 type IWorkerRepository interface {

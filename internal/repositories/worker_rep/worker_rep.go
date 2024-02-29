@@ -36,11 +36,14 @@ func InitWorkerRepository(db gorm.DB) repositories.IWorkerRepository {
 // Create создает рабочего
 func (r *WorkerRepository) Create(worker *repositories.Worker, colonyID string, accountId string) {
 	r.db.Create(&repositories.Worker{
-		ID:         uuid.NewString(),
-		Location:   worker.Location,
-		MaxStorage: worker.MaxStorage,
-		ColonyID:   colonyID,
-		AccountID:  accountId,
+		ID:            uuid.NewString(),
+		Location:      worker.Location,
+		MaxStorage:    100,
+		UsedStorage:   0,
+		FromDeparture: 0,
+		ToArrival:     0,
+		ColonyID:      colonyID,
+		AccountID:     accountId,
 	})
 }
 
