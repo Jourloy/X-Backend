@@ -1,0 +1,65 @@
+package resource_rep
+
+import (
+	"os"
+
+	"github.com/charmbracelet/log"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+
+	"github.com/jourloy/X-Backend/internal/repositories"
+)
+
+var (
+	logger = log.NewWithOptions(os.Stderr, log.Options{
+		Prefix: `[database-resource]`,
+		Level:  log.DebugLevel,
+	})
+)
+
+type ResourceRepository struct {
+	db gorm.DB
+}
+
+// InitResourceRepository создает репозиторий
+func InitResourceRepository(db gorm.DB) repositories.IResourceRepository {
+	// Автоматическая миграция
+	if err := db.AutoMigrate(&repositories.Resource{}); err != nil {
+		logger.Fatal(`Migration failed`)
+	}
+
+	return &ResourceRepository{
+		db: db,
+	}
+}
+
+// Create создает объект в БД
+func (r *ResourceRepository) Create(resource *repositories.Resource, placeID string) {
+	r.db.Create(&repositories.Resource{
+		ID:      uuid.NewString(),
+		Type:    resource.Type,
+		Amount:  resource.Amount,
+		Weight:  resource.Weight,
+		PlaceID: placeID,
+	})
+}
+
+// GetOne возвращает первый объект, попавший под условие
+func (r *ResourceRepository) GetOne(id string, placeID string) repositories.Resource {
+	var resource = repositories.Resource{
+		PlaceID: placeID,
+		ID:      id,
+	}
+	r.db.First(&resource)
+	return resource
+}
+
+// UpdateOne обновляет объект в БД
+func (r *ResourceRepository) UpdateOne(resource *repositories.Resource) {
+	r.db.Save(&resource)
+}
+
+// DeleteOne удаляет объект из БД
+func (r *ResourceRepository) DeleteOne(resource *repositories.Resource) {
+	r.db.Delete(&resource)
+}

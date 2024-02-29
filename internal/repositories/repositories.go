@@ -4,8 +4,9 @@ import "gorm.io/gorm"
 
 type Account struct {
 	gorm.Model
-	ID     string `json:"id"`
-	ApiKey string `json:"apiKey"`
+	ID       string   `json:"id"`
+	ApiKey   string   `json:"apiKey"`
+	Colonies []Colony `json:"colonies"`
 }
 
 type IAccountRepository interface {
@@ -21,11 +22,23 @@ type IAccountRepository interface {
 
 type Colony struct {
 	gorm.Model
-	ID        string   `json:"id"`
-	Balance   int      `json:"balance"`
-	Storage   int      `json:"storage"`
-	Workers   []Worker `json:"worker"`
-	AccountID string   `json:"accountId"`
+	ID         string   `json:"id"`
+	Balance    int      `json:"balance"`
+	MaxStorage int      `json:"maxStorage"`
+	Storage    []Item   `json:"storage"`
+	Workers    []Worker `json:"worker"`
+	AccountID  string   `json:"accountId"`
+}
+
+type IColonyRepository interface {
+	// Create создает объект в БД
+	Create(colony *Colony, accountID string)
+	// GetOne возвращает первый объект, попавший под условие
+	GetOne(id string, accountID string) Colony
+	// UpdateOne обновляет объект в БД
+	UpdateOne(colony *Colony)
+	// DeleteOne удаляет объект из БД
+	DeleteOne(colony *Colony)
 }
 
 type Worker struct {
@@ -37,17 +50,50 @@ type Worker struct {
 	ColonyID   string `json:"colonyId"`
 }
 
+type IWorkerRepository interface {
+	// Create создает объект в БД
+	Create(worker *Worker, colonyID string)
+	// GetOne возвращает первый объект, попавший под условие
+	GetOne(id string, colonyID string) Worker
+	// UpdateOne обновляет объект в БД
+	UpdateOne(worker *Worker)
+	// DeleteOne удаляет объект из БД
+	DeleteOne(worker *Worker)
+}
+
 type Item struct {
 	gorm.Model
 	ID       string `json:"id"`
 	Type     string `json:"type"`
-	WorkerID string `json:"workerId"`
+	ParentID string `json:"workerId"`
+}
+
+type IItemRepository interface {
+	// Create создает объект в БД
+	Create(item *Item, parentID string)
+	// GetOne возвращает первый объект, попавший под условие
+	GetOne(id string, parentID string) Item
+	// UpdateOne обновляет объект в БД
+	UpdateOne(item *Item)
+	// DeleteOne удаляет объект из БД
+	DeleteOne(item *Item)
 }
 
 type Place struct {
 	gorm.Model
 	ID        string     `json:"id"`
 	Resources []Resource `json:"resources"`
+}
+
+type IPlaceRepository interface {
+	// Create создает объект в БД
+	Create(place *Place)
+	// GetOne возвращает первый объект, попавший под условие
+	GetOne(id string) Place
+	// UpdateOne обновляет объект в БД
+	UpdateOne(place *Place)
+	// DeleteOne удаляет объект из БД
+	DeleteOne(place *Place)
 }
 
 type Resource struct {
@@ -57,4 +103,15 @@ type Resource struct {
 	Amount  int    `json:"amount"`
 	Weight  int    `json:"weight"`
 	PlaceID string `json:"placeId"`
+}
+
+type IResourceRepository interface {
+	// Create создает объект в БД
+	Create(resource *Resource, placeID string)
+	// GetOne возвращает первый объект, попавший под условие
+	GetOne(id string, placeID string) Resource
+	// UpdateOne обновляет объект в БД
+	UpdateOne(resource *Resource)
+	// DeleteOne удаляет объект из БД
+	DeleteOne(resource *Resource)
 }
