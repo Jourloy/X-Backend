@@ -21,32 +21,32 @@ var (
 )
 
 type ItemService struct {
-	db    repositories.IItemRepository
+	iRep  repositories.IItemRepository
+	wRep  repositories.IWorkerRepository
 	cache redis.Client
 }
 
 // InitItemService создает сервис колоний
-func InitItemService(db repositories.IItemRepository, cache redis.Client) *ItemService {
+func InitItemService(iRep repositories.IItemRepository, wRep repositories.IWorkerRepository, cache redis.Client) *ItemService {
 	return &ItemService{
-		db:    db,
+		iRep:  iRep,
+		wRep:  wRep,
 		cache: cache,
 	}
 }
 
-func (s *ItemService) Create(c *gin.Context, accountID string) {
+func (s *ItemService) Create(c *gin.Context) {
 	var body repositories.Item
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	s.db.Create(&body, accountID)
-
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-func (s *ItemService) GetOne(c *gin.Context, accountID string) {
-	s.db.GetOne(c.Param(`id`), accountID)
+func (s *ItemService) GetOne(c *gin.Context) {
+	s.iRep.GetOne(c.Param(`id`), c.Param(`parentId`))
 }
 
 func (s *ItemService) UpdateOne(c *gin.Context, accountID string) {
@@ -56,30 +56,30 @@ func (s *ItemService) UpdateOne(c *gin.Context, accountID string) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID, accountID)
+	model := s.iRep.GetOne(body.ID, accountID)
 	if model.ID != body.ID {
 		logger.Error(`Model not found`)
 		c.JSON(404, gin.H{`error`: `Model not found`})
 	}
 
-	s.db.UpdateOne(&body)
+	s.iRep.UpdateOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-func (s *ItemService) UpdateDelete(c *gin.Context, accountID string) {
+func (s *ItemService) DeleteOne(c *gin.Context, accountID string) {
 	var body repositories.Item
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID, accountID)
+	model := s.iRep.GetOne(body.ID, accountID)
 	if model.ID != body.ID {
 		logger.Error(`Model not found`)
 		c.JSON(404, gin.H{`error`: `Model not found`})
 	}
 
-	s.db.DeleteOne(&body)
+	s.iRep.DeleteOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 

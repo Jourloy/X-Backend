@@ -66,7 +66,7 @@ func (s *ResourceService) UpdateOne(c *gin.Context, accountID string) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-func (s *ResourceService) UpdateDelete(c *gin.Context, accountID string) {
+func (s *ResourceService) DeleteOne(c *gin.Context, accountID string) {
 	var body repositories.Resource
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)

@@ -33,6 +33,7 @@ func InitColonyService(db repositories.IColonyRepository, cache redis.Client) *C
 	}
 }
 
+// Create создает колонию
 func (s *ColonyService) Create(c *gin.Context, accountID string) {
 	var body repositories.Colony
 	if err := s.parseBody(c, &body); err != nil {
@@ -40,15 +41,17 @@ func (s *ColonyService) Create(c *gin.Context, accountID string) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	s.db.Create(&body, accountID)
+	s.db.Create(&body, accountID, c.Query(`placeID`))
 
 	c.JSON(200, gin.H{`error`: ``})
 }
 
+// GetOne получает колонию по id
 func (s *ColonyService) GetOne(c *gin.Context, accountID string) {
 	s.db.GetOne(c.Param(`id`), accountID)
 }
 
+// UpdateOne обновляет колонию
 func (s *ColonyService) UpdateOne(c *gin.Context, accountID string) {
 	var body repositories.Colony
 	if err := s.parseBody(c, &body); err != nil {
@@ -66,7 +69,8 @@ func (s *ColonyService) UpdateOne(c *gin.Context, accountID string) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-func (s *ColonyService) UpdateDelete(c *gin.Context, accountID string) {
+// DeleteOne удаляет колонию
+func (s *ColonyService) DeleteOne(c *gin.Context, accountID string) {
 	var body repositories.Colony
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)

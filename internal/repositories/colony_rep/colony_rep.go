@@ -34,12 +34,13 @@ func InitColonyRepository(db gorm.DB) repositories.IColonyRepository {
 }
 
 // Create создает объект в БД
-func (r *ColonyRepository) Create(colony *repositories.Colony, accountID string) {
+func (r *ColonyRepository) Create(colony *repositories.Colony, accountID string, placeID string) {
 	r.db.Create(&repositories.Colony{
 		ID:         uuid.NewString(),
 		Balance:    colony.Balance,
 		MaxStorage: colony.MaxStorage,
 		AccountID:  accountID,
+		PlaceID:    placeID,
 	})
 }
 

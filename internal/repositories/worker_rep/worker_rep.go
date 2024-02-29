@@ -33,32 +33,45 @@ func InitWorkerRepository(db gorm.DB) repositories.IWorkerRepository {
 	}
 }
 
-// Create создает объект в БД
-func (r *WorkerRepository) Create(worker *repositories.Worker, colonyID string) {
+// Create создает рабочего
+func (r *WorkerRepository) Create(worker *repositories.Worker, colonyID string, accountId string) {
 	r.db.Create(&repositories.Worker{
 		ID:         uuid.NewString(),
 		Location:   worker.Location,
 		MaxStorage: worker.MaxStorage,
 		ColonyID:   colonyID,
+		AccountID:  accountId,
 	})
 }
 
-// GetOne возвращает первый объект, попавший под условие
-func (r *WorkerRepository) GetOne(id string, colonyID string) repositories.Worker {
+// GetOne возвращает первого рабочего, попавшего под условие
+func (r *WorkerRepository) GetOne(id string, accountID string) repositories.Worker {
 	var worker = repositories.Worker{
-		ColonyID: colonyID,
-		ID:       id,
+		ID:        id,
+		AccountID: accountID,
 	}
 	r.db.First(&worker)
 	return worker
 }
 
-// UpdateOne обновляет объект в БД
+// GetAll возвращает всех рабочих
+func (r *WorkerRepository) GetAll(accountID string, usedStorage *int, maxStorage *int) []repositories.Worker {
+	var worker = repositories.Worker{
+		AccountID:   accountID,
+		UsedStorage: *usedStorage,
+		MaxStorage:  *maxStorage,
+	}
+	var workers = []repositories.Worker{}
+	r.db.Model(worker).Find(&workers)
+	return workers
+}
+
+// UpdateOne обновляет рабочего
 func (r *WorkerRepository) UpdateOne(worker *repositories.Worker) {
 	r.db.Save(&worker)
 }
 
-// DeleteOne удаляет объект из БД
+// DeleteOne удаляет рабочего
 func (r *WorkerRepository) DeleteOne(worker *repositories.Worker) {
 	r.db.Delete(&worker)
 }

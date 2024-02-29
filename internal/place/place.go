@@ -33,30 +33,30 @@ func InitPlaceService(db repositories.IPlaceRepository, cache redis.Client) *Pla
 	}
 }
 
-func (s *PlaceService) Create(c *gin.Context, accountID string) {
+func (s *PlaceService) Create(c *gin.Context) {
 	var body repositories.Place
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	s.db.Create(&body, accountID)
+	s.db.Create(&body)
 
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-func (s *PlaceService) GetOne(c *gin.Context, accountID string) {
-	s.db.GetOne(c.Param(`id`), accountID)
+func (s *PlaceService) GetOne(c *gin.Context) {
+	s.db.GetOne(c.Param(`id`))
 }
 
-func (s *PlaceService) UpdateOne(c *gin.Context, accountID string) {
+func (s *PlaceService) UpdateOne(c *gin.Context) {
 	var body repositories.Place
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID, accountID)
+	model := s.db.GetOne(body.ID)
 	if model.ID != body.ID {
 		logger.Error(`Model not found`)
 		c.JSON(404, gin.H{`error`: `Model not found`})
@@ -66,14 +66,14 @@ func (s *PlaceService) UpdateOne(c *gin.Context, accountID string) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-func (s *PlaceService) UpdateDelete(c *gin.Context, accountID string) {
+func (s *PlaceService) DeleteOne(c *gin.Context) {
 	var body repositories.Place
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID, accountID)
+	model := s.db.GetOne(body.ID)
 	if model.ID != body.ID {
 		logger.Error(`Model not found`)
 		c.JSON(404, gin.H{`error`: `Model not found`})
