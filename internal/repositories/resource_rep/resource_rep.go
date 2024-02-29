@@ -54,6 +54,25 @@ func (r *ResourceRepository) GetOne(id string, placeID string) repositories.Reso
 	return resource
 }
 
+// GetAll возвращает все ресурсы
+func (r *ResourceRepository) GetAll(placeID string, q repositories.ResourceFindAll) []repositories.Resource {
+	var resource = repositories.Resource{
+		PlaceID: placeID,
+		Type:    *q.Type,
+		Amount:  *q.Amount,
+		Weight:  *q.Weight,
+	}
+	var resources = []repositories.Resource{}
+
+	limit := -1
+	if q.Limit != nil {
+		limit = *q.Limit
+	}
+
+	r.db.Model(resource).Limit(limit).Find(&resources)
+	return resources
+}
+
 // UpdateOne обновляет ресурс
 func (r *ResourceRepository) UpdateOne(resource *repositories.Resource) {
 	r.db.Save(&resource)

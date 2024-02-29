@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"strconv"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
@@ -21,72 +22,108 @@ var (
 )
 
 type ColonyService struct {
-	db    repositories.IColonyRepository
+	cRep  repositories.IColonyRepository
 	cache redis.Client
 }
 
 // InitColonyService создает сервис колонии
-func InitColonyService(db repositories.IColonyRepository, cache redis.Client) *ColonyService {
+func InitColonyService(cRep repositories.IColonyRepository, cache redis.Client) *ColonyService {
 
 	logger.Info(`ColonyService initialized`)
 
 	return &ColonyService{
-		db:    db,
+		cRep:  cRep,
 		cache: cache,
 	}
 }
 
 // Create создает колонию
-func (s *ColonyService) Create(c *gin.Context, accountID string) {
+func (s *ColonyService) Create(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
 	var body repositories.Colony
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	s.db.Create(&body, accountID, c.Query(`placeID`))
+	s.cRep.Create(&body, accountID, c.Query(`placeID`))
 
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // GetOne получает колонию по id
-func (s *ColonyService) GetOne(c *gin.Context, accountID string) {
-	s.db.GetOne(c.Param(`id`), accountID)
+func (s *ColonyService) GetOne(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
+	s.cRep.GetOne(c.Param(`id`), accountID)
+}
+
+// GetAll возвращает все колонии
+func (s *ColonyService) GetAll(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
+
+	query := repositories.ColonyFindAll{}
+
+	if q := c.Query(`limit`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Limit = &n
+	}
+	if q := c.Query(`balance`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Balance = &n
+	}
+	if q := c.Query(`maxStorage`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.MaxStorage = &n
+	}
+	if q := c.Query(`usedStorage`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.UsedStorage = &n
+	}
+
+	colonies := s.cRep.GetAll(accountID, query)
+
+	c.JSON(200, gin.H{
+		`error`:    ``,
+		`colonies`: colonies,
+		`count`:    len(colonies),
+	})
 }
 
 // UpdateOne обновляет колонию
-func (s *ColonyService) UpdateOne(c *gin.Context, accountID string) {
+func (s *ColonyService) UpdateOne(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
 	var body repositories.Colony
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID, accountID)
+	model := s.cRep.GetOne(body.ID, accountID)
 	if model.ID != body.ID {
 		logger.Error(`Model not found`)
 		c.JSON(404, gin.H{`error`: `Model not found`})
 	}
 
-	s.db.UpdateOne(&body)
+	s.cRep.UpdateOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // DeleteOne удаляет колонию
-func (s *ColonyService) DeleteOne(c *gin.Context, accountID string) {
+func (s *ColonyService) DeleteOne(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
 	var body repositories.Colony
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID, accountID)
+	model := s.cRep.GetOne(body.ID, accountID)
 	if model.ID != body.ID {
 		logger.Error(`Model not found`)
 		c.JSON(404, gin.H{`error`: `Model not found`})
 	}
 
-	s.db.DeleteOne(&body)
+	s.cRep.DeleteOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 

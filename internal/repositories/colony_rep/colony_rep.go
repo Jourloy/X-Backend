@@ -54,6 +54,25 @@ func (r *ColonyRepository) GetOne(id string, accountID string) repositories.Colo
 	return colony
 }
 
+// GetAll возвращает все колонии
+func (r *ColonyRepository) GetAll(accountID string, q repositories.ColonyFindAll) []repositories.Colony {
+	var colony = repositories.Colony{
+		AccountID:   accountID,
+		Balance:     *q.Balance,
+		MaxStorage:  *q.MaxStorage,
+		UsedStorage: *q.UsedStorage,
+	}
+	var colonys = []repositories.Colony{}
+
+	limit := -1
+	if q.Limit != nil {
+		limit = *q.Limit
+	}
+
+	r.db.Model(colony).Limit(limit).Find(&colonys)
+	return colonys
+}
+
 // UpdateOne обновляет колонию
 func (r *ColonyRepository) UpdateOne(colony *repositories.Colony) {
 	r.db.Save(&colony)

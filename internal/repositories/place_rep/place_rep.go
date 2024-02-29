@@ -49,6 +49,20 @@ func (r *PlaceRepository) GetOne(id string) repositories.Place {
 	return place
 }
 
+// GetAll возвращает все места
+func (r *PlaceRepository) GetAll(q repositories.PlaceFindAll) []repositories.Place {
+	var place = repositories.Place{}
+	var places = []repositories.Place{}
+
+	limit := -1
+	if q.Limit != nil {
+		limit = *q.Limit
+	}
+
+	r.db.Model(place).Limit(limit).Find(&places)
+	return places
+}
+
 // UpdateOne обновляет место
 func (r *PlaceRepository) UpdateOne(place *repositories.Place) {
 	r.db.Save(&place)

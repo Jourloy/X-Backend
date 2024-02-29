@@ -52,6 +52,23 @@ func (r *ItemRepository) GetOne(id string, parentID string) repositories.Item {
 	return item
 }
 
+// GetAll возвращает все вещи
+func (r *ItemRepository) GetAll(q repositories.ItemFindAll) []repositories.Item {
+	var item = repositories.Item{
+		Type:     *q.Type,
+		ParentID: *q.ParentID,
+	}
+	var items = []repositories.Item{}
+
+	limit := -1
+	if q.Limit != nil {
+		limit = *q.Limit
+	}
+
+	r.db.Model(item).Limit(limit).Find(&items)
+	return items
+}
+
 // UpdateOne обновляет вещь
 func (r *ItemRepository) UpdateOne(item *repositories.Item) {
 	r.db.Save(&item)

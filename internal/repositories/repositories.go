@@ -26,11 +26,17 @@ type Place struct {
 	Resources []Resource `json:"resources"`
 }
 
+type PlaceFindAll struct {
+	Limit *int
+}
+
 type IPlaceRepository interface {
 	// Create создает место
 	Create(place *Place)
 	// GetOne возвращает первое место, попавшее под условие
 	GetOne(id string) Place
+	// GetAll возвращает все места
+	GetAll(q PlaceFindAll) []Place
 	// UpdateOne обновляет место
 	UpdateOne(place *Place)
 	// DeleteOne удаляет место
@@ -46,11 +52,20 @@ type Resource struct {
 	PlaceID string `json:"placeId"`
 }
 
+type ResourceFindAll struct {
+	Limit  *int
+	Type   *string
+	Amount *int
+	Weight *int
+}
+
 type IResourceRepository interface {
 	// Create создает ресурс
 	Create(resource *Resource, placeID string)
 	// GetOne возвращает первый ресурс, попавший под условие
 	GetOne(id string, placeID string) Resource
+	// GetAll возвращает все ресурсы
+	GetAll(placeID string, q ResourceFindAll) []Resource
 	// UpdateOne обновляет ресурс
 	UpdateOne(resource *Resource)
 	// DeleteOne удаляет ресурс
@@ -59,13 +74,21 @@ type IResourceRepository interface {
 
 type Colony struct {
 	gorm.Model
-	ID         string   `json:"id"`
-	Balance    int      `json:"balance"`
-	MaxStorage int      `json:"maxStorage"`
-	Storage    []Item   `json:"storage"`
-	Workers    []Worker `json:"worker"`
-	AccountID  string   `json:"accountId"`
-	PlaceID    string   `json:"placeId"`
+	ID          string   `json:"id"`
+	Balance     int      `json:"balance"`
+	MaxStorage  int      `json:"maxStorage"`
+	UsedStorage int      `json:"usedStorage"`
+	Storage     []Item   `json:"storage"`
+	Workers     []Worker `json:"worker"`
+	AccountID   string   `json:"accountId"`
+	PlaceID     string   `json:"placeId"`
+}
+
+type ColonyFindAll struct {
+	Limit       *int
+	Balance     *int
+	MaxStorage  *int
+	UsedStorage *int
 }
 
 type IColonyRepository interface {
@@ -73,6 +96,8 @@ type IColonyRepository interface {
 	Create(colony *Colony, accountID string, placeID string)
 	// GetOne возвращает первую колонию, попавшую под условие
 	GetOne(id string, accountID string) Colony
+	// GetAll возвращает все колонии
+	GetAll(accountID string, q ColonyFindAll) []Colony
 	// UpdateOne обновляет колонию
 	UpdateOne(colony *Colony)
 	// DeleteOne удаляет колонию
@@ -121,11 +146,19 @@ type Item struct {
 	ParentID string `json:"workerId"`
 }
 
+type ItemFindAll struct {
+	Limit    *int
+	Type     *string
+	ParentID *string
+}
+
 type IItemRepository interface {
 	// Create создает вещь
 	Create(item *Item, parentID string)
 	// GetOne возвращает первую вещь, попавшую под условие
 	GetOne(id string, parentID string) Item
+	// GetAll возвращает все вещи
+	GetAll(q ItemFindAll) []Item
 	// UpdateOne обновляет вещь
 	UpdateOne(item *Item)
 	// DeleteOne удаляет вещь
