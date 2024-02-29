@@ -58,17 +58,23 @@ func (r *WorkerRepository) GetOne(id string, accountID string) repositories.Work
 }
 
 // GetAll возвращает всех рабочих
-func (r *WorkerRepository) GetAll(accountID string, usedStorage *int, maxStorage *int, location *string, fromDeparture *int, toArrival *int) []repositories.Worker {
+func (r *WorkerRepository) GetAll(accountID string, q repositories.WorkerFindAll) []repositories.Worker {
 	var worker = repositories.Worker{
 		AccountID:     accountID,
-		UsedStorage:   *usedStorage,
-		MaxStorage:    *maxStorage,
-		Location:      *location,
-		FromDeparture: *fromDeparture,
-		ToArrival:     *toArrival,
+		UsedStorage:   *q.UsedStorage,
+		MaxStorage:    *q.MaxStorage,
+		Location:      *q.Location,
+		FromDeparture: *q.FromDeparture,
+		ToArrival:     *q.ToArrival,
 	}
 	var workers = []repositories.Worker{}
-	r.db.Model(worker).Find(&workers)
+
+	limit := -1
+	if q.Limit != nil {
+		limit = *q.Limit
+	}
+
+	r.db.Model(worker).Limit(limit).Find(&workers)
 	return workers
 }
 

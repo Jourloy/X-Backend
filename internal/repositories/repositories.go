@@ -92,13 +92,22 @@ type Worker struct {
 	AccountID     string `json:"accountId"`
 }
 
+type WorkerFindAll struct {
+	MaxStorage    *int
+	UsedStorage   *int
+	Location      *string
+	ToArrival     *int
+	FromDeparture *int
+	Limit         *int
+}
+
 type IWorkerRepository interface {
 	// Create создает рабочего
 	Create(worker *Worker, colonyID string, accountID string)
 	// GetOne возвращает первого рабочего, попавшего под условие
 	GetOne(id string, accountID string) Worker
 	// GetAll возвращает всех рабочих
-	GetAll(accountID string, usedStorage *int, maxStorage *int, location *string, fromDeparture *int, toArrival *int) []Worker
+	GetAll(accountID string, q WorkerFindAll) []Worker
 	// UpdateOne обновляет рабочего
 	UpdateOne(worker *Worker)
 	// DeleteOne удаляет рабочего

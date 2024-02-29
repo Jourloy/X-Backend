@@ -75,33 +75,29 @@ func (s *WorkerService) GetOne(c *gin.Context) {
 func (s *WorkerService) GetAll(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
-	var usedStorage *int
-	var maxStorage *int
-	var location *string
-	var fromDeparture *int
-	var toArrival *int
+	query := repositories.WorkerFindAll{}
 
 	if q := c.Query(`usedStorage`); q != `` {
 		n, _ := strconv.Atoi(q)
-		usedStorage = &n
+		query.UsedStorage = &n
 	}
 	if q := c.Query(`maxStorage`); q != `` {
 		n, _ := strconv.Atoi(q)
-		maxStorage = &n
+		query.MaxStorage = &n
 	}
 	if q := c.Query(`location`); q != `` {
-		location = &q
+		query.Location = &q
 	}
 	if q := c.Query(`fromDeparture`); q != `` {
 		n, _ := strconv.Atoi(q)
-		fromDeparture = &n
+		query.FromDeparture = &n
 	}
 	if q := c.Query(`toArrival`); q != `` {
 		n, _ := strconv.Atoi(q)
-		toArrival = &n
+		query.ToArrival = &n
 	}
 
-	workers := s.wRep.GetAll(accountID, usedStorage, maxStorage, location, fromDeparture, toArrival)
+	workers := s.wRep.GetAll(accountID, query)
 
 	c.JSON(200, gin.H{
 		`error`:   ``,
