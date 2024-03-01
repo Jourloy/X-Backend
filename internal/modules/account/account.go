@@ -1,16 +1,14 @@
 package account
 
 import (
-	"encoding/json"
-	"errors"
-	"io"
 	"os"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 
+	account_service "github.com/jourloy/X-Backend/internal/modules/account/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
+	"github.com/jourloy/X-Backend/internal/tools"
 )
 
 var (
@@ -20,92 +18,79 @@ var (
 	})
 )
 
-type AccountService struct {
-	db    repositories.IAccountRepository
-	cache redis.Client
+type Controller struct {
+	service account_service.Service
 }
 
 // InitAccountService создает сервис аккаунта
-func InitAccountService(db repositories.IAccountRepository, cache redis.Client) *AccountService {
-
-	logger.Info(`AccountService initialized`)
-
-	return &AccountService{
-		db:    db,
-		cache: cache,
+func InitAccountService() *Controller {
+	service := account_service.InitAccountService()
+	logger.Info(`Controller initialized`)
+	return &Controller{
+		service: *service,
 	}
 }
 
 // Create создает аккаунт
-func (s *AccountService) Create(c *gin.Context, accountID string) {
+func (s *Controller) Create(c *gin.Context) {
 	var body repositories.Account
-	if err := s.parseBody(c, &body); err != nil {
+	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	s.db.Create(&body)
+	resp := s.service.Create(body)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-// GetOne получает аккаунт по id
-func (s *AccountService) GetOne(c *gin.Context, accountID string) {
-	s.db.GetOne(c.Param(`id`))
+// GetOne получает аккаунт авторизованного пользователя
+func (s *Controller) GetMe(c *gin.Context) {
+	aID := c.GetString(`accountID`)
+
+	resp := s.service.GetOne(aID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
+	c.JSON(200, gin.H{`error`: ``, `account`: resp.Account})
 }
 
 // UpdateOne обновляет аккаунт
-func (s *AccountService) UpdateOne(c *gin.Context, accountID string) {
-	var body repositories.Account
-	if err := s.parseBody(c, &body); err != nil {
+func (s *Controller) UpdateOne(c *gin.Context) {
+	var b repositories.Account
+	if err := tools.ParseBody(c, &b); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID)
-	if model.ID != body.ID {
-		logger.Error(`Model not found`)
-		c.JSON(404, gin.H{`error`: `Model not found`})
+	resp := s.service.UpdateOne(b)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	s.db.UpdateOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // DeleteOne удаляет аккаунт
-func (s *AccountService) UpdateDelete(c *gin.Context, accountID string) {
-	var body repositories.Account
-	if err := s.parseBody(c, &body); err != nil {
+func (s *Controller) DeleteOne(c *gin.Context) {
+	var b repositories.Account
+	if err := tools.ParseBody(c, &b); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID)
-	if model.ID != body.ID {
-		logger.Error(`Model not found`)
-		c.JSON(404, gin.H{`error`: `Model not found`})
+	resp := s.service.DeleteOne(b)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	s.db.DeleteOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
-}
-
-func (s *AccountService) parseBody(c *gin.Context, body interface{}) error {
-	// Проверка body
-	if c.Request.Body == nil {
-		return errors.New(`body not found`)
-	}
-
-	// Чтение body
-	b, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		return err
-	}
-
-	// Парсинг
-	if err := json.Unmarshal(b, &body); err != nil {
-		return err
-	}
-
-	return nil
 }

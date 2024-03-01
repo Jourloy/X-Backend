@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
+	"github.com/jourloy/X-Backend/internal/storage"
 )
 
 var (
@@ -17,24 +18,26 @@ var (
 	})
 )
 
-type TraderRepository struct {
+var Repository repositories.ITraderRepository
+
+type traderRepository struct {
 	db gorm.DB
 }
 
-// InitTraderRepository создает репозиторий
-func InitTraderRepository(db gorm.DB) repositories.ITraderRepository {
+// Init создает репозиторий
+func Init() {
 	// Автоматическая миграция
-	if err := db.AutoMigrate(&repositories.Trader{}); err != nil {
+	if err := storage.Database.AutoMigrate(&repositories.Trader{}); err != nil {
 		logger.Fatal(`Migration failed`)
 	}
 
-	return &TraderRepository{
-		db: db,
+	Repository = &traderRepository{
+		db: *storage.Database,
 	}
 }
 
 // Create создает торговца
-func (r *TraderRepository) Create(trader *repositories.Trader, villageID string, accountId string) {
+func (r *traderRepository) Create(trader *repositories.Trader, villageID string, accountId string) {
 	r.db.Create(&repositories.Trader{
 		ID:            uuid.NewString(),
 		Location:      trader.Location,
@@ -48,7 +51,7 @@ func (r *TraderRepository) Create(trader *repositories.Trader, villageID string,
 }
 
 // GetOne возвращает первого торговца, попавшего под условие
-func (r *TraderRepository) GetOne(id string, accountID string) repositories.Trader {
+func (r *traderRepository) GetOne(id string, accountID string) repositories.Trader {
 	var trader = repositories.Trader{
 		ID:        id,
 		AccountID: accountID,
@@ -58,7 +61,7 @@ func (r *TraderRepository) GetOne(id string, accountID string) repositories.Trad
 }
 
 // GetAll возвращает всех торговцев
-func (r *TraderRepository) GetAll(accountID string, q repositories.TraderFindAll) []repositories.Trader {
+func (r *traderRepository) GetAll(accountID string, q repositories.TraderFindAll) []repositories.Trader {
 	var trader = repositories.Trader{
 		AccountID:     accountID,
 		UsedStorage:   *q.UsedStorage,
@@ -79,11 +82,11 @@ func (r *TraderRepository) GetAll(accountID string, q repositories.TraderFindAll
 }
 
 // UpdateOne обновляет торговца
-func (r *TraderRepository) UpdateOne(trader *repositories.Trader) {
+func (r *traderRepository) UpdateOne(trader *repositories.Trader) {
 	r.db.Save(&trader)
 }
 
 // DeleteOne удаляет торговца
-func (r *TraderRepository) DeleteOne(trader *repositories.Trader) {
+func (r *traderRepository) DeleteOne(trader *repositories.Trader) {
 	r.db.Delete(&trader)
 }

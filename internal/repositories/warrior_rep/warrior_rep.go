@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
+	"github.com/jourloy/X-Backend/internal/storage"
 )
 
 var (
@@ -17,24 +18,26 @@ var (
 	})
 )
 
-type WarriorRepository struct {
+var Repository repositories.IWarriorRepository
+
+type warriorRepository struct {
 	db gorm.DB
 }
 
-// InitWarriorRepository создает репозиторий
-func InitWarriorRepository(db gorm.DB) repositories.IWarriorRepository {
+// Init создает репозиторий
+func Init() {
 	// Автоматическая миграция
-	if err := db.AutoMigrate(&repositories.Warrior{}); err != nil {
+	if err := storage.Database.AutoMigrate(&repositories.Warrior{}); err != nil {
 		logger.Fatal(`Migration failed`)
 	}
 
-	return &WarriorRepository{
-		db: db,
+	Repository = &warriorRepository{
+		db: *storage.Database,
 	}
 }
 
 // Create создает рабочего
-func (r *WarriorRepository) Create(warrior *repositories.Warrior, villageID string, accountId string) {
+func (r *warriorRepository) Create(warrior *repositories.Warrior, villageID string, accountId string) {
 	r.db.Create(&repositories.Warrior{
 		ID:            uuid.NewString(),
 		Location:      warrior.Location,
@@ -49,7 +52,7 @@ func (r *WarriorRepository) Create(warrior *repositories.Warrior, villageID stri
 }
 
 // GetOne возвращает первого рабочего, попавшего под условие
-func (r *WarriorRepository) GetOne(id string, accountID string) repositories.Warrior {
+func (r *warriorRepository) GetOne(id string, accountID string) repositories.Warrior {
 	var warrior = repositories.Warrior{
 		ID:        id,
 		AccountID: accountID,
@@ -59,7 +62,7 @@ func (r *WarriorRepository) GetOne(id string, accountID string) repositories.War
 }
 
 // GetAll возвращает всех рабочих
-func (r *WarriorRepository) GetAll(accountID string, q repositories.WarriorFindAll) []repositories.Warrior {
+func (r *warriorRepository) GetAll(accountID string, q repositories.WarriorFindAll) []repositories.Warrior {
 	var warrior = repositories.Warrior{
 		AccountID:     accountID,
 		UsedStorage:   *q.UsedStorage,
@@ -80,11 +83,11 @@ func (r *WarriorRepository) GetAll(accountID string, q repositories.WarriorFindA
 }
 
 // UpdateOne обновляет рабочего
-func (r *WarriorRepository) UpdateOne(warrior *repositories.Warrior) {
+func (r *warriorRepository) UpdateOne(warrior *repositories.Warrior) {
 	r.db.Save(&warrior)
 }
 
 // DeleteOne удаляет рабочего
-func (r *WarriorRepository) DeleteOne(warrior *repositories.Warrior) {
+func (r *warriorRepository) DeleteOne(warrior *repositories.Warrior) {
 	r.db.Delete(&warrior)
 }

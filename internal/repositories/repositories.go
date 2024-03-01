@@ -142,9 +142,10 @@ type IWorkerRepository interface {
 
 type Item struct {
 	gorm.Model
-	ID       string `json:"id"`
-	Type     string `json:"type"`
-	ParentID string `json:"workerId"`
+	ID        string `json:"id"`
+	Type      string `json:"type"`
+	ParentID  string `json:"workerId"`
+	AccountID string `json:"accountId"`
 }
 
 type ItemFindAll struct {
@@ -155,11 +156,11 @@ type ItemFindAll struct {
 
 type IItemRepository interface {
 	// Create создает вещь
-	Create(item *Item, parentID string)
+	Create(item *Item, parentID string, aID string)
 	// GetOne возвращает первую вещь, попавшую под условие
-	GetOne(id string, parentID string) Item
+	GetOne(id string, aID string) Item
 	// GetAll возвращает все вещи
-	GetAll(q ItemFindAll) []Item
+	GetAll(q ItemFindAll, aID string) []Item
 	// UpdateOne обновляет вещь
 	UpdateOne(item *Item)
 	// DeleteOne удаляет вещь

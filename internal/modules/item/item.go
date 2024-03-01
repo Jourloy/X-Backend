@@ -1,17 +1,15 @@
 package item
 
 import (
-	"encoding/json"
-	"errors"
-	"io"
 	"os"
 	"strconv"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 
+	item_service "github.com/jourloy/X-Backend/internal/modules/item/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
+	"github.com/jourloy/X-Backend/internal/tools"
 )
 
 var (
@@ -21,42 +19,76 @@ var (
 	})
 )
 
-type ItemService struct {
-	iRep  repositories.IItemRepository
-	wRep  repositories.IWorkerRepository
-	cache redis.Client
+type Controller struct {
+	service item_service.Service
 }
 
 // InitItemService создает сервис вещи
-func InitItemService(iRep repositories.IItemRepository, wRep repositories.IWorkerRepository, cache redis.Client) *ItemService {
-
-	logger.Info(`ItemService initialized`)
-
-	return &ItemService{
-		iRep:  iRep,
-		wRep:  wRep,
-		cache: cache,
+func InitItemService() *Controller {
+	service := item_service.Init()
+	logger.Info(`Controller initialized`)
+	return &Controller{
+		service: *service,
 	}
 }
 
 // Create создает вещь
-func (s *ItemService) Create(c *gin.Context) {
-	var body repositories.Item
-	if err := s.parseBody(c, &body); err != nil {
+func (s *Controller) Create(c *gin.Context) {
+	aID := c.GetString(`accountID`)
+
+	// Парсинг body
+	var b repositories.Item
+	if err := tools.ParseBody(c, &b); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
+	}
+
+	// Получение ID родителя
+	pID := c.Query(`parentID`)
+	if pID == `` {
+		logger.Error(`parentID is required`)
+		c.JSON(400, gin.H{`error`: `parentID is required`})
+	}
+
+	// Получение тип родителя
+	pType := c.Query(`parentType`)
+	if pType == `` {
+		logger.Error(`parentID is required`)
+		c.JSON(400, gin.H{`error`: `parentID is required`})
+	}
+
+	resp := s.service.Create(b, pID, pType, aID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // GetOne получает вещь по id
-func (s *ItemService) GetOne(c *gin.Context) {
-	s.iRep.GetOne(c.Param(`id`), c.Param(`parentId`))
+func (s *Controller) GetOne(c *gin.Context) {
+	aID := c.GetString(`accountID`)
+
+	// Получение ID рабочего
+	id := c.Query(`itemID`)
+	if id == `` {
+		logger.Error(`itemID is required`)
+		c.JSON(400, gin.H{`error`: `itemID is required`})
+	}
+
+	resp := s.service.GetOne(id, aID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
+	c.JSON(200, gin.H{`error`: ``, `item`: resp.Item})
 }
 
 // GetAll возвращает все вещи
-func (s *ItemService) GetAll(c *gin.Context) {
+func (s *Controller) GetAll(c *gin.Context) {
+	aID := c.GetString(`accountID`)
 
 	// Создание фильтров
 	query := repositories.ItemFindAll{}
@@ -71,68 +103,55 @@ func (s *ItemService) GetAll(c *gin.Context) {
 		query.ParentID = &q
 	}
 
-	// Получение вещей
-	items := s.iRep.GetAll(query)
+	resp := s.service.GetAll(query, aID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
 	c.JSON(200, gin.H{
 		`error`: ``,
-		`items`: items,
-		`count`: len(items),
+		`items`: resp.Items,
+		`count`: len(resp.Items),
 	})
 }
 
 // UpdateOne обновляет вещь
-func (s *ItemService) UpdateOne(c *gin.Context, accountID string) {
-	var body repositories.Item
-	if err := s.parseBody(c, &body); err != nil {
+func (s *Controller) UpdateOne(c *gin.Context, accountID string) {
+	aID := c.GetString(`accountID`)
+
+	// Парсинг body
+	var b repositories.Item
+	if err := tools.ParseBody(c, &b); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.iRep.GetOne(body.ID, accountID)
-	if model.ID != body.ID {
-		logger.Error(`Model not found`)
-		c.JSON(404, gin.H{`error`: `Model not found`})
+	resp := s.service.UpdateOne(b, aID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	s.iRep.UpdateOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // DeleteOne удаляет вещь
-func (s *ItemService) DeleteOne(c *gin.Context, accountID string) {
-	var body repositories.Item
-	if err := s.parseBody(c, &body); err != nil {
+func (s *Controller) DeleteOne(c *gin.Context, accountID string) {
+	aID := c.GetString(`accountID`)
+
+	// Парсинг body
+	var b repositories.Item
+	if err := tools.ParseBody(c, &b); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.iRep.GetOne(body.ID, accountID)
-	if model.ID != body.ID {
-		logger.Error(`Model not found`)
-		c.JSON(404, gin.H{`error`: `Model not found`})
+	resp := s.service.DeleteOne(b, aID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	s.iRep.DeleteOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
-}
-
-func (s *ItemService) parseBody(c *gin.Context, body interface{}) error {
-	// Проверка body
-	if c.Request.Body == nil {
-		return errors.New(`body not found`)
-	}
-
-	// Чтение body
-	b, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		return err
-	}
-
-	// Парсинг
-	if err := json.Unmarshal(b, &body); err != nil {
-		return err
-	}
-
-	return nil
 }

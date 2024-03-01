@@ -6,6 +6,15 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
 
+	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/item_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/resource_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/trader_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/village_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/warrior_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/worker_rep"
+
 	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/middlewares"
 	"github.com/jourloy/X-Backend/internal/storage"
@@ -17,6 +26,16 @@ func StartServer() {
 	// Инициализация модулей
 	storage.InitDB()
 	cache.InitCache()
+
+	// Инициализация репозиториев
+	account_rep.Init()
+	item_rep.Init()
+	resource_rep.Init()
+	sector_rep.Init()
+	trader_rep.Init()
+	village_rep.Init()
+	warrior_rep.Init()
+	worker_rep.Init()
 
 	r := gin.New()
 

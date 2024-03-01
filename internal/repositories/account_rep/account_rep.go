@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
+	"github.com/jourloy/X-Backend/internal/storage"
 )
 
 var (
@@ -17,19 +18,21 @@ var (
 	})
 )
 
+var Repository repositories.IAccountRepository
+
 type AccountRepository struct {
 	db gorm.DB
 }
 
-// InitAccountRepository создает репозиторий
-func InitAccountRepository(db gorm.DB) repositories.IAccountRepository {
+// Init создает репозиторий
+func Init() {
 	// Автоматическая миграция
-	if err := db.AutoMigrate(&repositories.Account{}); err != nil {
+	if err := storage.Database.AutoMigrate(&repositories.Account{}); err != nil {
 		logger.Fatal(`Migration failed`)
 	}
 
-	return &AccountRepository{
-		db: db,
+	Repository = &AccountRepository{
+		db: *storage.Database,
 	}
 }
 

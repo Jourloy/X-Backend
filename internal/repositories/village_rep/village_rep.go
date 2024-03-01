@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
+	"github.com/jourloy/X-Backend/internal/storage"
 )
 
 var (
@@ -17,24 +18,26 @@ var (
 	})
 )
 
-type VillageRepository struct {
+var Repository repositories.IVillageRepository
+
+type villageRepository struct {
 	db gorm.DB
 }
 
-// InitVillageRepository создает репозиторий
-func InitVillageRepository(db gorm.DB) repositories.IVillageRepository {
+// Init создает репозиторий
+func Init() {
 	// Автоматическая миграция
-	if err := db.AutoMigrate(&repositories.Village{}); err != nil {
+	if err := storage.Database.AutoMigrate(&repositories.Village{}); err != nil {
 		logger.Fatal(`Migration failed`)
 	}
 
-	return &VillageRepository{
-		db: db,
+	Repository = &villageRepository{
+		db: *storage.Database,
 	}
 }
 
 // Create создает поселение
-func (r *VillageRepository) Create(village *repositories.Village, accountID string, sectorID string) {
+func (r *villageRepository) Create(village *repositories.Village, accountID string, sectorID string) {
 	r.db.Create(&repositories.Village{
 		ID:         uuid.NewString(),
 		Balance:    village.Balance,
@@ -45,7 +48,7 @@ func (r *VillageRepository) Create(village *repositories.Village, accountID stri
 }
 
 // GetOne возвращает первое поселение, попавшее под условие
-func (r *VillageRepository) GetOne(id string, accountID string) repositories.Village {
+func (r *villageRepository) GetOne(id string, accountID string) repositories.Village {
 	var village = repositories.Village{
 		AccountID: accountID,
 		ID:        id,
@@ -55,7 +58,7 @@ func (r *VillageRepository) GetOne(id string, accountID string) repositories.Vil
 }
 
 // GetAll возвращает все поселения
-func (r *VillageRepository) GetAll(accountID string, q repositories.VillageFindAll) []repositories.Village {
+func (r *villageRepository) GetAll(accountID string, q repositories.VillageFindAll) []repositories.Village {
 	var village = repositories.Village{
 		AccountID:   accountID,
 		Balance:     *q.Balance,
@@ -74,11 +77,11 @@ func (r *VillageRepository) GetAll(accountID string, q repositories.VillageFindA
 }
 
 // UpdateOne обновляет поселение
-func (r *VillageRepository) UpdateOne(village *repositories.Village) {
+func (r *villageRepository) UpdateOne(village *repositories.Village) {
 	r.db.Save(&village)
 }
 
 // DeleteOne удаляет поселение
-func (r *VillageRepository) DeleteOne(village *repositories.Village) {
+func (r *villageRepository) DeleteOne(village *repositories.Village) {
 	r.db.Delete(&village)
 }

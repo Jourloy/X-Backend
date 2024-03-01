@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
+	"github.com/jourloy/X-Backend/internal/storage"
 )
 
 var (
@@ -17,31 +18,33 @@ var (
 	})
 )
 
-type SectorRepository struct {
+var Repository repositories.ISectorRepository
+
+type sectorRepository struct {
 	db gorm.DB
 }
 
-// InitSectorRepository создает репозиторий
-func InitSectorRepository(db gorm.DB) repositories.ISectorRepository {
+// Init создает репозиторий
+func Init() {
 	// Автоматическая миграция
-	if err := db.AutoMigrate(&repositories.Sector{}); err != nil {
+	if err := storage.Database.AutoMigrate(&repositories.Sector{}); err != nil {
 		logger.Fatal(`Migration failed`)
 	}
 
-	return &SectorRepository{
-		db: db,
+	Repository = &sectorRepository{
+		db: *storage.Database,
 	}
 }
 
 // Create создает место
-func (r *SectorRepository) Create(sector *repositories.Sector) {
+func (r *sectorRepository) Create(sector *repositories.Sector) {
 	r.db.Create(&repositories.Sector{
 		ID: uuid.NewString(),
 	})
 }
 
 // GetOne возвращает первое место, попавшее под условие
-func (r *SectorRepository) GetOne(id string) repositories.Sector {
+func (r *sectorRepository) GetOne(id string) repositories.Sector {
 	var sector = repositories.Sector{
 		ID: id,
 	}
@@ -50,7 +53,7 @@ func (r *SectorRepository) GetOne(id string) repositories.Sector {
 }
 
 // GetAll возвращает все места
-func (r *SectorRepository) GetAll(q repositories.SectorFindAll) []repositories.Sector {
+func (r *sectorRepository) GetAll(q repositories.SectorFindAll) []repositories.Sector {
 	var sector = repositories.Sector{}
 	var sectors = []repositories.Sector{}
 
@@ -64,11 +67,11 @@ func (r *SectorRepository) GetAll(q repositories.SectorFindAll) []repositories.S
 }
 
 // UpdateOne обновляет место
-func (r *SectorRepository) UpdateOne(sector *repositories.Sector) {
+func (r *sectorRepository) UpdateOne(sector *repositories.Sector) {
 	r.db.Save(&sector)
 }
 
 // DeleteOne удаляет место
-func (r *SectorRepository) DeleteOne(sector *repositories.Sector) {
+func (r *sectorRepository) DeleteOne(sector *repositories.Sector) {
 	r.db.Delete(&sector)
 }
