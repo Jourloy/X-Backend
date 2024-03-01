@@ -97,13 +97,13 @@ func (s *WarriorService) GetAll(c *gin.Context) {
 		n, _ := strconv.Atoi(q)
 		query.ToArrival = &n
 	}
-	if q := c.Query(`limit`); q != `` {
-		n, _ := strconv.Atoi(q)
-		query.Limit = &n
-	}
 	if q := c.Query(`health`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.Health = &n
+	}
+	if q := c.Query(`limit`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Limit = &n
 	}
 
 	// Получение воинов

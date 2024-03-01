@@ -12,6 +12,18 @@ import (
 	"github.com/jourloy/X-Backend/internal/config"
 )
 
+//	@title						X Backend
+//	@version					1.0
+//	@description				Документация для API игры
+//
+//	@host						localhost:10000
+//	@BasePath					/
+//
+//	@securityDefinitions.basic	BasicAuth
+//	@securityDefinitions.apikey	ApiKeyAuth
+//	@in							header
+//	@name						Authorization
+
 var clear map[string]func()
 
 func init() {
