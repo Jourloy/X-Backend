@@ -1,4 +1,4 @@
-package worker
+package trader
 
 import (
 	"os"
@@ -14,41 +14,41 @@ import (
 
 var (
 	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[worker]`,
+		Prefix: `[trader]`,
 		Level:  log.DebugLevel,
 	})
 )
 
-type WorkerService struct {
-	wRep  repositories.IWorkerRepository
+type TraderService struct {
+	wRep  repositories.ITraderRepository
 	cRep  repositories.IVillageRepository
 	cache redis.Client
 }
 
-// InitWorkerService создает сервис рабочего
-func InitWorkerService(wRep repositories.IWorkerRepository, cRep repositories.IVillageRepository, cache redis.Client) *WorkerService {
+// InitTraderService создает сервис торговца
+func InitTraderService(wRep repositories.ITraderRepository, cRep repositories.IVillageRepository, cache redis.Client) *TraderService {
 
-	logger.Info(`WorkerService initialized`)
+	logger.Info(`TraderService initialized`)
 
-	return &WorkerService{
+	return &TraderService{
 		wRep:  wRep,
 		cRep:  cRep,
 		cache: cache,
 	}
 }
 
-// Create создает рабочего
-func (s *WorkerService) Create(c *gin.Context) {
+// Create создает торговца
+func (s *TraderService) Create(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
-	var body repositories.Worker
+	var body repositories.Trader
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Проверка существования колонии
+	// Проверка существования поселения
 	villageID := c.Query(`villageID`)
 	if villageID == `` {
 		logger.Error(`villageID is required`)
@@ -65,19 +65,19 @@ func (s *WorkerService) Create(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-// GetOne получает рабочего по его ID
-func (s *WorkerService) GetOne(c *gin.Context) {
+// GetOne получает торговца по его ID
+func (s *TraderService) GetOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	s.wRep.GetOne(c.Query(`id`), accountID)
 }
 
-// GetAll возвращает всех рабочих
-func (s *WorkerService) GetAll(c *gin.Context) {
+// GetAll возвращает всех торговцев
+func (s *TraderService) GetAll(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Создание фильтров
-	query := repositories.WorkerFindAll{}
+	query := repositories.TraderFindAll{}
 	if q := c.Query(`usedStorage`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.UsedStorage = &n
@@ -102,22 +102,22 @@ func (s *WorkerService) GetAll(c *gin.Context) {
 		query.Limit = &n
 	}
 
-	// Получение работников
-	workers := s.wRep.GetAll(accountID, query)
+	// Получение торговцев
+	traders := s.wRep.GetAll(accountID, query)
 
 	c.JSON(200, gin.H{
 		`error`:   ``,
-		`workers`: workers,
-		`count`:   len(workers),
+		`traders`: traders,
+		`count`:   len(traders),
 	})
 }
 
-// UpdateOne обновляет рабочего
-func (s *WorkerService) UpdateOne(c *gin.Context) {
+// UpdateOne обновляет торговца
+func (s *TraderService) UpdateOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
-	var body repositories.Worker
+	var body repositories.Trader
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
@@ -130,12 +130,12 @@ func (s *WorkerService) UpdateOne(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-// DeleteOne удаляет рабочего
-func (s *WorkerService) DeleteOne(c *gin.Context) {
+// DeleteOne удаляет торговца
+func (s *TraderService) DeleteOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
-	var body repositories.Worker
+	var body repositories.Trader
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})

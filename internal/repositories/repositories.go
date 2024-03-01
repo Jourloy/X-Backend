@@ -4,9 +4,9 @@ import "gorm.io/gorm"
 
 type Account struct {
 	gorm.Model
-	ID       string   `json:"id"`
-	ApiKey   string   `json:"apiKey"`
-	Colonies []Colony `json:"colonies"`
+	ID       string    `json:"id"`
+	ApiKey   string    `json:"apiKey"`
+	Colonies []Village `json:"villages"`
 }
 
 type IAccountRepository interface {
@@ -20,36 +20,36 @@ type IAccountRepository interface {
 	DeleteOne(account *Account)
 }
 
-type Place struct {
+type Sector struct {
 	gorm.Model
 	ID        string     `json:"id"`
 	Resources []Resource `json:"resources"`
 }
 
-type PlaceFindAll struct {
+type SectorFindAll struct {
 	Limit *int
 }
 
-type IPlaceRepository interface {
-	// Create создает место
-	Create(place *Place)
-	// GetOne возвращает первое место, попавшее под условие
-	GetOne(id string) Place
-	// GetAll возвращает все места
-	GetAll(q PlaceFindAll) []Place
-	// UpdateOne обновляет место
-	UpdateOne(place *Place)
-	// DeleteOne удаляет место
-	DeleteOne(place *Place)
+type ISectorRepository interface {
+	// Create создает сектор
+	Create(sector *Sector)
+	// GetOne возвращает первый сектор, попавший под условие
+	GetOne(id string) Sector
+	// GetAll возвращает все сектора
+	GetAll(q SectorFindAll) []Sector
+	// UpdateOne обновляет сектор
+	UpdateOne(sector *Sector)
+	// DeleteOne удаляет сектор
+	DeleteOne(sector *Sector)
 }
 
 type Resource struct {
 	gorm.Model
-	ID      string `json:"id"`
-	Type    string `json:"type"`
-	Amount  int    `json:"amount"`
-	Weight  int    `json:"weight"`
-	PlaceID string `json:"placeId"`
+	ID       string `json:"id"`
+	Type     string `json:"type"`
+	Amount   int    `json:"amount"`
+	Weight   int    `json:"weight"`
+	SectorID string `json:"sectorId"`
 }
 
 type ResourceFindAll struct {
@@ -61,18 +61,18 @@ type ResourceFindAll struct {
 
 type IResourceRepository interface {
 	// Create создает ресурс
-	Create(resource *Resource, placeID string)
+	Create(resource *Resource, sectorID string)
 	// GetOne возвращает первый ресурс, попавший под условие
-	GetOne(id string, placeID string) Resource
+	GetOne(id string, sectorID string) Resource
 	// GetAll возвращает все ресурсы
-	GetAll(placeID string, q ResourceFindAll) []Resource
+	GetAll(sectorID string, q ResourceFindAll) []Resource
 	// UpdateOne обновляет ресурс
 	UpdateOne(resource *Resource)
 	// DeleteOne удаляет ресурс
 	DeleteOne(resource *Resource)
 }
 
-type Colony struct {
+type Village struct {
 	gorm.Model
 	ID          string    `json:"id"`
 	Balance     int       `json:"balance"`
@@ -82,27 +82,27 @@ type Colony struct {
 	Workers     []Worker  `json:"worker"`
 	Warriors    []Warrior `json:"warriors"`
 	AccountID   string    `json:"accountId"`
-	PlaceID     string    `json:"placeId"`
+	SectorID    string    `json:"sectorId"`
 }
 
-type ColonyFindAll struct {
+type VillageFindAll struct {
 	Limit       *int
 	Balance     *int
 	MaxStorage  *int
 	UsedStorage *int
 }
 
-type IColonyRepository interface {
-	// Create создает колонию
-	Create(colony *Colony, accountID string, placeID string)
-	// GetOne возвращает первую колонию, попавшую под условие
-	GetOne(id string, accountID string) Colony
-	// GetAll возвращает все колонии
-	GetAll(accountID string, q ColonyFindAll) []Colony
-	// UpdateOne обновляет колонию
-	UpdateOne(colony *Colony)
-	// DeleteOne удаляет колонию
-	DeleteOne(colony *Colony)
+type IVillageRepository interface {
+	// Create создает поселение
+	Create(village *Village, accountID string, sectorID string)
+	// GetOne возвращает первое поселение, попавшее под условие
+	GetOne(id string, accountID string) Village
+	// GetAll возвращает все поселения
+	GetAll(accountID string, q VillageFindAll) []Village
+	// UpdateOne обновляет поселение
+	UpdateOne(village *Village)
+	// DeleteOne удаляет поселение
+	DeleteOne(village *Village)
 }
 
 type Worker struct {
@@ -114,7 +114,7 @@ type Worker struct {
 	ToArrival     int    `json:"toTarget"`
 	FromDeparture int    `json:"fromDeparture"`
 	Storage       []Item `json:"storage"`
-	ColonyID      string `json:"colonyId"`
+	VillageID     string `json:"villageId"`
 	AccountID     string `json:"accountId"`
 }
 
@@ -129,7 +129,7 @@ type WorkerFindAll struct {
 
 type IWorkerRepository interface {
 	// Create создает рабочего
-	Create(worker *Worker, colonyID string, accountID string)
+	Create(worker *Worker, villageID string, accountID string)
 	// GetOne возвращает первого рабочего, попавшего под условие
 	GetOne(id string, accountID string) Worker
 	// GetAll возвращает всех рабочих
@@ -176,7 +176,7 @@ type Warrior struct {
 	FromDeparture int    `json:"fromDeparture"`
 	Health        int    `json:"health"`
 	Storage       []Item `json:"storage"`
-	ColonyID      string `json:"colonyId"`
+	VillageID     string `json:"villageId"`
 	AccountID     string `json:"accountId"`
 }
 
@@ -192,7 +192,7 @@ type WarriorFindAll struct {
 
 type IWarriorRepository interface {
 	// Create создает рабочего
-	Create(warrior *Warrior, colonyID string, accountID string)
+	Create(warrior *Warrior, villageID string, accountID string)
 	// GetOne возвращает первого рабочего, попавшего под условие
 	GetOne(id string, accountID string) Warrior
 	// GetAll возвращает всех рабочих
@@ -201,4 +201,39 @@ type IWarriorRepository interface {
 	UpdateOne(warrior *Warrior)
 	// DeleteOne удаляет рабочего
 	DeleteOne(warrior *Warrior)
+}
+
+type Trader struct {
+	gorm.Model
+	ID            string `json:"id"`
+	MaxStorage    int    `json:"maxStorage"`
+	UsedStorage   int    `json:"usedStorage"`
+	Location      string `json:"location"`
+	ToArrival     int    `json:"toTarget"`
+	FromDeparture int    `json:"fromDeparture"`
+	Storage       []Item `json:"storage"`
+	VillageID     string `json:"villageId"`
+	AccountID     string `json:"accountId"`
+}
+
+type TraderFindAll struct {
+	MaxStorage    *int
+	UsedStorage   *int
+	Location      *string
+	ToArrival     *int
+	FromDeparture *int
+	Limit         *int
+}
+
+type ITraderRepository interface {
+	// Create создает торговца
+	Create(trader *Trader, villageID string, accountID string)
+	// GetOne возвращает первого торговца, попавшего под условие
+	GetOne(id string, accountID string) Trader
+	// GetAll возвращает всех торговцев
+	GetAll(accountID string, q TraderFindAll) []Trader
+	// UpdateOne обновляет торговца
+	UpdateOne(trader *Trader)
+	// DeleteOne удаляет торговца
+	DeleteOne(trader *Trader)
 }

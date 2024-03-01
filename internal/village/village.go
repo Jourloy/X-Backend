@@ -1,4 +1,4 @@
-package colony
+package village
 
 import (
 	"os"
@@ -14,61 +14,61 @@ import (
 
 var (
 	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[colony]`,
+		Prefix: `[village]`,
 		Level:  log.DebugLevel,
 	})
 )
 
-type ColonyService struct {
-	cRep  repositories.IColonyRepository
+type VillageService struct {
+	cRep  repositories.IVillageRepository
 	cache redis.Client
 }
 
-// InitColonyService создает сервис колонии
-func InitColonyService(cRep repositories.IColonyRepository, cache redis.Client) *ColonyService {
+// InitVillageService создает сервис поселений
+func InitVillageService(cRep repositories.IVillageRepository, cache redis.Client) *VillageService {
 
-	logger.Info(`ColonyService initialized`)
+	logger.Info(`VillageService initialized`)
 
-	return &ColonyService{
+	return &VillageService{
 		cRep:  cRep,
 		cache: cache,
 	}
 }
 
-// Create создает колонию
-func (s *ColonyService) Create(c *gin.Context) {
+// Create создает поселение
+func (s *VillageService) Create(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
-	var body repositories.Colony
+	var body repositories.Village
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Получение placeID
-	q := c.Query(`placeID`)
+	// Получение sectorID
+	q := c.Query(`sectorID`)
 	if q == `` {
-		logger.Error(`placeID is required`)
-		c.JSON(400, gin.H{`error`: `placeID is required`})
+		logger.Error(`sectorID is required`)
+		c.JSON(400, gin.H{`error`: `sectorID is required`})
 	}
 
 	s.cRep.Create(&body, accountID, q)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-// GetOne получает колонию по id
-func (s *ColonyService) GetOne(c *gin.Context) {
+// GetOne получает поселение по id
+func (s *VillageService) GetOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 	s.cRep.GetOne(c.Param(`id`), accountID)
 }
 
-// GetAll возвращает все колонии
-func (s *ColonyService) GetAll(c *gin.Context) {
+// GetAll возвращает все поселения
+func (s *VillageService) GetAll(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Создание фильтров
-	query := repositories.ColonyFindAll{}
+	query := repositories.VillageFindAll{}
 	if q := c.Query(`balance`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.Balance = &n
@@ -86,21 +86,21 @@ func (s *ColonyService) GetAll(c *gin.Context) {
 		query.Limit = &n
 	}
 
-	// Получение колоний
-	colonies := s.cRep.GetAll(accountID, query)
+	// Получение поселений
+	villages := s.cRep.GetAll(accountID, query)
 	c.JSON(200, gin.H{
 		`error`:    ``,
-		`colonies`: colonies,
-		`count`:    len(colonies),
+		`villages`: villages,
+		`count`:    len(villages),
 	})
 }
 
-// UpdateOne обновляет колонию
-func (s *ColonyService) UpdateOne(c *gin.Context) {
+// UpdateOne обновляет поселение
+func (s *VillageService) UpdateOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
-	var body repositories.Colony
+	var body repositories.Village
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
@@ -113,12 +113,12 @@ func (s *ColonyService) UpdateOne(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-// DeleteOne удаляет колонию
-func (s *ColonyService) DeleteOne(c *gin.Context) {
+// DeleteOne удаляет поселение
+func (s *VillageService) DeleteOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
-	var body repositories.Colony
+	var body repositories.Village
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})

@@ -21,12 +21,12 @@ var (
 
 type WarriorService struct {
 	wRep  repositories.IWarriorRepository
-	cRep  repositories.IColonyRepository
+	cRep  repositories.IVillageRepository
 	cache redis.Client
 }
 
 // InitWarriorService создает сервис воина
-func InitWarriorService(wRep repositories.IWarriorRepository, cRep repositories.IColonyRepository, cache redis.Client) *WarriorService {
+func InitWarriorService(wRep repositories.IWarriorRepository, cRep repositories.IVillageRepository, cache redis.Client) *WarriorService {
 
 	logger.Info(`WarriorService initialized`)
 
@@ -49,19 +49,19 @@ func (s *WarriorService) Create(c *gin.Context) {
 	}
 
 	// Проверка существования воина
-	colonyID := c.Query(`colonyID`)
-	if colonyID == `` {
-		logger.Error(`colonyID is required`)
-		c.JSON(400, gin.H{`error`: `colonyID is required`})
+	villageID := c.Query(`villageID`)
+	if villageID == `` {
+		logger.Error(`villageID is required`)
+		c.JSON(400, gin.H{`error`: `villageID is required`})
 	}
 
-	colony := s.cRep.GetOne(colonyID, accountID)
-	if colony.ID == `` {
-		logger.Error(`Colony not found`)
-		c.JSON(404, gin.H{`error`: `Colony not found`})
+	village := s.cRep.GetOne(villageID, accountID)
+	if village.ID == `` {
+		logger.Error(`Village not found`)
+		c.JSON(404, gin.H{`error`: `Village not found`})
 	}
 
-	s.wRep.Create(&body, colonyID, accountID)
+	s.wRep.Create(&body, villageID, accountID)
 	c.JSON(200, gin.H{`error`: ``})
 }
 

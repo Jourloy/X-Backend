@@ -46,11 +46,11 @@ func (s *ResourceService) Create(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Получение placeID
-	q := c.Query(`placeID`)
+	// Получение sectorID
+	q := c.Query(`sectorID`)
 	if q == `` {
-		logger.Error(`placeID is required`)
-		c.JSON(400, gin.H{`error`: `placeID is required`})
+		logger.Error(`sectorID is required`)
+		c.JSON(400, gin.H{`error`: `sectorID is required`})
 	}
 
 	// Создание
@@ -87,14 +87,14 @@ func (s *ResourceService) GetAll(c *gin.Context) {
 		query.Weight = &n
 	}
 
-	placeID := c.Query(`weight`)
-	if placeID == `` {
-		logger.Error(`placeID is required`)
-		c.JSON(400, gin.H{`error`: `placeID is required`})
+	sectorID := c.Query(`weight`)
+	if sectorID == `` {
+		logger.Error(`sectorID is required`)
+		c.JSON(400, gin.H{`error`: `sectorID is required`})
 	}
 
 	// Получение ресурсов
-	resources := s.db.GetAll(placeID, query)
+	resources := s.db.GetAll(sectorID, query)
 	c.JSON(200, gin.H{
 		`error`:     ``,
 		`resources`: resources,

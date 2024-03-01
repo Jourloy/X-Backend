@@ -34,7 +34,7 @@ func InitWarriorRepository(db gorm.DB) repositories.IWarriorRepository {
 }
 
 // Create создает рабочего
-func (r *WarriorRepository) Create(warrior *repositories.Warrior, colonyID string, accountId string) {
+func (r *WarriorRepository) Create(warrior *repositories.Warrior, villageID string, accountId string) {
 	r.db.Create(&repositories.Warrior{
 		ID:            uuid.NewString(),
 		Location:      warrior.Location,
@@ -43,7 +43,7 @@ func (r *WarriorRepository) Create(warrior *repositories.Warrior, colonyID strin
 		UsedStorage:   0,
 		FromDeparture: 0,
 		ToArrival:     0,
-		ColonyID:      colonyID,
+		VillageID:     villageID,
 		AccountID:     accountId,
 	})
 }

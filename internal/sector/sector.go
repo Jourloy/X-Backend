@@ -1,4 +1,4 @@
-package place
+package sector
 
 import (
 	"encoding/json"
@@ -16,30 +16,30 @@ import (
 
 var (
 	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[place]`,
+		Prefix: `[sector]`,
 		Level:  log.DebugLevel,
 	})
 )
 
-type PlaceService struct {
-	db    repositories.IPlaceRepository
+type SectorService struct {
+	db    repositories.ISectorRepository
 	cache redis.Client
 }
 
-// InitPlaceService создает сервис места
-func InitPlaceService(db repositories.IPlaceRepository, cache redis.Client) *PlaceService {
+// InitSectorService создает сервис сектора
+func InitSectorService(db repositories.ISectorRepository, cache redis.Client) *SectorService {
 
-	logger.Info(`PlaceService initialized`)
+	logger.Info(`SectorService initialized`)
 
-	return &PlaceService{
+	return &SectorService{
 		db:    db,
 		cache: cache,
 	}
 }
 
-// Create создает место
-func (s *PlaceService) Create(c *gin.Context) {
-	var body repositories.Place
+// Create создает сектор
+func (s *SectorService) Create(c *gin.Context) {
+	var body repositories.Sector
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
@@ -50,34 +50,34 @@ func (s *PlaceService) Create(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-// GetOne получает место по id
-func (s *PlaceService) GetOne(c *gin.Context) {
+// GetOne получает сектор по id
+func (s *SectorService) GetOne(c *gin.Context) {
 	s.db.GetOne(c.Param(`id`))
 }
 
-// GetAll возвращает все места
-func (s *PlaceService) GetAll(c *gin.Context) {
+// GetAll возвращает все сектора
+func (s *SectorService) GetAll(c *gin.Context) {
 
 	// Создание фильтров
-	query := repositories.PlaceFindAll{}
+	query := repositories.SectorFindAll{}
 	if q := c.Query(`limit`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.Limit = &n
 	}
 
-	// Получение мест
-	places := s.db.GetAll(query)
+	// Получение секторов
+	sectors := s.db.GetAll(query)
 
 	c.JSON(200, gin.H{
-		`error`:  ``,
-		`places`: places,
-		`count`:  len(places),
+		`error`:   ``,
+		`sectors`: sectors,
+		`count`:   len(sectors),
 	})
 }
 
-// UpdateOne обновляет место
-func (s *PlaceService) UpdateOne(c *gin.Context) {
-	var body repositories.Place
+// UpdateOne обновляет сектор
+func (s *SectorService) UpdateOne(c *gin.Context) {
+	var body repositories.Sector
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
@@ -93,9 +93,9 @@ func (s *PlaceService) UpdateOne(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-// DeleteOne удаляет место
-func (s *PlaceService) DeleteOne(c *gin.Context) {
-	var body repositories.Place
+// DeleteOne удаляет сектор
+func (s *SectorService) DeleteOne(c *gin.Context) {
+	var body repositories.Sector
 	if err := s.parseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
@@ -111,7 +111,7 @@ func (s *PlaceService) DeleteOne(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-func (s *PlaceService) parseBody(c *gin.Context, body interface{}) error {
+func (s *SectorService) parseBody(c *gin.Context, body interface{}) error {
 	// Проверка body
 	if c.Request.Body == nil {
 		return errors.New(`body not found`)
