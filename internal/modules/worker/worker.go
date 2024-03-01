@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 
+	worker_service "github.com/jourloy/X-Backend/internal/modules/worker/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/tools"
 )
@@ -19,26 +20,23 @@ var (
 	})
 )
 
-type WorkerService struct {
-	wRep  repositories.IWorkerRepository
-	cRep  repositories.IVillageRepository
-	cache redis.Client
+type Controller struct {
+	service worker_service.Service
 }
 
 // InitWorkerService создает сервис рабочего
-func InitWorkerService(wRep repositories.IWorkerRepository, cRep repositories.IVillageRepository, cache redis.Client) *WorkerService {
+func InitWorkerService(wRep repositories.IWorkerRepository, cRep repositories.IVillageRepository, cache redis.Client) *Controller {
 
-	logger.Info(`WorkerService initialized`)
+	logger.Info(`Controller initialized`)
+	service := worker_service.InitWorkerService(wRep, cRep, cache)
 
-	return &WorkerService{
-		wRep:  wRep,
-		cRep:  cRep,
-		cache: cache,
+	return &Controller{
+		service: *service,
 	}
 }
 
 // Create создает рабочего
-func (s *WorkerService) Create(c *gin.Context) {
+func (s *Controller) Create(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -48,32 +46,44 @@ func (s *WorkerService) Create(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Проверка существования колонии
+	// Получение ID колонии
 	villageID := c.Query(`villageID`)
 	if villageID == `` {
 		logger.Error(`villageID is required`)
 		c.JSON(400, gin.H{`error`: `villageID is required`})
 	}
 
-	village := s.cRep.GetOne(villageID, accountID)
-	if village.ID == `` {
-		logger.Error(`Village not found`)
-		c.JSON(404, gin.H{`error`: `Village not found`})
+	resp := s.service.Create(body, accountID, villageID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	s.wRep.Create(&body, villageID, accountID)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // GetOne получает рабочего по его ID
-func (s *WorkerService) GetOne(c *gin.Context) {
+func (s *Controller) GetOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
-	s.wRep.GetOne(c.Query(`id`), accountID)
+	// Получение ID рабочего
+	workerID := c.Query(`workerID`)
+	if workerID == `` {
+		logger.Error(`workerID is required`)
+		c.JSON(400, gin.H{`error`: `workerID is required`})
+	}
+
+	resp := s.service.GetOne(workerID, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
+	c.JSON(200, gin.H{`error`: ``})
 }
 
 // GetAll возвращает всех рабочих
-func (s *WorkerService) GetAll(c *gin.Context) {
+func (s *Controller) GetAll(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Создание фильтров
@@ -102,18 +112,21 @@ func (s *WorkerService) GetAll(c *gin.Context) {
 		query.Limit = &n
 	}
 
-	// Получение работников
-	workers := s.wRep.GetAll(accountID, query)
+	resp := s.service.GetAll(query, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
 	c.JSON(200, gin.H{
 		`error`:   ``,
-		`workers`: workers,
-		`count`:   len(workers),
+		`workers`: resp.Workers,
+		`count`:   len(resp.Workers),
 	})
 }
 
 // UpdateOne обновляет рабочего
-func (s *WorkerService) UpdateOne(c *gin.Context) {
+func (s *Controller) UpdateOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -123,15 +136,17 @@ func (s *WorkerService) UpdateOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Перезапись accountID для безопасности
-	body.AccountID = accountID
+	resp := s.service.UpdateOne(body, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
-	s.wRep.UpdateOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // DeleteOne удаляет рабочего
-func (s *WorkerService) DeleteOne(c *gin.Context) {
+func (s *Controller) DeleteOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -141,9 +156,11 @@ func (s *WorkerService) DeleteOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Перезапись accountId для безопасности
-	body.AccountID = accountID
+	resp := s.service.DeleteOne(body, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
-	s.wRep.DeleteOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
