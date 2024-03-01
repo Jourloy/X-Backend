@@ -6,7 +6,6 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 
 	warrior_service "github.com/jourloy/X-Backend/internal/modules/warrior/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
@@ -24,12 +23,10 @@ type Controller struct {
 	service warrior_service.Service
 }
 
-// InitWarriorService создает сервис воина
-func InitWarriorService(wRep repositories.IWarriorRepository, cRep repositories.IVillageRepository, cache redis.Client) *Controller {
-
+// Init создает контроллер воина
+func Init() *Controller {
+	service := warrior_service.Init()
 	logger.Info(`Controller initialized`)
-	service := warrior_service.InitWarriorService(wRep, cRep, cache)
-
 	return &Controller{
 		service: *service,
 	}

@@ -6,7 +6,9 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/redis/go-redis/v9"
 
+	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/repositories"
+	"github.com/jourloy/X-Backend/internal/repositories/village_rep"
 )
 
 var (
@@ -17,18 +19,20 @@ var (
 )
 
 type Service struct {
-	vRep  repositories.IVillageRepository
-	cache redis.Client
+	vilRep repositories.IVillageRepository
+	cache  redis.Client
 }
 
-// InitVillageService создает сервис поселений
-func InitVillageService(vRep repositories.IVillageRepository, cache redis.Client) *Service {
+// Init создает сервис поселений
+func Init() *Service {
+
+	vilRep := village_rep.Repository
 
 	logger.Info(`Service initialized`)
 
 	return &Service{
-		vRep:  vRep,
-		cache: cache,
+		vilRep: vilRep,
+		cache:  *cache.Client,
 	}
 }
 
@@ -37,8 +41,8 @@ type createResp struct {
 }
 
 // Create создает поселение
-func (s *Service) Create(b repositories.Village, aID string, sID string) createResp {
-	s.vRep.Create(&b, aID, sID)
+func (s *Service) Create(body repositories.Village, accountID string, sID string) createResp {
+	s.vilRep.Create(&body, accountID, sID)
 	return createResp{Err: nil}
 }
 
@@ -47,8 +51,8 @@ type getOneResp struct {
 	Village repositories.Village
 }
 
-func (s *Service) GetOne(id string, aID string) getOneResp {
-	village := s.vRep.GetOne(id, aID)
+func (s *Service) GetOne(id string, accountID string) getOneResp {
+	village := s.vilRep.GetOne(id, accountID)
 	return getOneResp{
 		Err:     nil,
 		Village: village,
@@ -60,9 +64,9 @@ type getAllResp struct {
 	Villages []repositories.Village
 }
 
-func (s *Service) GetAll(q repositories.VillageFindAll, aID string) getAllResp {
+func (s *Service) GetAll(query repositories.VillageFindAll, accountID string) getAllResp {
 	// Получение поселений
-	villages := s.vRep.GetAll(aID, q)
+	villages := s.vilRep.GetAll(accountID, query)
 	return getAllResp{
 		Err:      nil,
 		Villages: villages,
@@ -73,11 +77,11 @@ type updateOneResp struct {
 	Err error
 }
 
-func (s *Service) UpdateOne(b repositories.Village, aID string) updateOneResp {
+func (s *Service) UpdateOne(body repositories.Village, accountID string) updateOneResp {
 	// Перезапись accountID для безопасности
-	b.AccountID = aID
+	body.AccountID = accountID
 
-	s.vRep.UpdateOne(&b)
+	s.vilRep.UpdateOne(&body)
 	return updateOneResp{
 		Err: nil,
 	}
@@ -87,11 +91,11 @@ type deleteOneResp struct {
 	Err error
 }
 
-func (s *Service) DeleteOne(b repositories.Village, aID string) deleteOneResp {
+func (s *Service) DeleteOne(body repositories.Village, accountID string) deleteOneResp {
 	// Перезапись accountID для безопасности
-	b.AccountID = aID
+	body.AccountID = accountID
 
-	s.vRep.DeleteOne(&b)
+	s.vilRep.DeleteOne(&body)
 	return deleteOneResp{
 		Err: nil,
 	}

@@ -156,11 +156,11 @@ type ItemFindAll struct {
 
 type IItemRepository interface {
 	// Create создает вещь
-	Create(item *Item, parentID string, aID string)
+	Create(item *Item, parentID string, accountID string)
 	// GetOne возвращает первую вещь, попавшую под условие
-	GetOne(id string, aID string) Item
+	GetOne(id string, accountID string) Item
 	// GetAll возвращает все вещи
-	GetAll(q ItemFindAll, aID string) []Item
+	GetAll(q ItemFindAll, accountID string) []Item
 	// UpdateOne обновляет вещь
 	UpdateOne(item *Item)
 	// DeleteOne удаляет вещь

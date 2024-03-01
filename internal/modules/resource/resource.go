@@ -1,9 +1,6 @@
 package resource
 
 import (
-	"encoding/json"
-	"errors"
-	"io"
 	"os"
 	"strconv"
 
@@ -12,6 +9,7 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
+	"github.com/jourloy/X-Backend/internal/tools"
 )
 
 var (
@@ -41,7 +39,7 @@ func InitResourceService(db repositories.IResourceRepository, cache redis.Client
 func (s *ResourceService) Create(c *gin.Context) {
 	// Парсинг body
 	var body repositories.Resource
-	if err := s.parseBody(c, &body); err != nil {
+	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
@@ -87,7 +85,7 @@ func (s *ResourceService) GetAll(c *gin.Context) {
 		query.Weight = &n
 	}
 
-	sectorID := c.Query(`weight`)
+	sectorID := c.Query(`sectorID`)
 	if sectorID == `` {
 		logger.Error(`sectorID is required`)
 		c.JSON(400, gin.H{`error`: `sectorID is required`})
@@ -106,7 +104,7 @@ func (s *ResourceService) GetAll(c *gin.Context) {
 func (s *ResourceService) UpdateOne(c *gin.Context) {
 	// Парсинг body
 	var body repositories.Resource
-	if err := s.parseBody(c, &body); err != nil {
+	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
@@ -119,31 +117,11 @@ func (s *ResourceService) UpdateOne(c *gin.Context) {
 func (s *ResourceService) DeleteOne(c *gin.Context) {
 	// Парсинг body
 	var body repositories.Resource
-	if err := s.parseBody(c, &body); err != nil {
+	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
 	s.db.DeleteOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
-}
-
-func (s *ResourceService) parseBody(c *gin.Context, body interface{}) error {
-	// Проверка body
-	if c.Request.Body == nil {
-		return errors.New(`body not found`)
-	}
-
-	// Чтение body
-	b, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		return err
-	}
-
-	// Парсинг
-	if err := json.Unmarshal(b, &body); err != nil {
-		return err
-	}
-
-	return nil
 }

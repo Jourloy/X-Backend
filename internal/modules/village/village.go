@@ -6,7 +6,6 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 
 	village_service "github.com/jourloy/X-Backend/internal/modules/village/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
@@ -24,12 +23,10 @@ type Controller struct {
 	service village_service.Service
 }
 
-// InitVillageService создает сервис поселений
-func InitVillageService(cRep repositories.IVillageRepository, cache redis.Client) *Controller {
-
+// Init создает сервис поселений
+func Init() *Controller {
+	service := village_service.Init()
 	logger.Info(`Controller initialized`)
-	service := village_service.InitVillageService(cRep, cache)
-
 	return &Controller{
 		service: *service,
 	}

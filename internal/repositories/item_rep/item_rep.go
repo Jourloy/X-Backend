@@ -37,31 +37,31 @@ func Init() {
 }
 
 // Create создает вещь
-func (r *ItemRepository) Create(item *repositories.Item, parentID string, aID string) {
+func (r *ItemRepository) Create(item *repositories.Item, parentID string, accountID string) {
 	r.db.Create(&repositories.Item{
 		ID:        uuid.NewString(),
 		Type:      item.Type,
 		ParentID:  parentID,
-		AccountID: aID,
+		AccountID: accountID,
 	})
 }
 
 // GetOne возвращает первую вещь, попавшую под условие
-func (r *ItemRepository) GetOne(id string, aID string) repositories.Item {
+func (r *ItemRepository) GetOne(id string, accountID string) repositories.Item {
 	var item = repositories.Item{
 		ID:        id,
-		AccountID: aID,
+		AccountID: accountID,
 	}
 	r.db.First(&item)
 	return item
 }
 
 // GetAll возвращает все вещи
-func (r *ItemRepository) GetAll(q repositories.ItemFindAll, aID string) []repositories.Item {
+func (r *ItemRepository) GetAll(q repositories.ItemFindAll, accountID string) []repositories.Item {
 	var item = repositories.Item{
 		Type:      *q.Type,
 		ParentID:  *q.ParentID,
-		AccountID: aID,
+		AccountID: accountID,
 	}
 	var items = []repositories.Item{}
 

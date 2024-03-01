@@ -50,9 +50,9 @@ func (s *Controller) Create(c *gin.Context) {
 
 // GetOne получает аккаунт авторизованного пользователя
 func (s *Controller) GetMe(c *gin.Context) {
-	aID := c.GetString(`accountID`)
+	accountID := c.GetString(`accountID`)
 
-	resp := s.service.GetOne(aID)
+	resp := s.service.GetOne(accountID)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})

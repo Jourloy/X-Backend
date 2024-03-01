@@ -41,8 +41,8 @@ type createResp struct {
 }
 
 // Create создает аккаунт
-func (s *Service) Create(b repositories.Account) createResp {
-	s.aRep.Create(&b)
+func (s *Service) Create(body repositories.Account) createResp {
+	s.aRep.Create(&body)
 	return createResp{
 		Err: nil,
 	}
@@ -54,8 +54,8 @@ type getOneResp struct {
 }
 
 // GetOne получает аккаунт по id
-func (s *Service) GetOne(aID string) getOneResp {
-	a := s.aRep.GetOne(aID)
+func (s *Service) GetOne(accountID string) getOneResp {
+	a := s.aRep.GetOne(accountID)
 	return getOneResp{
 		Err:     nil,
 		Account: a,
@@ -67,8 +67,8 @@ type updateOneResp struct {
 }
 
 // UpdateOne обновляет аккаунт
-func (s *Service) UpdateOne(b repositories.Account) updateOneResp {
-	s.aRep.UpdateOne(&b)
+func (s *Service) UpdateOne(body repositories.Account) updateOneResp {
+	s.aRep.UpdateOne(&body)
 	return updateOneResp{
 		Err: nil,
 	}
@@ -79,8 +79,8 @@ type deleteOneResp struct {
 }
 
 // DeleteOne удаляет аккаунт
-func (s *Service) DeleteOne(b repositories.Account) deleteOneResp {
-	s.aRep.DeleteOne(&b)
+func (s *Service) DeleteOne(body repositories.Account) deleteOneResp {
+	s.aRep.DeleteOne(&body)
 	return deleteOneResp{
 		Err: nil,
 	}
