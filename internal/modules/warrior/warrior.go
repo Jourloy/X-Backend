@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 
+	warrior_service "github.com/jourloy/X-Backend/internal/modules/warrior/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/tools"
 )
@@ -19,26 +20,23 @@ var (
 	})
 )
 
-type WarriorService struct {
-	wRep  repositories.IWarriorRepository
-	cRep  repositories.IVillageRepository
-	cache redis.Client
+type Controller struct {
+	service warrior_service.Service
 }
 
 // InitWarriorService создает сервис воина
-func InitWarriorService(wRep repositories.IWarriorRepository, cRep repositories.IVillageRepository, cache redis.Client) *WarriorService {
+func InitWarriorService(wRep repositories.IWarriorRepository, cRep repositories.IVillageRepository, cache redis.Client) *Controller {
 
-	logger.Info(`WarriorService initialized`)
+	logger.Info(`Controller initialized`)
+	service := warrior_service.InitWarriorService(wRep, cRep, cache)
 
-	return &WarriorService{
-		wRep:  wRep,
-		cRep:  cRep,
-		cache: cache,
+	return &Controller{
+		service: *service,
 	}
 }
 
 // Create создает воина
-func (s *WarriorService) Create(c *gin.Context) {
+func (s *Controller) Create(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -48,32 +46,44 @@ func (s *WarriorService) Create(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Проверка существования воина
+	// Получение ID поселения
 	villageID := c.Query(`villageID`)
 	if villageID == `` {
 		logger.Error(`villageID is required`)
 		c.JSON(400, gin.H{`error`: `villageID is required`})
 	}
 
-	village := s.cRep.GetOne(villageID, accountID)
-	if village.ID == `` {
-		logger.Error(`Village not found`)
-		c.JSON(404, gin.H{`error`: `Village not found`})
+	resp := s.service.Create(body, accountID, villageID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	s.wRep.Create(&body, villageID, accountID)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // GetOne получает воина по его ID
-func (s *WarriorService) GetOne(c *gin.Context) {
+func (s *Controller) GetOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
-	s.wRep.GetOne(c.Query(`id`), accountID)
+	// Получение ID рабочего
+	warriorID := c.Query(`warriorID`)
+	if warriorID == `` {
+		logger.Error(`warriorID is required`)
+		c.JSON(400, gin.H{`error`: `warriorID is required`})
+	}
+
+	resp := s.service.GetOne(warriorID, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
+	c.JSON(200, gin.H{`error`: ``, `worker`: resp.Warrior})
 }
 
 // GetAll возвращает всех воинов
-func (s *WarriorService) GetAll(c *gin.Context) {
+func (s *Controller) GetAll(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Создание фильтров
@@ -106,18 +116,21 @@ func (s *WarriorService) GetAll(c *gin.Context) {
 		query.Limit = &n
 	}
 
-	// Получение воинов
-	warriors := s.wRep.GetAll(accountID, query)
+	resp := s.service.GetAll(query, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
 	c.JSON(200, gin.H{
 		`error`:    ``,
-		`warriors`: warriors,
-		`count`:    len(warriors),
+		`warriors`: resp.Warriors,
+		`count`:    len(resp.Warriors),
 	})
 }
 
 // UpdateOne обновляет воина
-func (s *WarriorService) UpdateOne(c *gin.Context) {
+func (s *Controller) UpdateOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -127,15 +140,17 @@ func (s *WarriorService) UpdateOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Перезапись accountID для безопасности
-	body.AccountID = accountID
+	resp := s.service.UpdateOne(body, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
-	s.wRep.UpdateOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // DeleteOne удаляет воина
-func (s *WarriorService) DeleteOne(c *gin.Context) {
+func (s *Controller) DeleteOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -145,9 +160,11 @@ func (s *WarriorService) DeleteOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Перезапись accountId для безопасности
-	body.AccountID = accountID
+	resp := s.service.DeleteOne(body, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
-	s.wRep.DeleteOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }

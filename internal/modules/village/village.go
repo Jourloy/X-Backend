@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 
+	village_service "github.com/jourloy/X-Backend/internal/modules/village/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/tools"
 )
@@ -19,24 +20,23 @@ var (
 	})
 )
 
-type VillageService struct {
-	cRep  repositories.IVillageRepository
-	cache redis.Client
+type Controller struct {
+	service village_service.Service
 }
 
 // InitVillageService создает сервис поселений
-func InitVillageService(cRep repositories.IVillageRepository, cache redis.Client) *VillageService {
+func InitVillageService(cRep repositories.IVillageRepository, cache redis.Client) *Controller {
 
-	logger.Info(`VillageService initialized`)
+	logger.Info(`Controller initialized`)
+	service := village_service.InitVillageService(cRep, cache)
 
-	return &VillageService{
-		cRep:  cRep,
-		cache: cache,
+	return &Controller{
+		service: *service,
 	}
 }
 
 // Create создает поселение
-func (s *VillageService) Create(c *gin.Context) {
+func (s *Controller) Create(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -46,25 +46,44 @@ func (s *VillageService) Create(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Получение sectorID
-	q := c.Query(`sectorID`)
-	if q == `` {
-		logger.Error(`sectorID is required`)
-		c.JSON(400, gin.H{`error`: `sectorID is required`})
+	// Получение ID поселения
+	villageID := c.Query(`villageID`)
+	if villageID == `` {
+		logger.Error(`villageID is required`)
+		c.JSON(400, gin.H{`error`: `villageID is required`})
 	}
 
-	s.cRep.Create(&body, accountID, q)
+	resp := s.service.Create(body, accountID, villageID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // GetOne получает поселение по id
-func (s *VillageService) GetOne(c *gin.Context) {
+func (s *Controller) GetOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
-	s.cRep.GetOne(c.Param(`id`), accountID)
+
+	// Получение ID рабочего
+	villageID := c.Query(`villageID`)
+	if villageID == `` {
+		logger.Error(`villageID is required`)
+		c.JSON(400, gin.H{`error`: `villageID is required`})
+	}
+
+	resp := s.service.GetOne(villageID, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
+	c.JSON(200, gin.H{`error`: ``, `village`: resp.Village})
 }
 
 // GetAll возвращает все поселения
-func (s *VillageService) GetAll(c *gin.Context) {
+func (s *Controller) GetAll(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Создание фильтров
@@ -86,17 +105,21 @@ func (s *VillageService) GetAll(c *gin.Context) {
 		query.Limit = &n
 	}
 
-	// Получение поселений
-	villages := s.cRep.GetAll(accountID, query)
+	resp := s.service.GetAll(query, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
 	c.JSON(200, gin.H{
 		`error`:    ``,
-		`villages`: villages,
-		`count`:    len(villages),
+		`villages`: resp.Villages,
+		`count`:    len(resp.Villages),
 	})
 }
 
 // UpdateOne обновляет поселение
-func (s *VillageService) UpdateOne(c *gin.Context) {
+func (s *Controller) UpdateOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -106,15 +129,17 @@ func (s *VillageService) UpdateOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Перезапись accountID для безопасности
-	body.AccountID = accountID
+	resp := s.service.UpdateOne(body, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
-	s.cRep.UpdateOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // DeleteOne удаляет поселение
-func (s *VillageService) DeleteOne(c *gin.Context) {
+func (s *Controller) DeleteOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -124,9 +149,11 @@ func (s *VillageService) DeleteOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Перезапись accountID для безопасности
-	body.AccountID = accountID
+	resp := s.service.DeleteOne(body, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
-	s.cRep.DeleteOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }

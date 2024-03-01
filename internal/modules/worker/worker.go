@@ -46,7 +46,7 @@ func (s *Controller) Create(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Получение ID колонии
+	// Получение ID поселения
 	villageID := c.Query(`villageID`)
 	if villageID == `` {
 		logger.Error(`villageID is required`)
@@ -79,7 +79,7 @@ func (s *Controller) GetOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	c.JSON(200, gin.H{`error`: ``})
+	c.JSON(200, gin.H{`error`: ``, `worker`: resp.Worker})
 }
 
 // GetAll возвращает всех рабочих

@@ -26,7 +26,7 @@ type Service struct {
 // InitWorkerService создает сервис рабочего
 func InitWorkerService(wRep repositories.IWorkerRepository, cRep repositories.IVillageRepository, cache redis.Client) *Service {
 
-	logger.Info(`Controller initialized`)
+	logger.Info(`Service initialized`)
 
 	return &Service{
 		wRep:  wRep,
@@ -96,12 +96,12 @@ type deleteOneResp struct {
 	Err error
 }
 
-func (s *Service) DeleteOne(b repositories.Worker, aID string) updateOneResp {
+func (s *Service) DeleteOne(b repositories.Worker, aID string) deleteOneResp {
 	// Перезапись accountID для безопасности
 	b.AccountID = aID
 
 	s.wRep.DeleteOne(&b)
-	return updateOneResp{
+	return deleteOneResp{
 		Err: nil,
 	}
 }
