@@ -62,15 +62,15 @@ func (r *ColonyRepository) GetAll(accountID string, q repositories.ColonyFindAll
 		MaxStorage:  *q.MaxStorage,
 		UsedStorage: *q.UsedStorage,
 	}
-	var colonys = []repositories.Colony{}
+	var colonies = []repositories.Colony{}
 
 	limit := -1
 	if q.Limit != nil {
 		limit = *q.Limit
 	}
 
-	r.db.Model(colony).Limit(limit).Find(&colonys)
-	return colonys
+	r.db.Model(colony).Limit(limit).Find(&colonies)
+	return colonies
 }
 
 // UpdateOne обновляет колонию

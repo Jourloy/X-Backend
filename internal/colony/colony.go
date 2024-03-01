@@ -86,7 +86,7 @@ func (s *ColonyService) GetAll(c *gin.Context) {
 		query.Limit = &n
 	}
 
-	// Получение работников
+	// Получение колоний
 	colonies := s.cRep.GetAll(accountID, query)
 	c.JSON(200, gin.H{
 		`error`:    ``,

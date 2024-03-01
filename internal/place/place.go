@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"strconv"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
@@ -52,6 +53,26 @@ func (s *PlaceService) Create(c *gin.Context) {
 // GetOne получает место по id
 func (s *PlaceService) GetOne(c *gin.Context) {
 	s.db.GetOne(c.Param(`id`))
+}
+
+// GetAll возвращает все места
+func (s *PlaceService) GetAll(c *gin.Context) {
+
+	// Создание фильтров
+	query := repositories.PlaceFindAll{}
+	if q := c.Query(`limit`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Limit = &n
+	}
+
+	// Получение мест
+	places := s.db.GetAll(query)
+
+	c.JSON(200, gin.H{
+		`error`:  ``,
+		`places`: places,
+		`count`:  len(places),
+	})
 }
 
 // UpdateOne обновляет место

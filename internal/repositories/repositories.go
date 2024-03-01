@@ -74,14 +74,15 @@ type IResourceRepository interface {
 
 type Colony struct {
 	gorm.Model
-	ID          string   `json:"id"`
-	Balance     int      `json:"balance"`
-	MaxStorage  int      `json:"maxStorage"`
-	UsedStorage int      `json:"usedStorage"`
-	Storage     []Item   `json:"storage"`
-	Workers     []Worker `json:"worker"`
-	AccountID   string   `json:"accountId"`
-	PlaceID     string   `json:"placeId"`
+	ID          string    `json:"id"`
+	Balance     int       `json:"balance"`
+	MaxStorage  int       `json:"maxStorage"`
+	UsedStorage int       `json:"usedStorage"`
+	Storage     []Item    `json:"storage"`
+	Workers     []Worker  `json:"worker"`
+	Warriors    []Warrior `json:"warriors"`
+	AccountID   string    `json:"accountId"`
+	PlaceID     string    `json:"placeId"`
 }
 
 type ColonyFindAll struct {
@@ -163,4 +164,41 @@ type IItemRepository interface {
 	UpdateOne(item *Item)
 	// DeleteOne удаляет вещь
 	DeleteOne(item *Item)
+}
+
+type Warrior struct {
+	gorm.Model
+	ID            string `json:"id"`
+	MaxStorage    int    `json:"maxStorage"`
+	UsedStorage   int    `json:"usedStorage"`
+	Location      string `json:"location"`
+	ToArrival     int    `json:"toTarget"`
+	FromDeparture int    `json:"fromDeparture"`
+	Health        int    `json:"health"`
+	Storage       []Item `json:"storage"`
+	ColonyID      string `json:"colonyId"`
+	AccountID     string `json:"accountId"`
+}
+
+type WarriorFindAll struct {
+	MaxStorage    *int
+	UsedStorage   *int
+	Location      *string
+	ToArrival     *int
+	FromDeparture *int
+	Health        *int
+	Limit         *int
+}
+
+type IWarriorRepository interface {
+	// Create создает рабочего
+	Create(warrior *Warrior, colonyID string, accountID string)
+	// GetOne возвращает первого рабочего, попавшего под условие
+	GetOne(id string, accountID string) Warrior
+	// GetAll возвращает всех рабочих
+	GetAll(accountID string, q WarriorFindAll) []Warrior
+	// UpdateOne обновляет рабочего
+	UpdateOne(warrior *Warrior)
+	// DeleteOne удаляет рабочего
+	DeleteOne(warrior *Warrior)
 }

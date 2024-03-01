@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"strconv"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
@@ -52,6 +53,32 @@ func (s *ItemService) Create(c *gin.Context) {
 // GetOne получает вещь по id
 func (s *ItemService) GetOne(c *gin.Context) {
 	s.iRep.GetOne(c.Param(`id`), c.Param(`parentId`))
+}
+
+// GetAll возвращает все вещи
+func (s *ItemService) GetAll(c *gin.Context) {
+
+	// Создание фильтров
+	query := repositories.ItemFindAll{}
+	if q := c.Query(`limit`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Limit = &n
+	}
+	if q := c.Query(`type`); q != `` {
+		query.Type = &q
+	}
+	if q := c.Query(`parentID`); q != `` {
+		query.ParentID = &q
+	}
+
+	// Получение вещей
+	items := s.iRep.GetAll(query)
+
+	c.JSON(200, gin.H{
+		`error`: ``,
+		`items`: items,
+		`count`: len(items),
+	})
 }
 
 // UpdateOne обновляет вещь

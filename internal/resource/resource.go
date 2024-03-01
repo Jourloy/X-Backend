@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"strconv"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
@@ -63,6 +64,42 @@ func (s *ResourceService) GetOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	s.db.GetOne(c.Param(`id`), accountID)
+}
+
+// GetAll возвращает все ресурсы
+func (s *ResourceService) GetAll(c *gin.Context) {
+
+	// Создание фильтров
+	query := repositories.ResourceFindAll{}
+	if q := c.Query(`limit`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Limit = &n
+	}
+	if q := c.Query(`type`); q != `` {
+		query.Type = &q
+	}
+	if q := c.Query(`amount`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Amount = &n
+	}
+	if q := c.Query(`weight`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Weight = &n
+	}
+
+	placeID := c.Query(`weight`)
+	if placeID == `` {
+		logger.Error(`placeID is required`)
+		c.JSON(400, gin.H{`error`: `placeID is required`})
+	}
+
+	// Получение ресурсов
+	resources := s.db.GetAll(placeID, query)
+	c.JSON(200, gin.H{
+		`error`:     ``,
+		`resources`: resources,
+		`count`:     len(resources),
+	})
 }
 
 // UpdateOne обновляет ресурс
