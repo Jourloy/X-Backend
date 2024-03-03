@@ -1,9 +1,6 @@
 package sector
 
 import (
-	"encoding/json"
-	"errors"
-	"io"
 	"os"
 	"strconv"
 
@@ -11,7 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 
+	sector_service "github.com/jourloy/X-Backend/internal/modules/sector/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
+	"github.com/jourloy/X-Backend/internal/tools"
 )
 
 var (
@@ -21,112 +20,121 @@ var (
 	})
 )
 
-type SectorService struct {
-	db    repositories.ISectorRepository
-	cache redis.Client
+type Controller struct {
+	service sector_service.Service
 }
 
 // InitSectorService создает сервис сектора
-func InitSectorService(db repositories.ISectorRepository, cache redis.Client) *SectorService {
+func InitSectorService(db repositories.ISectorRepository, cache redis.Client) *Controller {
 
-	logger.Info(`SectorService initialized`)
+	service := sector_service.InitSectorService()
 
-	return &SectorService{
-		db:    db,
-		cache: cache,
+	logger.Info(`Controller initialized`)
+
+	return &Controller{
+		service: *service,
 	}
 }
 
 // Create создает сектор
-func (s *SectorService) Create(c *gin.Context) {
+func (s *Controller) Create(c *gin.Context) {
+	// Парсинг body
 	var body repositories.Sector
-	if err := s.parseBody(c, &body); err != nil {
+	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	s.db.Create(&body)
+	resp := s.service.Create(body)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // GetOne получает сектор по id
-func (s *SectorService) GetOne(c *gin.Context) {
-	s.db.GetOne(c.Param(`id`))
+func (s *Controller) GetOne(c *gin.Context) {
+	// Получение ID сектора
+	sectorID := c.Query(`sectorID`)
+	if sectorID == `` {
+		logger.Error(`sectorID is required`)
+		c.JSON(400, gin.H{`error`: `sectorID is required`})
+	}
+
+	resp := s.service.GetOne(sectorID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
+	c.JSON(200, gin.H{`error`: ``, `sector`: resp.Sector})
 }
 
 // GetAll возвращает все сектора
-func (s *SectorService) GetAll(c *gin.Context) {
+func (s *Controller) GetAll(c *gin.Context) {
 
 	// Создание фильтров
-	query := repositories.SectorFindAll{}
+	query := repositories.SectorGetAll{}
+	if q := c.Query(`x`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.X = &n
+	}
+	if q := c.Query(`y`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Y = &n
+	}
 	if q := c.Query(`limit`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.Limit = &n
 	}
 
-	// Получение секторов
-	sectors := s.db.GetAll(query)
+	resp := s.service.GetAll(query)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
 	c.JSON(200, gin.H{
 		`error`:   ``,
-		`sectors`: sectors,
-		`count`:   len(sectors),
+		`sectors`: resp.Sectors,
+		`count`:   len(resp.Sectors),
 	})
 }
 
 // UpdateOne обновляет сектор
-func (s *SectorService) UpdateOne(c *gin.Context) {
+func (s *Controller) UpdateOne(c *gin.Context) {
+	// Парсинг body
 	var body repositories.Sector
-	if err := s.parseBody(c, &body); err != nil {
+	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID)
-	if model.ID != body.ID {
-		logger.Error(`Model not found`)
-		c.JSON(404, gin.H{`error`: `Model not found`})
+	resp := s.service.UpdateOne(body)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	s.db.UpdateOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // DeleteOne удаляет сектор
-func (s *SectorService) DeleteOne(c *gin.Context) {
+func (s *Controller) DeleteOne(c *gin.Context) {
+	// Парсинг body
 	var body repositories.Sector
-	if err := s.parseBody(c, &body); err != nil {
+	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	model := s.db.GetOne(body.ID)
-	if model.ID != body.ID {
-		logger.Error(`Model not found`)
-		c.JSON(404, gin.H{`error`: `Model not found`})
+	resp := s.service.DeleteOne(body)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	s.db.DeleteOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
-}
-
-func (s *SectorService) parseBody(c *gin.Context, body interface{}) error {
-	// Проверка body
-	if c.Request.Body == nil {
-		return errors.New(`body not found`)
-	}
-
-	// Чтение body
-	b, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		return err
-	}
-
-	// Парсинг
-	if err := json.Unmarshal(b, &body); err != nil {
-		return err
-	}
-
-	return nil
 }
