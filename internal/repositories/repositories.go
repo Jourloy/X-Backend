@@ -180,6 +180,25 @@ type Wall struct {
 	AccountID     string `json:"accountId"`
 }
 
+// Структура поиска стены
+type WallGetAll struct {
+	MaxDurability *int
+	Durability    *int
+	Level         *int
+	Y             *int
+	X             *int
+	Limit         *int
+}
+
+// Репозиторий планируемой стены
+type IWallRepository interface {
+	Create(wall *Wall, accountID string)
+	GetOne(id string, accountID string) Wall
+	GetAll(query WallGetAll, accountID string) []Wall
+	UpdateOne(wall *Wall)
+	DeleteOne(wall *Wall)
+}
+
 // Модель планируемой постройки
 type Plan struct {
 	gorm.Model
