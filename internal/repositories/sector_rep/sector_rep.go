@@ -55,13 +55,15 @@ func (r *sectorRepository) GetOne(id string) repositories.Sector {
 }
 
 // GetAll возвращает все сектора
-func (r *sectorRepository) GetAll(q repositories.SectorGetAll) []repositories.Sector {
+func (r *sectorRepository) GetAll(query repositories.SectorGetAll) []repositories.Sector {
 	var sector = repositories.Sector{}
 	var sectors = []repositories.Sector{}
 
+	// Добавить данные
+
 	limit := -1
-	if q.Limit != nil {
-		limit = *q.Limit
+	if query.Limit != nil {
+		limit = *query.Limit
 	}
 
 	r.db.Model(sector).Limit(limit).Find(&sectors)

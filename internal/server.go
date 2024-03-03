@@ -11,7 +11,6 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/resource_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/trader_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/village_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/warrior_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/worker_rep"
 
@@ -33,7 +32,6 @@ func StartServer() {
 	resource_rep.Init()
 	sector_rep.Init()
 	trader_rep.Init()
-	village_rep.Init()
 	warrior_rep.Init()
 	worker_rep.Init()
 

@@ -39,10 +39,10 @@ func Init() {
 // Create создает вещь
 func (r *ItemRepository) Create(item *repositories.Item, parentID string, accountID string) {
 	r.db.Create(&repositories.Item{
-		ID:        uuid.NewString(),
-		Type:      item.Type,
-		ParentID:  parentID,
-		AccountID: accountID,
+		ID: uuid.NewString(),
+
+		// Добавить данные
+
 	})
 }
 
@@ -57,17 +57,18 @@ func (r *ItemRepository) GetOne(id string, accountID string) repositories.Item {
 }
 
 // GetAll возвращает все вещи
-func (r *ItemRepository) GetAll(q repositories.ItemFindAll, accountID string) []repositories.Item {
+func (r *ItemRepository) GetAll(query repositories.ItemGetAll, accountID string) []repositories.Item {
 	var item = repositories.Item{
-		Type:      *q.Type,
-		ParentID:  *q.ParentID,
+
+		// Добавить данные
+
 		AccountID: accountID,
 	}
 	var items = []repositories.Item{}
 
 	limit := -1
-	if q.Limit != nil {
-		limit = *q.Limit
+	if query.Limit != nil {
+		limit = *query.Limit
 	}
 
 	r.db.Model(item).Limit(limit).Find(&items)

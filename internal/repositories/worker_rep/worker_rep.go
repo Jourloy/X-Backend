@@ -39,12 +39,11 @@ func Init() {
 // Create создает рабочего
 func (r *WorkerRepository) Create(worker *repositories.Worker, accountId string) {
 	r.db.Create(&repositories.Worker{
-		ID:          uuid.NewString(),
-		MaxStorage:  100,
-		UsedStorage: 0,
-		X:           worker.X,
-		Y:           worker.Y,
-		AccountID:   accountId,
+		ID: uuid.NewString(),
+
+		// Добавить данные
+
+		AccountID: accountId,
 	})
 }
 
@@ -59,20 +58,18 @@ func (r *WorkerRepository) GetOne(id string, accountID string) repositories.Work
 }
 
 // GetAll возвращает всех рабочих
-func (r *WorkerRepository) GetAll(q repositories.WorkerFindAll, accountID string) []repositories.Worker {
+func (r *WorkerRepository) GetAll(query repositories.WorkerGetAll, accountID string) []repositories.Worker {
 	var worker = repositories.Worker{
-		AccountID:   accountID,
-		UsedStorage: *q.UsedStorage,
-		MaxStorage:  *q.MaxStorage,
-		X:           *q.X,
-		Y:           *q.Y,
-		SectorID:    *q.SectorID,
+
+		// Добавить данные
+
+		AccountID: accountID,
 	}
 	var workers = []repositories.Worker{}
 
 	limit := -1
-	if q.Limit != nil {
-		limit = *q.Limit
+	if query.Limit != nil {
+		limit = *query.Limit
 	}
 
 	r.db.Model(worker).Limit(limit).Find(&workers)

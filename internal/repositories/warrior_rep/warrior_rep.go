@@ -39,15 +39,11 @@ func Init() {
 // Create создает рабочего
 func (r *warriorRepository) Create(warrior *repositories.Warrior, villageID string, accountId string) {
 	r.db.Create(&repositories.Warrior{
-		ID:            uuid.NewString(),
-		Location:      warrior.Location,
-		MaxStorage:    100,
-		Health:        100,
-		UsedStorage:   0,
-		FromDeparture: 0,
-		ToArrival:     0,
-		VillageID:     villageID,
-		AccountID:     accountId,
+		ID: uuid.NewString(),
+
+		// Добавить данные
+
+		AccountID: accountId,
 	})
 }
 
@@ -62,20 +58,18 @@ func (r *warriorRepository) GetOne(id string, accountID string) repositories.War
 }
 
 // GetAll возвращает всех рабочих
-func (r *warriorRepository) GetAll(accountID string, q repositories.WarriorFindAll) []repositories.Warrior {
+func (r *warriorRepository) GetAll(query repositories.WarriorGetAll, accountID string) []repositories.Warrior {
 	var warrior = repositories.Warrior{
-		AccountID:     accountID,
-		UsedStorage:   *q.UsedStorage,
-		MaxStorage:    *q.MaxStorage,
-		Location:      *q.Location,
-		FromDeparture: *q.FromDeparture,
-		ToArrival:     *q.ToArrival,
+
+		// Добавить данные
+
+		AccountID: accountID,
 	}
 	var warriors = []repositories.Warrior{}
 
 	limit := -1
-	if q.Limit != nil {
-		limit = *q.Limit
+	if query.Limit != nil {
+		limit = *query.Limit
 	}
 
 	r.db.Model(warrior).Limit(limit).Find(&warriors)

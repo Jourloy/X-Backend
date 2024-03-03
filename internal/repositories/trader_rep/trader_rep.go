@@ -39,14 +39,11 @@ func Init() {
 // Create создает торговца
 func (r *traderRepository) Create(trader *repositories.Trader, villageID string, accountId string) {
 	r.db.Create(&repositories.Trader{
-		ID:            uuid.NewString(),
-		Location:      trader.Location,
-		MaxStorage:    200,
-		UsedStorage:   0,
-		FromDeparture: 0,
-		ToArrival:     0,
-		VillageID:     villageID,
-		AccountID:     accountId,
+		ID: uuid.NewString(),
+
+		// Добавить данные
+
+		AccountID: accountId,
 	})
 }
 
@@ -60,21 +57,18 @@ func (r *traderRepository) GetOne(id string, accountID string) repositories.Trad
 	return trader
 }
 
-// GetAll возвращает всех торговцев
-func (r *traderRepository) GetAll(accountID string, q repositories.TraderFindAll) []repositories.Trader {
+func (r *traderRepository) GetAll(query repositories.TraderGetAll, accountID string) []repositories.Trader {
 	var trader = repositories.Trader{
-		AccountID:     accountID,
-		UsedStorage:   *q.UsedStorage,
-		MaxStorage:    *q.MaxStorage,
-		Location:      *q.Location,
-		FromDeparture: *q.FromDeparture,
-		ToArrival:     *q.ToArrival,
+
+		// Добавить данные
+
+		AccountID: accountID,
 	}
 	var traders = []repositories.Trader{}
 
 	limit := -1
-	if q.Limit != nil {
-		limit = *q.Limit
+	if query.Limit != nil {
+		limit = *query.Limit
 	}
 
 	r.db.Model(trader).Limit(limit).Find(&traders)

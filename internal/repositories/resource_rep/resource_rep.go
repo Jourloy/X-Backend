@@ -39,10 +39,10 @@ func Init() {
 // Create создает ресурс
 func (r *ResourceRepository) Create(resource *repositories.Resource, sectorID string) {
 	r.db.Create(&repositories.Resource{
-		ID:       uuid.NewString(),
-		Type:     resource.Type,
-		Amount:   resource.Amount,
-		Weight:   resource.Weight,
+		ID: uuid.NewString(),
+
+		// Добавить данные
+
 		SectorID: sectorID,
 	})
 }
@@ -58,18 +58,18 @@ func (r *ResourceRepository) GetOne(id string, sectorID string) repositories.Res
 }
 
 // GetAll возвращает все ресурсы
-func (r *ResourceRepository) GetAll(sectorID string, q repositories.ResourceFindAll) []repositories.Resource {
+func (r *ResourceRepository) GetAll(query repositories.ResourceGetAll, sectorID string) []repositories.Resource {
 	var resource = repositories.Resource{
+
+		// Добавить данные
+
 		SectorID: sectorID,
-		Type:     *q.Type,
-		Amount:   *q.Amount,
-		Weight:   *q.Weight,
 	}
 	var resources = []repositories.Resource{}
 
 	limit := -1
-	if q.Limit != nil {
-		limit = *q.Limit
+	if query.Limit != nil {
+		limit = *query.Limit
 	}
 
 	r.db.Model(resource).Limit(limit).Find(&resources)
