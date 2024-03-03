@@ -68,8 +68,6 @@ func (s *Controller) Create(c *gin.Context) {
 
 // GetOne получает вещь по id
 func (s *Controller) GetOne(c *gin.Context) {
-	accountID := c.GetString(`accountID`)
-
 	// Получение ID рабочего
 	id := c.Query(`itemID`)
 	if id == `` {
@@ -77,7 +75,7 @@ func (s *Controller) GetOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `itemID is required`})
 	}
 
-	resp := s.service.GetOne(id, accountID)
+	resp := s.service.GetOne(id)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
@@ -88,22 +86,37 @@ func (s *Controller) GetOne(c *gin.Context) {
 
 // GetAll возвращает все вещи
 func (s *Controller) GetAll(c *gin.Context) {
-	accountID := c.GetString(`accountID`)
-
 	// Создание фильтров
-	query := repositories.ItemFindAll{}
+	query := repositories.ItemGetAll{}
+	if q := c.Query(`type`); q != `` {
+		query.Type = &q
+	}
+	if q := c.Query(`x`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.X = &n
+	}
+	if q := c.Query(`y`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Y = &n
+	}
+	if q := c.Query(`parentId`); q != `` {
+		query.ParentID = &q
+	}
+	if q := c.Query(`parentType`); q != `` {
+		query.ParentType = &q
+	}
+	if q := c.Query(`sectorId`); q != `` {
+		query.SectorID = &q
+	}
+	if q := c.Query(`creatorId`); q != `` {
+		query.CreatorID = &q
+	}
 	if q := c.Query(`limit`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.Limit = &n
 	}
-	if q := c.Query(`type`); q != `` {
-		query.Type = &q
-	}
-	if q := c.Query(`parentID`); q != `` {
-		query.ParentID = &q
-	}
 
-	resp := s.service.GetAll(query, accountID)
+	resp := s.service.GetAll(query)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
@@ -118,8 +131,6 @@ func (s *Controller) GetAll(c *gin.Context) {
 
 // UpdateOne обновляет вещь
 func (s *Controller) UpdateOne(c *gin.Context) {
-	accountID := c.GetString(`accountID`)
-
 	// Парсинг body
 	var body repositories.Item
 	if err := tools.ParseBody(c, &body); err != nil {
@@ -127,7 +138,7 @@ func (s *Controller) UpdateOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	resp := s.service.UpdateOne(body, accountID)
+	resp := s.service.UpdateOne(body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
@@ -138,8 +149,6 @@ func (s *Controller) UpdateOne(c *gin.Context) {
 
 // DeleteOne удаляет вещь
 func (s *Controller) DeleteOne(c *gin.Context) {
-	accountID := c.GetString(`accountID`)
-
 	// Парсинг body
 	var body repositories.Item
 	if err := tools.ParseBody(c, &body); err != nil {
@@ -147,7 +156,7 @@ func (s *Controller) DeleteOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	resp := s.service.DeleteOne(body, accountID)
+	resp := s.service.DeleteOne(body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
