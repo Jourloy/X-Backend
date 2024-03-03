@@ -13,7 +13,6 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/resource_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/trader_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/wall_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/warrior_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/worker_rep"
 
@@ -30,16 +29,7 @@ func StartServer() {
 	cache.InitCache()
 
 	// Инициализация репозиториев
-	account_rep.Init()
-	item_rep.Init()
-	resource_rep.Init()
-	sector_rep.Init()
-	trader_rep.Init()
-	warrior_rep.Init()
-	worker_rep.Init()
-	plan_rep.Init()
-	deposit_rep.Init()
-	wall_rep.Init()
+	initReps()
 
 	r := gin.New()
 
@@ -52,6 +42,19 @@ func StartServer() {
 	if err := r.Run(`0.0.0.0:10000`); err != nil {
 		log.Fatal(err)
 	}
+}
+
+// Инициализация репозиториев
+func initReps() {
+	account_rep.Init()
+	item_rep.Init()
+	resource_rep.Init()
+	sector_rep.Init()
+	trader_rep.Init()
+	warrior_rep.Init()
+	worker_rep.Init()
+	plan_rep.Init()
+	deposit_rep.Init()
 }
 
 type WriteFunc func([]byte) (int, error)
