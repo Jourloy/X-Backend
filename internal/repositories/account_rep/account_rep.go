@@ -39,8 +39,9 @@ func Init() {
 // Create создает аккаунт
 func (r *AccountRepository) Create(account *repositories.Account) {
 	r.db.Create(&repositories.Account{
-		ID:     uuid.NewString(),
-		ApiKey: uuid.NewString(),
+		ID:      uuid.NewString(),
+		ApiKey:  uuid.NewString(),
+		Balance: 0,
 	})
 }
 

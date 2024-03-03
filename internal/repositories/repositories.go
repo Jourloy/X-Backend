@@ -4,8 +4,9 @@ import "gorm.io/gorm"
 
 type Account struct {
 	gorm.Model
-	ID     string `json:"id"`
-	ApiKey string `json:"apiKey"`
+	ID      string `json:"id"`
+	ApiKey  string `json:"apiKey"`
+	Balance int    `json:"balance"`
 }
 
 type IAccountRepository interface {
