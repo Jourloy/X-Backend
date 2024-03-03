@@ -13,6 +13,7 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/resource_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/trader_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/wall_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/warrior_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/worker_rep"
 
@@ -38,6 +39,7 @@ func StartServer() {
 	worker_rep.Init()
 	plan_rep.Init()
 	deposit_rep.Init()
+	wall_rep.Init()
 
 	r := gin.New()
 
