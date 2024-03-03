@@ -72,6 +72,22 @@ type Deposit struct {
 	SectorID string `json:"sectorId"`
 }
 
+// Структура поиска залежей
+type DepositGetAll struct {
+	Type   *string
+	Amount *int
+	Limit  *int
+}
+
+// Репозиторий ресурсов
+type IDepositRepository interface {
+	Create(deposit *Deposit)
+	GetOne(id string, sectorID string) Deposit
+	GetAll(query DepositGetAll, sectorID string) []Deposit
+	UpdateOne(deposit *Deposit)
+	DeleteOne(deposit *Deposit)
+}
+
 // Модель ресурсов
 type Resource struct {
 	gorm.Model
