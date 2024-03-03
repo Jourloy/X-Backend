@@ -7,7 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/deposit_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/item_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/plan_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/resource_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/trader_rep"
@@ -34,6 +36,8 @@ func StartServer() {
 	trader_rep.Init()
 	warrior_rep.Init()
 	worker_rep.Init()
+	plan_rep.Init()
+	deposit_rep.Init()
 
 	r := gin.New()
 
