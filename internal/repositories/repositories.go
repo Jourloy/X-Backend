@@ -284,7 +284,7 @@ type TraderGetAll struct {
 
 // Репозиторий торговца
 type ITraderRepository interface {
-	Create(trader *Trader, villageID string, accountID string)
+	Create(trader *Trader, accountID string)
 	GetOne(id string, accountID string) Trader
 	GetAll(query TraderGetAll, accountID string) []Trader
 	UpdateOne(trader *Trader)
