@@ -37,16 +37,14 @@ func Init() {
 }
 
 // Create создает рабочего
-func (r *WorkerRepository) Create(worker *repositories.Worker, villageID string, accountId string) {
+func (r *WorkerRepository) Create(worker *repositories.Worker, accountId string) {
 	r.db.Create(&repositories.Worker{
-		ID:            uuid.NewString(),
-		Location:      worker.Location,
-		MaxStorage:    100,
-		UsedStorage:   0,
-		FromDeparture: 0,
-		ToArrival:     0,
-		VillageID:     villageID,
-		AccountID:     accountId,
+		ID:          uuid.NewString(),
+		MaxStorage:  100,
+		UsedStorage: 0,
+		X:           worker.X,
+		Y:           worker.Y,
+		AccountID:   accountId,
 	})
 }
 
@@ -61,14 +59,14 @@ func (r *WorkerRepository) GetOne(id string, accountID string) repositories.Work
 }
 
 // GetAll возвращает всех рабочих
-func (r *WorkerRepository) GetAll(accountID string, q repositories.WorkerFindAll) []repositories.Worker {
+func (r *WorkerRepository) GetAll(q repositories.WorkerFindAll, accountID string) []repositories.Worker {
 	var worker = repositories.Worker{
-		AccountID:     accountID,
-		UsedStorage:   *q.UsedStorage,
-		MaxStorage:    *q.MaxStorage,
-		Location:      *q.Location,
-		FromDeparture: *q.FromDeparture,
-		ToArrival:     *q.ToArrival,
+		AccountID:   accountID,
+		UsedStorage: *q.UsedStorage,
+		MaxStorage:  *q.MaxStorage,
+		X:           *q.X,
+		Y:           *q.Y,
+		SectorID:    *q.SectorID,
 	}
 	var workers = []repositories.Worker{}
 

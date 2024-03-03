@@ -36,14 +36,16 @@ func Init() {
 	}
 }
 
-// Create создает место
+// Create создает сектор
 func (r *sectorRepository) Create(sector *repositories.Sector) {
 	r.db.Create(&repositories.Sector{
 		ID: uuid.NewString(),
+		X:  sector.X,
+		Y:  sector.Y,
 	})
 }
 
-// GetOne возвращает первое место, попавшее под условие
+// GetOne возвращает сектор по его ID
 func (r *sectorRepository) GetOne(id string) repositories.Sector {
 	var sector = repositories.Sector{
 		ID: id,
@@ -52,8 +54,8 @@ func (r *sectorRepository) GetOne(id string) repositories.Sector {
 	return sector
 }
 
-// GetAll возвращает все места
-func (r *sectorRepository) GetAll(q repositories.SectorFindAll) []repositories.Sector {
+// GetAll возвращает все сектора
+func (r *sectorRepository) GetAll(q repositories.SectorGetAll) []repositories.Sector {
 	var sector = repositories.Sector{}
 	var sectors = []repositories.Sector{}
 
@@ -66,12 +68,12 @@ func (r *sectorRepository) GetAll(q repositories.SectorFindAll) []repositories.S
 	return sectors
 }
 
-// UpdateOne обновляет место
+// UpdateOne обновляет сектор
 func (r *sectorRepository) UpdateOne(sector *repositories.Sector) {
 	r.db.Save(&sector)
 }
 
-// DeleteOne удаляет место
+// DeleteOne удаляет сектор
 func (r *sectorRepository) DeleteOne(sector *repositories.Sector) {
 	r.db.Delete(&sector)
 }

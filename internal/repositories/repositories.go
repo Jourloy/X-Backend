@@ -4,237 +4,289 @@ import "gorm.io/gorm"
 
 type Account struct {
 	gorm.Model
-	ID       string    `json:"id"`
-	ApiKey   string    `json:"apiKey"`
-	Colonies []Village `json:"villages"`
+	ID     string `json:"id"`
+	ApiKey string `json:"apiKey"`
 }
 
 type IAccountRepository interface {
-	// Create создает аккаунт
 	Create(account *Account)
-	// GetOne возвращает первый аккаунт, попавший под условие
 	GetOne(apiKey string) Account
-	// UpdateOne обновляет аккаунт
 	UpdateOne(account *Account)
-	// DeleteOne удаляет аккаунт
 	DeleteOne(account *Account)
 }
 
+// Модель сектора
 type Sector struct {
 	gorm.Model
-	ID        string     `json:"id"`
+	ID string `json:"id"`
+
+	X int `json:"x"`
+	Y int `json:"y"`
+
+	// Добавить отношения
+
 	Resources []Resource `json:"resources"`
 }
 
-type SectorFindAll struct {
+// Модель поиска сектора
+type SectorGetAll struct {
+
+	// Переделать здесь и в сервисе
+
 	Limit *int
 }
 
+// Репозиторий сектора
 type ISectorRepository interface {
-	// Create создает сектор
 	Create(sector *Sector)
-	// GetOne возвращает первый сектор, попавший под условие
 	GetOne(id string) Sector
-	// GetAll возвращает все сектора
-	GetAll(q SectorFindAll) []Sector
-	// UpdateOne обновляет сектор
+	GetAll(query SectorGetAll) []Sector
 	UpdateOne(sector *Sector)
-	// DeleteOne удаляет сектор
 	DeleteOne(sector *Sector)
 }
 
-type Resource struct {
+// Модель залежи ресурсов
+type Deposit struct {
 	gorm.Model
 	ID       string `json:"id"`
 	Type     string `json:"type"`
 	Amount   int    `json:"amount"`
-	Weight   int    `json:"weight"`
 	SectorID string `json:"sectorId"`
 }
 
-type ResourceFindAll struct {
-	Limit  *int
-	Type   *string
-	Amount *int
-	Weight *int
+// Модель ресурсов
+type Resource struct {
+	gorm.Model
+	ID         string `json:"id"`
+	Type       string `json:"type"`
+	Amount     int    `json:"amount"`
+	Weight     int    `json:"weight"`
+	X          int    `json:"x"`
+	Y          int    `json:"y"`
+	ParentID   string `json:"parentId"`
+	ParentType string `json:"parentType"`
+	SectorID   string `json:"sectorId"`
+	AccountID  string `json:"accountId"`
+	CreatorID  string `json:"creatorId"`
 }
 
+// Структура поиска ресурсов
+type ResourceGetAll struct {
+
+	// Переделать здесь и в сервисе
+
+	Limit *int
+}
+
+// Репозиторий ресурсов
 type IResourceRepository interface {
-	// Create создает ресурс
 	Create(resource *Resource, sectorID string)
-	// GetOne возвращает первый ресурс, попавший под условие
 	GetOne(id string, sectorID string) Resource
-	// GetAll возвращает все ресурсы
-	GetAll(sectorID string, q ResourceFindAll) []Resource
-	// UpdateOne обновляет ресурс
+	GetAll(query ResourceGetAll, sectorID string) []Resource
 	UpdateOne(resource *Resource)
-	// DeleteOne удаляет ресурс
 	DeleteOne(resource *Resource)
 }
 
-type Village struct {
-	gorm.Model
-	ID          string    `json:"id"`
-	Balance     int       `json:"balance"`
-	MaxStorage  int       `json:"maxStorage"`
-	UsedStorage int       `json:"usedStorage"`
-	Storage     []Item    `json:"storage"`
-	Workers     []Worker  `json:"worker"`
-	Warriors    []Warrior `json:"warriors"`
-	AccountID   string    `json:"accountId"`
-	SectorID    string    `json:"sectorId"`
-}
-
-type VillageFindAll struct {
-	Limit       *int
-	Balance     *int
-	MaxStorage  *int
-	UsedStorage *int
-}
-
-type IVillageRepository interface {
-	// Create создает поселение
-	Create(village *Village, accountID string, sectorID string)
-	// GetOne возвращает первое поселение, попавшее под условие
-	GetOne(id string, accountID string) Village
-	// GetAll возвращает все поселения
-	GetAll(accountID string, q VillageFindAll) []Village
-	// UpdateOne обновляет поселение
-	UpdateOne(village *Village)
-	// DeleteOne удаляет поселение
-	DeleteOne(village *Village)
-}
-
-type Worker struct {
-	gorm.Model
-	ID            string `json:"id"`
-	MaxStorage    int    `json:"maxStorage"`
-	UsedStorage   int    `json:"usedStorage"`
-	Location      string `json:"location"`
-	ToArrival     int    `json:"toTarget"`
-	FromDeparture int    `json:"fromDeparture"`
-	Storage       []Item `json:"storage"`
-	VillageID     string `json:"villageId"`
-	AccountID     string `json:"accountId"`
-}
-
-type WorkerFindAll struct {
-	MaxStorage    *int
-	UsedStorage   *int
-	Location      *string
-	ToArrival     *int
-	FromDeparture *int
-	Limit         *int
-}
-
-type IWorkerRepository interface {
-	// Create создает рабочего
-	Create(worker *Worker, villageID string, accountID string)
-	// GetOne возвращает первого рабочего, попавшего под условие
-	GetOne(id string, accountID string) Worker
-	// GetAll возвращает всех рабочих
-	GetAll(accountID string, q WorkerFindAll) []Worker
-	// UpdateOne обновляет рабочего
-	UpdateOne(worker *Worker)
-	// DeleteOne удаляет рабочего
-	DeleteOne(worker *Worker)
-}
-
+// Модель вещи
 type Item struct {
 	gorm.Model
-	ID        string `json:"id"`
-	Type      string `json:"type"`
-	ParentID  string `json:"workerId"`
-	AccountID string `json:"accountId"`
+	ID         string `json:"id"`
+	Type       string `json:"type"`
+	X          int    `json:"x"`
+	Y          int    `json:"y"`
+	ParentID   string `json:"workerId"`
+	ParentType string `json:"parentType"`
+	AccountID  string `json:"accountId"`
+	CreatorID  string `json:"creatorId"`
 }
 
-type ItemFindAll struct {
-	Limit    *int
-	Type     *string
-	ParentID *string
+// Структура поиска вещи
+type ItemGetAll struct {
+
+	// Переделать здесь и в сервисе
+
+	Limit *int
 }
 
+// Репозиторий вещи
 type IItemRepository interface {
-	// Create создает вещь
 	Create(item *Item, parentID string, accountID string)
-	// GetOne возвращает первую вещь, попавшую под условие
 	GetOne(id string, accountID string) Item
-	// GetAll возвращает все вещи
-	GetAll(q ItemFindAll, accountID string) []Item
-	// UpdateOne обновляет вещь
+	GetAll(query ItemGetAll, accountID string) []Item
 	UpdateOne(item *Item)
-	// DeleteOne удаляет вещь
 	DeleteOne(item *Item)
 }
 
-type Warrior struct {
+//////// Постройки ////////
+
+// Модель главного здания
+type Townhall struct {
 	gorm.Model
 	ID            string `json:"id"`
+	MaxDurability int    `json:"maxDurability"`
+	Durability    int    `json:"durability"`
 	MaxStorage    int    `json:"maxStorage"`
 	UsedStorage   int    `json:"usedStorage"`
-	Location      string `json:"location"`
-	ToArrival     int    `json:"toTarget"`
-	FromDeparture int    `json:"fromDeparture"`
-	Health        int    `json:"health"`
+	X             int    `json:"x"`
+	Y             int    `json:"y"`
 	Storage       []Item `json:"storage"`
-	VillageID     string `json:"villageId"`
+	SectorID      string `json:"sectorId"`
 	AccountID     string `json:"accountId"`
 }
 
-type WarriorFindAll struct {
-	MaxStorage    *int
-	UsedStorage   *int
-	Location      *string
-	ToArrival     *int
-	FromDeparture *int
-	Health        *int
-	Limit         *int
+// Модель башни
+type Tower struct {
+	gorm.Model
+	ID            string `json:"id"`
+	MaxDurability int    `json:"maxDurability"`
+	Durability    int    `json:"durability"`
+	Level         int    `json:"level"`
+	MaxStorage    int    `json:"maxStorage"`
+	UsedStorage   int    `json:"usedStorage"`
+	X             int    `json:"x"`
+	Y             int    `json:"y"`
+	Storage       []Item `json:"storage"`
+	SectorID      string `json:"sectorId"`
+	AccountID     string `json:"accountId"`
+}
+
+// Модель хранилища
+type Storage struct {
+	gorm.Model
+	ID            string `json:"id"`
+	MaxDurability int    `json:"maxDurability"`
+	Durability    int    `json:"durability"`
+	Level         int    `json:"level"`
+	MaxStorage    int    `json:"maxStorage"`
+	UsedStorage   int    `json:"usedStorage"`
+	X             int    `json:"x"`
+	Y             int    `json:"y"`
+	Storage       []Item `json:"storage"`
+	SectorID      string `json:"sectorId"`
+	AccountID     string `json:"accountId"`
+}
+
+// Модель стены
+type Wall struct {
+	gorm.Model
+	ID            string `json:"id"`
+	MaxDurability int    `json:"maxDurability"`
+	Durability    int    `json:"durability"`
+	Level         int    `json:"level"`
+	X             int    `json:"x"`
+	Y             int    `json:"y"`
+	Storage       []Item `json:"storage"`
+	SectorID      string `json:"sectorId"`
+	AccountID     string `json:"accountId"`
+}
+
+// Модель планируемой постройки
+type Plan struct {
+	gorm.Model
+	ID          string `json:"id"`
+	MaxProgress int    `json:"maxProgress"`
+	Progress    int    `json:"progress"`
+	Type        string `json:"type"`
+	X           int    `json:"x"`
+	Y           int    `json:"y"`
+	Storage     []Item `json:"storage"`
+	SectorID    string `json:"sectorId"`
+	AccountID   string `json:"accountId"`
+}
+
+//////// Существа ////////
+
+// Модель рабочего
+type Worker struct {
+	gorm.Model
+	ID          string `json:"id"`
+	MaxStorage  int    `json:"maxStorage"`
+	UsedStorage int    `json:"usedStorage"`
+	X           int    `json:"x"`
+	Y           int    `json:"y"`
+	MaxHealth   int    `json:"maxHealth"`
+	Health      int    `json:"health"`
+	Storage     []Item `json:"storage"`
+	SectorID    string `json:"sectorId"`
+	AccountID   string `json:"accountId"`
+}
+
+// Структура поиска рабочего
+type WorkerGetAll struct {
+
+	// Переделать здесь и в сервисе
+
+	Limit *int
+}
+
+// Репозиторий рабочего
+type IWorkerRepository interface {
+	Create(worker *Worker, accountID string)
+	GetOne(id string, accountID string) Worker
+	GetAll(query WorkerGetAll, accountID string) []Worker
+	UpdateOne(worker *Worker)
+	DeleteOne(worker *Worker)
+}
+
+// Модель воина
+type Warrior struct {
+	gorm.Model
+	ID          string `json:"id"`
+	MaxStorage  int    `json:"maxStorage"`
+	UsedStorage int    `json:"usedStorage"`
+	X           int    `json:"x"`
+	Y           int    `json:"y"`
+	MaxHealth   int    `json:"maxHealth"`
+	Health      int    `json:"health"`
+	Storage     []Item `json:"storage"`
+	SectorID    string `json:"sectorId"`
+	AccountID   string `json:"accountId"`
+}
+
+// Структура поиска воинов
+type WarriorGetAll struct {
+
+	// Переделать здесь и в сервисе
+
+	Limit *int
 }
 
 type IWarriorRepository interface {
-	// Create создает рабочего
 	Create(warrior *Warrior, villageID string, accountID string)
-	// GetOne возвращает первого рабочего, попавшего под условие
 	GetOne(id string, accountID string) Warrior
-	// GetAll возвращает всех рабочих
-	GetAll(accountID string, q WarriorFindAll) []Warrior
-	// UpdateOne обновляет рабочего
+	GetAll(query WarriorGetAll, accountID string) []Warrior
 	UpdateOne(warrior *Warrior)
-	// DeleteOne удаляет рабочего
 	DeleteOne(warrior *Warrior)
 }
 
+// Модель торговца
 type Trader struct {
 	gorm.Model
-	ID            string `json:"id"`
-	MaxStorage    int    `json:"maxStorage"`
-	UsedStorage   int    `json:"usedStorage"`
-	Location      string `json:"location"`
-	ToArrival     int    `json:"toTarget"`
-	FromDeparture int    `json:"fromDeparture"`
-	Storage       []Item `json:"storage"`
-	VillageID     string `json:"villageId"`
-	AccountID     string `json:"accountId"`
+	ID          string `json:"id"`
+	MaxStorage  int    `json:"maxStorage"`
+	UsedStorage int    `json:"usedStorage"`
+	X           int    `json:"x"`
+	Y           int    `json:"y"`
+	MaxHealth   int    `json:"maxHealth"`
+	Health      int    `json:"health"`
+	Storage     []Item `json:"storage"`
+	SectorID    string `json:"sectorId"`
+	AccountID   string `json:"accountId"`
 }
 
-type TraderFindAll struct {
-	MaxStorage    *int
-	UsedStorage   *int
-	Location      *string
-	ToArrival     *int
-	FromDeparture *int
-	Limit         *int
+// Структура поиска торговца
+type TraderGetAll struct {
+
+	// Переделать здесь и в сервисе
+
+	Limit *int
 }
 
+// Репозиторий торговца
 type ITraderRepository interface {
-	// Create создает торговца
 	Create(trader *Trader, villageID string, accountID string)
-	// GetOne возвращает первого торговца, попавшего под условие
 	GetOne(id string, accountID string) Trader
-	// GetAll возвращает всех торговцев
-	GetAll(accountID string, q TraderFindAll) []Trader
-	// UpdateOne обновляет торговца
+	GetAll(query TraderGetAll, accountID string) []Trader
 	UpdateOne(trader *Trader)
-	// DeleteOne удаляет торговца
 	DeleteOne(trader *Trader)
 }
