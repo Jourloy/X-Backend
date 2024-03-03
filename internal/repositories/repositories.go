@@ -101,23 +101,28 @@ type Resource struct {
 	ParentID   string `json:"parentId"`
 	ParentType string `json:"parentType"`
 	SectorID   string `json:"sectorId"`
-	AccountID  string `json:"accountId"`
 	CreatorID  string `json:"creatorId"`
 }
 
 // Структура поиска ресурсов
 type ResourceGetAll struct {
-
-	// Переделать здесь и в сервисе
-
-	Limit *int
+	Type       *string
+	Amount     *int
+	Weight     *int
+	X          *int
+	Y          *int
+	ParentID   *string
+	ParentType *string
+	SectorID   *string
+	CreatorID  *string
+	Limit      *int
 }
 
 // Репозиторий ресурсов
 type IResourceRepository interface {
-	Create(resource *Resource, sectorID string)
-	GetOne(id string, sectorID string) Resource
-	GetAll(query ResourceGetAll, sectorID string) []Resource
+	Create(resource *Resource)
+	GetOne(id string) Resource
+	GetAll(query ResourceGetAll) []Resource
 	UpdateOne(resource *Resource)
 	DeleteOne(resource *Resource)
 }

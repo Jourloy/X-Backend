@@ -23,11 +23,12 @@ var (
 type ResourceService struct {
 	resRep repositories.IResourceRepository
 	secRep repositories.ISectorRepository
+	accRep repositories.IAccountRepository
 	cache  redis.Client
 }
 
-// InitResourceService создает сервис ресурса
-func InitResourceService() *ResourceService {
+// Init создает сервис ресурса
+func Init() *ResourceService {
 
 	resRep := resource_rep.Repository
 	secRep := sector_rep.Repository
@@ -46,14 +47,20 @@ type createResp struct {
 }
 
 // Create создает ресурс
-func (s *ResourceService) Create(body repositories.Resource, sectorID string) createResp {
+func (s *ResourceService) Create(body repositories.Resource) createResp {
+	// Проверка существования аккаунта
+	account := s.accRep.GetOne(body.CreatorID)
+	if account.ID == `` {
+		return createResp{Err: errors.New(`account not found`)}
+	}
+
 	// Проверка существования сектора
-	sector := s.secRep.GetOne(sectorID)
+	sector := s.secRep.GetOne(body.SectorID)
 	if sector.ID == `` {
 		return createResp{Err: errors.New(`sector not found`)}
 	}
 
-	s.resRep.Create(&body, sectorID)
+	s.resRep.Create(&body)
 	return createResp{Err: nil}
 }
 
@@ -63,8 +70,8 @@ type getOneResp struct {
 }
 
 // GetOne получает ресурс по id
-func (s *ResourceService) GetOne(resourceID string, accountID string) getOneResp {
-	resource := s.resRep.GetOne(resourceID, accountID)
+func (s *ResourceService) GetOne(resourceID string) getOneResp {
+	resource := s.resRep.GetOne(resourceID)
 	return getOneResp{
 		Err:      nil,
 		Resource: resource,
@@ -77,8 +84,8 @@ type getAllResp struct {
 }
 
 // GetAll возвращает все ресурсы
-func (s *ResourceService) GetAll(query repositories.ResourceFindAll, sectorID string) getAllResp {
-	resources := s.resRep.GetAll(sectorID, query)
+func (s *ResourceService) GetAll(query repositories.ResourceGetAll) getAllResp {
+	resources := s.resRep.GetAll(query)
 	return getAllResp{
 		Err:       nil,
 		Resources: resources,
