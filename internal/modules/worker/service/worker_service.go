@@ -9,7 +9,8 @@ import (
 
 	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/repositories"
-	"github.com/jourloy/X-Backend/internal/repositories/village_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/worker_rep"
 )
 
@@ -22,7 +23,8 @@ var (
 
 type Service struct {
 	worRep repositories.IWorkerRepository
-	vilRep repositories.IVillageRepository
+	secRep repositories.ISectorRepository
+	accRep repositories.IAccountRepository
 	cache  redis.Client
 }
 
@@ -30,13 +32,15 @@ type Service struct {
 func Init() *Service {
 
 	worRep := worker_rep.Repository
-	vilRep := village_rep.Repository
+	secRep := sector_rep.Repository
+	accRep := account_rep.Repository
 
 	logger.Info(`Service initialized`)
 
 	return &Service{
 		worRep: worRep,
-		vilRep: vilRep,
+		secRep: secRep,
+		accRep: accRep,
 		cache:  *cache.Client,
 	}
 }
@@ -46,14 +50,20 @@ type createResp struct {
 }
 
 // Create создает рабочего
-func (s *Service) Create(body repositories.Worker, accountID string, vID string) createResp {
-	// Проверка существования поселения
-	village := s.vilRep.GetOne(vID, accountID)
-	if village.ID == `` {
-		return createResp{Err: errors.New(`village not found`)}
+func (s *Service) Create(body repositories.Worker, accountID string) createResp {
+	// Проверка существования аккаунта
+	account := s.accRep.GetOne(accountID)
+	if account.ID == `` {
+		return createResp{Err: errors.New(`account not found`)}
 	}
 
-	s.worRep.Create(&body, vID, accountID)
+	// Проверка существования сектора
+	sector := s.secRep.GetOne(body.SectorID)
+	if sector.ID == `` {
+		return createResp{Err: errors.New(`sector not found`)}
+	}
+
+	s.worRep.Create(&body, accountID)
 	return createResp{Err: nil}
 }
 
@@ -75,9 +85,9 @@ type getAllResp struct {
 	Workers []repositories.Worker
 }
 
-func (s *Service) GetAll(query repositories.WorkerFindAll, accountID string) getAllResp {
+func (s *Service) GetAll(query repositories.WorkerGetAll, accountID string) getAllResp {
 	// Получение работников
-	workers := s.worRep.GetAll(accountID, query)
+	workers := s.worRep.GetAll(query, accountID)
 	return getAllResp{
 		Err:     nil,
 		Workers: workers,
