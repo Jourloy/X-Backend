@@ -37,7 +37,7 @@ func Init() {
 }
 
 // Create создает рабочего
-func (r *warriorRepository) Create(warrior *repositories.Warrior, villageID string, accountId string) {
+func (r *warriorRepository) Create(warrior *repositories.Warrior, accountId string) {
 	r.db.Create(&repositories.Warrior{
 		ID:          uuid.NewString(),
 		MaxStorage:  warrior.MaxStorage,

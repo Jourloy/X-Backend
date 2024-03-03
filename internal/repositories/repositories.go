@@ -194,6 +194,25 @@ type Plan struct {
 	AccountID   string `json:"accountId"`
 }
 
+// Структура поиска планируемой постройки
+type PlanGetAll struct {
+	MaxProgress *int
+	Progress    *int
+	Type        *string
+	Y           *int
+	X           *int
+	Limit       *int
+}
+
+// Репозиторий планируемой постройки
+type IPlanRepository interface {
+	Create(plan *Plan, accountID string)
+	GetOne(id string, accountID string) Plan
+	GetAll(query PlanGetAll, accountID string) []Plan
+	UpdateOne(plan *Plan)
+	DeleteOne(plan *Plan)
+}
+
 //////// Существа ////////
 
 // Модель рабочего
@@ -259,7 +278,7 @@ type WarriorGetAll struct {
 
 // Репозиторий воина
 type IWarriorRepository interface {
-	Create(warrior *Warrior, villageID string, accountID string)
+	Create(warrior *Warrior, accountID string)
 	GetOne(id string, accountID string) Warrior
 	GetAll(query WarriorGetAll, accountID string) []Warrior
 	UpdateOne(warrior *Warrior)
