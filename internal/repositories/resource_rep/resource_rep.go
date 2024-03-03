@@ -37,33 +37,42 @@ func Init() {
 }
 
 // Create создает ресурс
-func (r *ResourceRepository) Create(resource *repositories.Resource, sectorID string) {
+func (r *ResourceRepository) Create(resource *repositories.Resource) {
 	r.db.Create(&repositories.Resource{
-		ID: uuid.NewString(),
-
-		// Добавить данные
-
-		SectorID: sectorID,
+		ID:         uuid.NewString(),
+		Type:       resource.Type,
+		Amount:     resource.Amount,
+		Weight:     resource.Weight,
+		X:          resource.X,
+		Y:          resource.Y,
+		ParentID:   resource.ParentID,
+		ParentType: resource.ParentType,
+		SectorID:   resource.SectorID,
+		CreatorID:  resource.CreatorID,
 	})
 }
 
 // GetOne возвращает первый ресурс, попавший под условие
-func (r *ResourceRepository) GetOne(id string, sectorID string) repositories.Resource {
+func (r *ResourceRepository) GetOne(id string) repositories.Resource {
 	var resource = repositories.Resource{
-		SectorID: sectorID,
-		ID:       id,
+		ID: id,
 	}
 	r.db.First(&resource)
 	return resource
 }
 
 // GetAll возвращает все ресурсы
-func (r *ResourceRepository) GetAll(query repositories.ResourceGetAll, sectorID string) []repositories.Resource {
+func (r *ResourceRepository) GetAll(query repositories.ResourceGetAll) []repositories.Resource {
 	var resource = repositories.Resource{
-
-		// Добавить данные
-
-		SectorID: sectorID,
+		Type:       *query.Type,
+		Amount:     *query.Amount,
+		Weight:     *query.Weight,
+		X:          *query.X,
+		Y:          *query.Y,
+		ParentID:   *query.ParentID,
+		ParentType: *query.ParentType,
+		SectorID:   *query.SectorID,
+		CreatorID:  *query.CreatorID,
 	}
 	var resources = []repositories.Resource{}
 

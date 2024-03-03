@@ -6,8 +6,8 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 
+	resource_service "github.com/jourloy/X-Backend/internal/modules/resource/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/tools"
 )
@@ -19,24 +19,21 @@ var (
 	})
 )
 
-type ResourceService struct {
-	db    repositories.IResourceRepository
-	cache redis.Client
+type Controller struct {
+	service resource_service.ResourceService
 }
 
-// InitResourceService создает сервис ресурса
-func InitResourceService(db repositories.IResourceRepository, cache redis.Client) *ResourceService {
-
-	logger.Info(`ResourceService initialized`)
-
-	return &ResourceService{
-		db:    db,
-		cache: cache,
+// Init создает сервис ресурса
+func Init() *Controller {
+	service := resource_service.Init()
+	logger.Info(`Controller initialized`)
+	return &Controller{
+		service: *service,
 	}
 }
 
 // Create создает ресурс
-func (s *ResourceService) Create(c *gin.Context) {
+func (s *Controller) Create(c *gin.Context) {
 	// Парсинг body
 	var body repositories.Resource
 	if err := tools.ParseBody(c, &body); err != nil {
@@ -44,35 +41,38 @@ func (s *ResourceService) Create(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Получение sectorID
-	q := c.Query(`sectorID`)
-	if q == `` {
-		logger.Error(`sectorID is required`)
-		c.JSON(400, gin.H{`error`: `sectorID is required`})
+	resp := s.service.Create(body)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
-
-	// Создание
-	s.db.Create(&body, q)
 
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // GetOne получает ресурс по id
-func (s *ResourceService) GetOne(c *gin.Context) {
-	accountID := c.GetString(`accountID`)
+func (s *Controller) GetOne(c *gin.Context) {
+	// Получение ID ресурса
+	resourceID := c.Query(`resourceID`)
+	if resourceID == `` {
+		logger.Error(`resourceID is required`)
+		c.JSON(400, gin.H{`error`: `resourceID is required`})
+	}
 
-	s.db.GetOne(c.Param(`id`), accountID)
+	resp := s.service.GetOne(resourceID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
+	c.JSON(200, gin.H{`error`: ``, `resource`: resp.Resource})
 }
 
 // GetAll возвращает все ресурсы
-func (s *ResourceService) GetAll(c *gin.Context) {
+func (s *Controller) GetAll(c *gin.Context) {
 
 	// Создание фильтров
-	query := repositories.ResourceFindAll{}
-	if q := c.Query(`limit`); q != `` {
-		n, _ := strconv.Atoi(q)
-		query.Limit = &n
-	}
+	query := repositories.ResourceGetAll{}
 	if q := c.Query(`type`); q != `` {
 		query.Type = &q
 	}
@@ -84,24 +84,46 @@ func (s *ResourceService) GetAll(c *gin.Context) {
 		n, _ := strconv.Atoi(q)
 		query.Weight = &n
 	}
-
-	sectorID := c.Query(`sectorID`)
-	if sectorID == `` {
-		logger.Error(`sectorID is required`)
-		c.JSON(400, gin.H{`error`: `sectorID is required`})
+	if q := c.Query(`x`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.X = &n
+	}
+	if q := c.Query(`y`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Y = &n
+	}
+	if q := c.Query(`parentID`); q != `` {
+		query.ParentID = &q
+	}
+	if q := c.Query(`parentType`); q != `` {
+		query.ParentType = &q
+	}
+	if q := c.Query(`sectorId`); q != `` {
+		query.SectorID = &q
+	}
+	if q := c.Query(`creatorId`); q != `` {
+		query.CreatorID = &q
+	}
+	if q := c.Query(`limit`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Limit = &n
 	}
 
-	// Получение ресурсов
-	resources := s.db.GetAll(sectorID, query)
+	resp := s.service.GetAll(query)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
 	c.JSON(200, gin.H{
 		`error`:     ``,
-		`resources`: resources,
-		`count`:     len(resources),
+		`resources`: resp.Resources,
+		`count`:     len(resp.Resources),
 	})
 }
 
 // UpdateOne обновляет ресурс
-func (s *ResourceService) UpdateOne(c *gin.Context) {
+func (s *Controller) UpdateOne(c *gin.Context) {
 	// Парсинг body
 	var body repositories.Resource
 	if err := tools.ParseBody(c, &body); err != nil {
@@ -109,12 +131,17 @@ func (s *ResourceService) UpdateOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	s.db.UpdateOne(&body)
+	resp := s.service.UpdateOne(body)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // DeleteOne удаляет ресурс
-func (s *ResourceService) DeleteOne(c *gin.Context) {
+func (s *Controller) DeleteOne(c *gin.Context) {
 	// Парсинг body
 	var body repositories.Resource
 	if err := tools.ParseBody(c, &body); err != nil {
@@ -122,6 +149,11 @@ func (s *ResourceService) DeleteOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	s.db.DeleteOne(&body)
+	resp := s.service.DeleteOne(body)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
 	c.JSON(200, gin.H{`error`: ``})
 }
