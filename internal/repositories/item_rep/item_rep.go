@@ -37,32 +37,38 @@ func Init() {
 }
 
 // Create создает вещь
-func (r *ItemRepository) Create(item *repositories.Item, parentID string, accountID string) {
+func (r *ItemRepository) Create(item *repositories.Item) {
 	r.db.Create(&repositories.Item{
-		ID: uuid.NewString(),
-
-		// Добавить данные
-
+		ID:         uuid.NewString(),
+		Type:       item.Type,
+		X:          item.X,
+		Y:          item.Y,
+		ParentID:   item.ParentID,
+		ParentType: item.ParentType,
+		CreatorID:  item.CreatorID,
+		SectorID:   item.SectorID,
 	})
 }
 
 // GetOne возвращает первую вещь, попавшую под условие
-func (r *ItemRepository) GetOne(id string, accountID string) repositories.Item {
+func (r *ItemRepository) GetOne(id string) repositories.Item {
 	var item = repositories.Item{
-		ID:        id,
-		AccountID: accountID,
+		ID: id,
 	}
 	r.db.First(&item)
 	return item
 }
 
 // GetAll возвращает все вещи
-func (r *ItemRepository) GetAll(query repositories.ItemGetAll, accountID string) []repositories.Item {
+func (r *ItemRepository) GetAll(query repositories.ItemGetAll) []repositories.Item {
 	var item = repositories.Item{
-
-		// Добавить данные
-
-		AccountID: accountID,
+		Type:       *query.Type,
+		X:          *query.X,
+		Y:          *query.Y,
+		ParentID:   *query.ParentID,
+		ParentType: *query.ParentType,
+		CreatorID:  *query.CreatorID,
+		SectorID:   *query.SectorID,
 	}
 	var items = []repositories.Item{}
 

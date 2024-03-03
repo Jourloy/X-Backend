@@ -11,7 +11,6 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/repositories/item_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/trader_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/village_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/warrior_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/worker_rep"
 )
@@ -27,7 +26,6 @@ type Service struct {
 	iteRep repositories.IItemRepository
 	warRep repositories.IWarriorRepository
 	worRep repositories.IWorkerRepository
-	vilRep repositories.IVillageRepository
 	traRep repositories.ITraderRepository
 	cache  redis.Client
 }
@@ -39,7 +37,6 @@ func Init() *Service {
 	worRep := worker_rep.Repository
 	warRep := warrior_rep.Repository
 	traRep := trader_rep.Repository
-	vilRep := village_rep.Repository
 
 	logger.Info(`Service initialized`)
 
@@ -48,7 +45,6 @@ func Init() *Service {
 		worRep: worRep,
 		warRep: warRep,
 		traRep: traRep,
-		vilRep: vilRep,
 		cache:  *cache.Client,
 	}
 }
@@ -58,32 +54,27 @@ type createResp struct {
 }
 
 // Create создает вещь
-func (s *Service) Create(body repositories.Item, pID string, pType string, accountID string) createResp {
-	if pType == `village` {
-		v := s.vilRep.GetOne(pID, accountID)
-		if v.ID == `` {
-			return createResp{Err: errors.New(`village not found`)}
-		}
-	} else if pType == `worker` {
-		w := s.worRep.GetOne(pID, accountID)
+func (s *Service) Create(body repositories.Item, parentID string, parentType string, accountID string) createResp {
+	if parentType == `worker` {
+		w := s.worRep.GetOne(parentID, accountID)
 		if w.ID == `` {
 			return createResp{Err: errors.New(`worker not found`)}
 		}
-	} else if pType == `warrior` {
-		w := s.warRep.GetOne(pID, accountID)
+	} else if parentType == `warrior` {
+		w := s.warRep.GetOne(parentID, accountID)
 		if w.ID == `` {
 			return createResp{Err: errors.New(`warrior not found`)}
 		}
-	} else if pType == `trader` {
-		w := s.warRep.GetOne(pID, accountID)
+	} else if parentType == `trader` {
+		w := s.warRep.GetOne(parentID, accountID)
 		if w.ID == `` {
 			return createResp{Err: errors.New(`trader not found`)}
 		}
 	} else {
-		return createResp{Err: errors.New(`pType is invalid`)}
+		return createResp{Err: errors.New(`parentType is invalid`)}
 	}
 
-	s.iteRep.Create(&body, pID, accountID)
+	s.iteRep.Create(&body)
 	return createResp{Err: nil}
 }
 
@@ -93,8 +84,8 @@ type getOneResp struct {
 }
 
 // GetOne получает вещь по id
-func (s *Service) GetOne(id string, accountID string) getOneResp {
-	i := s.iteRep.GetOne(id, accountID)
+func (s *Service) GetOne(id string) getOneResp {
+	i := s.iteRep.GetOne(id)
 	return getOneResp{
 		Err:  nil,
 		Item: i,
@@ -107,9 +98,9 @@ type getAllResp struct {
 }
 
 // GetAll возвращает все вещи
-func (s *Service) GetAll(query repositories.ItemFindAll, accountID string) getAllResp {
+func (s *Service) GetAll(query repositories.ItemGetAll) getAllResp {
 	// Получение вещей
-	items := s.iteRep.GetAll(query, accountID)
+	items := s.iteRep.GetAll(query)
 
 	return getAllResp{
 		Err:   nil,
@@ -122,10 +113,7 @@ type updateOneResp struct {
 }
 
 // UpdateOne обновляет вещь
-func (s *Service) UpdateOne(body repositories.Item, accountID string) updateOneResp {
-	// Перезапись accountID для безопасности
-	body.AccountID = accountID
-
+func (s *Service) UpdateOne(body repositories.Item) updateOneResp {
 	s.iteRep.UpdateOne(&body)
 	return updateOneResp{
 		Err: nil,
@@ -137,10 +125,7 @@ type deleteOneResp struct {
 }
 
 // DeleteOne удаляет вещь
-func (s *Service) DeleteOne(body repositories.Item, accountID string) deleteOneResp {
-	// Перезапись accountID для безопасности
-	body.AccountID = accountID
-
+func (s *Service) DeleteOne(body repositories.Item) deleteOneResp {
 	s.iteRep.DeleteOne(&body)
 	return deleteOneResp{
 		Err: nil,

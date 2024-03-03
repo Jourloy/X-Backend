@@ -136,23 +136,27 @@ type Item struct {
 	Y          int    `json:"y"`
 	ParentID   string `json:"workerId"`
 	ParentType string `json:"parentType"`
-	AccountID  string `json:"accountId"`
+	SectorID   string `json:"sectorId"`
 	CreatorID  string `json:"creatorId"`
 }
 
 // Структура поиска вещи
 type ItemGetAll struct {
-
-	// Переделать здесь и в сервисе
-
-	Limit *int
+	Type       *string
+	X          *int
+	Y          *int
+	ParentID   *string
+	ParentType *string
+	SectorID   *string
+	CreatorID  *string
+	Limit      *int
 }
 
 // Репозиторий вещи
 type IItemRepository interface {
-	Create(item *Item, parentID string, accountID string)
-	GetOne(id string, accountID string) Item
-	GetAll(query ItemGetAll, accountID string) []Item
+	Create(item *Item)
+	GetOne(id string) Item
+	GetAll(query ItemGetAll) []Item
 	UpdateOne(item *Item)
 	DeleteOne(item *Item)
 }
