@@ -201,6 +201,27 @@ type Storage struct {
 	AccountID     string `json:"accountId"`
 }
 
+// Структура поиска хранилища
+type StorageGetAll struct {
+	MaxDurability *int
+	Durability    *int
+	Level         *int
+	MaxStorage    *int
+	UsedStorage   *int
+	X             *int
+	Y             *int
+	Limit         *int
+}
+
+// Репозиторий хранилища
+type IStorageRepository interface {
+	Create(storage *Storage, accountID string)
+	GetOne(id string, accountID string) Storage
+	GetAll(query StorageGetAll, accountID string) []Storage
+	UpdateOne(storage *Storage)
+	DeleteOne(storage *Storage)
+}
+
 // Модель стены
 type Wall struct {
 	gorm.Model
@@ -225,7 +246,7 @@ type WallGetAll struct {
 	Limit         *int
 }
 
-// Репозиторий планируемой стены
+// Репозиторий  стены
 type IWallRepository interface {
 	Create(wall *Wall, accountID string)
 	GetOne(id string, accountID string) Wall

@@ -24,7 +24,7 @@ type planRepository struct {
 	db gorm.DB
 }
 
-// Init создает репозиторий
+// Init создает репозиторий планируемой постройки
 func Init() {
 	// Автоматическая миграция
 	if err := storage.Database.AutoMigrate(&repositories.Plan{}); err != nil {
@@ -36,7 +36,7 @@ func Init() {
 	}
 }
 
-// Create создает рабочего
+// Create создает планируемую постройку
 func (r *planRepository) Create(plan *repositories.Plan, accountId string) {
 	r.db.Create(&repositories.Plan{
 		ID:          uuid.NewString(),
@@ -49,7 +49,7 @@ func (r *planRepository) Create(plan *repositories.Plan, accountId string) {
 	})
 }
 
-// GetOne возвращает первого рабочего, попавшего под условие
+// GetOne возвращает первую планируемую постройку, попавшую под условие
 func (r *planRepository) GetOne(id string, accountID string) repositories.Plan {
 	var plan = repositories.Plan{
 		ID:        id,
@@ -59,7 +59,7 @@ func (r *planRepository) GetOne(id string, accountID string) repositories.Plan {
 	return plan
 }
 
-// GetAll возвращает всех рабочих
+// GetAll возвращает все планируемые постройки
 func (r *planRepository) GetAll(query repositories.PlanGetAll, accountID string) []repositories.Plan {
 	var plan = repositories.Plan{
 		MaxProgress: *query.MaxProgress,
@@ -80,12 +80,12 @@ func (r *planRepository) GetAll(query repositories.PlanGetAll, accountID string)
 	return plans
 }
 
-// UpdateOne обновляет рабочего
+// UpdateOne обновляет планируемую постройку
 func (r *planRepository) UpdateOne(plan *repositories.Plan) {
 	r.db.Save(&plan)
 }
 
-// DeleteOne удаляет рабочего
+// DeleteOne удаляет планируемую постройку
 func (r *planRepository) DeleteOne(plan *repositories.Plan) {
 	r.db.Delete(&plan)
 }

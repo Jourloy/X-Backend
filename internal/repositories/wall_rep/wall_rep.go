@@ -24,7 +24,7 @@ type WallRepository struct {
 	db gorm.DB
 }
 
-// Init создает репозиторий
+// Init создает репозиторий стены
 func Init() {
 	// Автоматическая миграция
 	if err := storage.Database.AutoMigrate(&repositories.Wall{}); err != nil {
@@ -36,7 +36,7 @@ func Init() {
 	}
 }
 
-// Create создает рабочего
+// Create создает стену
 func (r *WallRepository) Create(wall *repositories.Wall, accountId string) {
 	r.db.Create(&repositories.Wall{
 		ID:            uuid.NewString(),
@@ -49,7 +49,7 @@ func (r *WallRepository) Create(wall *repositories.Wall, accountId string) {
 	})
 }
 
-// GetOne возвращает первого рабочего, попавшего под условие
+// GetOne возвращает первую стену, попавую под условие
 func (r *WallRepository) GetOne(id string, accountID string) repositories.Wall {
 	var wall = repositories.Wall{
 		ID:        id,
@@ -59,7 +59,7 @@ func (r *WallRepository) GetOne(id string, accountID string) repositories.Wall {
 	return wall
 }
 
-// GetAll возвращает всех рабочих
+// GetAll возвращает все стены
 func (r *WallRepository) GetAll(query repositories.WallGetAll, accountID string) []repositories.Wall {
 	var wall = repositories.Wall{
 		MaxDurability: *query.MaxDurability,
@@ -80,12 +80,12 @@ func (r *WallRepository) GetAll(query repositories.WallGetAll, accountID string)
 	return walls
 }
 
-// UpdateOne обновляет рабочего
+// UpdateOne обновляет стену
 func (r *WallRepository) UpdateOne(wall *repositories.Wall) {
 	r.db.Save(&wall)
 }
 
-// DeleteOne удаляет рабочего
+// DeleteOne удаляет стену
 func (r *WallRepository) DeleteOne(wall *repositories.Wall) {
 	r.db.Delete(&wall)
 }
