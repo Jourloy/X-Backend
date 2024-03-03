@@ -56,10 +56,12 @@ func (r *sectorRepository) GetOne(id string) repositories.Sector {
 
 // GetAll возвращает все сектора
 func (r *sectorRepository) GetAll(query repositories.SectorGetAll) []repositories.Sector {
-	var sector = repositories.Sector{}
-	var sectors = []repositories.Sector{}
+	var sector = repositories.Sector{
+		X: *query.X,
+		Y: *query.Y,
+	}
 
-	// Добавить данные
+	var sectors = []repositories.Sector{}
 
 	limit := -1
 	if query.Limit != nil {

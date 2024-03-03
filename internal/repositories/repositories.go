@@ -23,16 +23,34 @@ type Sector struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 
-	// Добавить отношения
+	// Постройки
 
+	Townhalls []Townhall `json:"townhall"`
+	Towers    []Tower    `json:"tower"`
+	Storages  []Storage  `json:"storages"`
+	Walls     []Wall     `json:"walls"`
+	Plans     []Plan     `json:"plans"`
+
+	// Существа
+
+	Workers  []Worker  `json:"workes"`
+	Warriors []Warrior `json:"warriors"`
+	Traders  []Trader  `json:"traders"`
+
+	// Ресурсы
+
+	Deposits  []Deposit  `json:"deposits"`
 	Resources []Resource `json:"resources"`
+
+	// Предметы
+
+	Items []Item `json:"items"`
 }
 
 // Модель поиска сектора
 type SectorGetAll struct {
-
-	// Переделать здесь и в сервисе
-
+	X     *int
+	Y     *int
 	Limit *int
 }
 

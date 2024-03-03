@@ -43,14 +43,7 @@ func (s *Controller) Create(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Получение ID поселения
-	villageID := c.Query(`villageID`)
-	if villageID == `` {
-		logger.Error(`villageID is required`)
-		c.JSON(400, gin.H{`error`: `villageID is required`})
-	}
-
-	resp := s.service.Create(body, accountID, villageID)
+	resp := s.service.Create(body, accountID)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
@@ -84,7 +77,7 @@ func (s *Controller) GetAll(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Создание фильтров
-	query := repositories.WorkerFindAll{}
+	query := repositories.WorkerGetAll{}
 	if q := c.Query(`usedStorage`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.UsedStorage = &n
@@ -93,16 +86,21 @@ func (s *Controller) GetAll(c *gin.Context) {
 		n, _ := strconv.Atoi(q)
 		query.MaxStorage = &n
 	}
-	if q := c.Query(`location`); q != `` {
-		query.Location = &q
-	}
-	if q := c.Query(`fromDeparture`); q != `` {
+	if q := c.Query(`x`); q != `` {
 		n, _ := strconv.Atoi(q)
-		query.FromDeparture = &n
+		query.X = &n
 	}
-	if q := c.Query(`toArrival`); q != `` {
+	if q := c.Query(`y`); q != `` {
 		n, _ := strconv.Atoi(q)
-		query.ToArrival = &n
+		query.Y = &n
+	}
+	if q := c.Query(`maxHealth`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.MaxHealth = &n
+	}
+	if q := c.Query(`health`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Health = &n
 	}
 	if q := c.Query(`limit`); q != `` {
 		n, _ := strconv.Atoi(q)

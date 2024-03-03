@@ -6,8 +6,8 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 
+	trader_service "github.com/jourloy/X-Backend/internal/modules/trader/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/tools"
 )
@@ -19,26 +19,23 @@ var (
 	})
 )
 
-type TraderService struct {
-	wRep  repositories.ITraderRepository
-	cRep  repositories.IVillageRepository
-	cache redis.Client
+type Controller struct {
+	service trader_service.Service
 }
 
-// InitTraderService создает сервис торговца
-func InitTraderService(wRep repositories.ITraderRepository, cRep repositories.IVillageRepository, cache redis.Client) *TraderService {
+// Init создает сервис торговца
+func Init() *Controller {
 
-	logger.Info(`TraderService initialized`)
+	service := trader_service.Init()
+	logger.Info(`Controller initialized`)
 
-	return &TraderService{
-		wRep:  wRep,
-		cRep:  cRep,
-		cache: cache,
+	return &Controller{
+		service: *service,
 	}
 }
 
 // Create создает торговца
-func (s *TraderService) Create(c *gin.Context) {
+func (s *Controller) Create(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -48,36 +45,41 @@ func (s *TraderService) Create(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Проверка существования поселения
-	villageID := c.Query(`villageID`)
-	if villageID == `` {
-		logger.Error(`villageID is required`)
-		c.JSON(400, gin.H{`error`: `villageID is required`})
+	resp := s.service.Create(body, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	village := s.cRep.GetOne(villageID, accountID)
-	if village.ID == `` {
-		logger.Error(`Village not found`)
-		c.JSON(404, gin.H{`error`: `Village not found`})
-	}
-
-	s.wRep.Create(&body, villageID, accountID)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // GetOne получает торговца по его ID
-func (s *TraderService) GetOne(c *gin.Context) {
+func (s *Controller) GetOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
-	s.wRep.GetOne(c.Query(`id`), accountID)
+	// Получение ID рабочего
+	traderID := c.Query(`traderID`)
+	if traderID == `` {
+		logger.Error(`traderID is required`)
+		c.JSON(400, gin.H{`error`: `traderID is required`})
+	}
+
+	resp := s.service.GetOne(traderID, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
+
+	c.JSON(200, gin.H{`error`: ``, `trader`: resp.Trader})
 }
 
 // GetAll возвращает всех торговцев
-func (s *TraderService) GetAll(c *gin.Context) {
+func (s *Controller) GetAll(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Создание фильтров
-	query := repositories.TraderFindAll{}
+	query := repositories.TraderGetAll{}
 	if q := c.Query(`usedStorage`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.UsedStorage = &n
@@ -86,34 +88,42 @@ func (s *TraderService) GetAll(c *gin.Context) {
 		n, _ := strconv.Atoi(q)
 		query.MaxStorage = &n
 	}
-	if q := c.Query(`location`); q != `` {
-		query.Location = &q
-	}
-	if q := c.Query(`fromDeparture`); q != `` {
+	if q := c.Query(`x`); q != `` {
 		n, _ := strconv.Atoi(q)
-		query.FromDeparture = &n
+		query.X = &n
 	}
-	if q := c.Query(`toArrival`); q != `` {
+	if q := c.Query(`y`); q != `` {
 		n, _ := strconv.Atoi(q)
-		query.ToArrival = &n
+		query.Y = &n
+	}
+	if q := c.Query(`maxHealth`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.MaxHealth = &n
+	}
+	if q := c.Query(`health`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Health = &n
 	}
 	if q := c.Query(`limit`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.Limit = &n
 	}
 
-	// Получение торговцев
-	traders := s.wRep.GetAll(accountID, query)
+	resp := s.service.GetAll(query, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
 	c.JSON(200, gin.H{
 		`error`:   ``,
-		`traders`: traders,
-		`count`:   len(traders),
+		`traders`: resp.Traders,
+		`count`:   len(resp.Traders),
 	})
 }
 
 // UpdateOne обновляет торговца
-func (s *TraderService) UpdateOne(c *gin.Context) {
+func (s *Controller) UpdateOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -123,15 +133,17 @@ func (s *TraderService) UpdateOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Перезапись accountID для безопасности
-	body.AccountID = accountID
+	resp := s.service.UpdateOne(body, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
-	s.wRep.UpdateOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
 // DeleteOne удаляет торговца
-func (s *TraderService) DeleteOne(c *gin.Context) {
+func (s *Controller) DeleteOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
@@ -141,9 +153,11 @@ func (s *TraderService) DeleteOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Перезапись accountId для безопасности
-	body.AccountID = accountID
+	resp := s.service.DeleteOne(body, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
-	s.wRep.DeleteOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
