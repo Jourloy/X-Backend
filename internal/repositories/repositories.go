@@ -4,8 +4,9 @@ import "gorm.io/gorm"
 
 type Account struct {
 	gorm.Model
-	ID     string `json:"id"`
-	ApiKey string `json:"apiKey"`
+	ID      string `json:"id"`
+	ApiKey  string `json:"apiKey"`
+	Balance int    `json:"balance"`
 }
 
 type IAccountRepository interface {
@@ -70,6 +71,22 @@ type Deposit struct {
 	Type     string `json:"type"`
 	Amount   int    `json:"amount"`
 	SectorID string `json:"sectorId"`
+}
+
+// Структура поиска залежей
+type DepositGetAll struct {
+	Type   *string
+	Amount *int
+	Limit  *int
+}
+
+// Репозиторий ресурсов
+type IDepositRepository interface {
+	Create(deposit *Deposit)
+	GetOne(id string, sectorID string) Deposit
+	GetAll(query DepositGetAll, sectorID string) []Deposit
+	UpdateOne(deposit *Deposit)
+	DeleteOne(deposit *Deposit)
 }
 
 // Модель ресурсов
