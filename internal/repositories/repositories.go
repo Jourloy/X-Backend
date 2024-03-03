@@ -213,10 +213,13 @@ type Worker struct {
 
 // Структура поиска рабочего
 type WorkerGetAll struct {
-
-	// Переделать здесь и в сервисе
-
-	Limit *int
+	MaxStorage  *int
+	UsedStorage *int
+	X           *int
+	Y           *int
+	MaxHealth   *int
+	Health      *int
+	Limit       *int
 }
 
 // Репозиторий рабочего
@@ -245,12 +248,16 @@ type Warrior struct {
 
 // Структура поиска воинов
 type WarriorGetAll struct {
-
-	// Переделать здесь и в сервисе
-
-	Limit *int
+	MaxStorage  *int
+	UsedStorage *int
+	X           *int
+	Y           *int
+	MaxHealth   *int
+	Health      *int
+	Limit       *int
 }
 
+// Репозиторий воина
 type IWarriorRepository interface {
 	Create(warrior *Warrior, villageID string, accountID string)
 	GetOne(id string, accountID string) Warrior
@@ -276,10 +283,13 @@ type Trader struct {
 
 // Структура поиска торговца
 type TraderGetAll struct {
-
-	// Переделать здесь и в сервисе
-
-	Limit *int
+	MaxStorage  *int
+	UsedStorage *int
+	X           *int
+	Y           *int
+	MaxHealth   *int
+	Health      *int
+	Limit       *int
 }
 
 // Репозиторий торговца

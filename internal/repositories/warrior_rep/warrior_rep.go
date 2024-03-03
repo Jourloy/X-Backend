@@ -39,11 +39,14 @@ func Init() {
 // Create создает рабочего
 func (r *warriorRepository) Create(warrior *repositories.Warrior, villageID string, accountId string) {
 	r.db.Create(&repositories.Warrior{
-		ID: uuid.NewString(),
-
-		// Добавить данные
-
-		AccountID: accountId,
+		ID:          uuid.NewString(),
+		MaxStorage:  warrior.MaxStorage,
+		UsedStorage: warrior.UsedStorage,
+		X:           warrior.X,
+		Y:           warrior.Y,
+		MaxHealth:   warrior.MaxHealth,
+		Health:      warrior.Health,
+		AccountID:   accountId,
 	})
 }
 
@@ -60,10 +63,13 @@ func (r *warriorRepository) GetOne(id string, accountID string) repositories.War
 // GetAll возвращает всех рабочих
 func (r *warriorRepository) GetAll(query repositories.WarriorGetAll, accountID string) []repositories.Warrior {
 	var warrior = repositories.Warrior{
-
-		// Добавить данные
-
-		AccountID: accountID,
+		MaxStorage:  *query.MaxStorage,
+		UsedStorage: *query.UsedStorage,
+		X:           *query.X,
+		Y:           *query.Y,
+		MaxHealth:   *query.MaxHealth,
+		Health:      *query.Health,
+		AccountID:   accountID,
 	}
 	var warriors = []repositories.Warrior{}
 
