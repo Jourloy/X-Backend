@@ -178,6 +178,26 @@ type Townhall struct {
 	AccountID     string `json:"accountId"`
 }
 
+// Структура поиска главного здания
+type TownhallGetAll struct {
+	MaxDurability *int
+	Durability    *int
+	MaxStorage    *int
+	UsedStorage   *int
+	X             *int
+	Y             *int
+	Limit         *int
+}
+
+// Репозиторий главного здания
+type ITownhallRepository interface {
+	Create(townhall *Townhall, accountID string)
+	GetOne(id string, accountID string) Townhall
+	GetAll(query TownhallGetAll, accountID string) []Townhall
+	UpdateOne(townhall *Townhall)
+	DeleteOne(townhall *Townhall)
+}
+
 // Модель башни
 type Tower struct {
 	gorm.Model
