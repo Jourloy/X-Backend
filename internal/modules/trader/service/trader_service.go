@@ -73,8 +73,12 @@ type getOneResp struct {
 }
 
 // GetOne получает торговца по его ID
-func (s *Service) GetOne(id string, accountID string) {
-	s.traRep.GetOne(id, accountID)
+func (s *Service) GetOne(id string, accountID string) getOneResp {
+	trader := s.traRep.GetOne(id, accountID)
+	return getOneResp{
+		Err:    nil,
+		Trader: trader,
+	}
 }
 
 type getAllResp struct {

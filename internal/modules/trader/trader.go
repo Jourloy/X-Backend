@@ -6,7 +6,6 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 
 	trader_service "github.com/jourloy/X-Backend/internal/modules/trader/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
@@ -72,7 +71,7 @@ func (s *Controller) GetOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	c.JSON(200, gin.H{`error`: ``, `worker`: resp.Worker})
+	c.JSON(200, gin.H{`error`: ``, `trader`: resp.Trader})
 }
 
 // GetAll возвращает всех торговцев
@@ -80,7 +79,7 @@ func (s *Controller) GetAll(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Создание фильтров
-	query := repositories.TraderFindAll{}
+	query := repositories.TraderGetAll{}
 	if q := c.Query(`usedStorage`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.UsedStorage = &n
@@ -89,29 +88,37 @@ func (s *Controller) GetAll(c *gin.Context) {
 		n, _ := strconv.Atoi(q)
 		query.MaxStorage = &n
 	}
-	if q := c.Query(`location`); q != `` {
-		query.Location = &q
-	}
-	if q := c.Query(`fromDeparture`); q != `` {
+	if q := c.Query(`x`); q != `` {
 		n, _ := strconv.Atoi(q)
-		query.FromDeparture = &n
+		query.X = &n
 	}
-	if q := c.Query(`toArrival`); q != `` {
+	if q := c.Query(`y`); q != `` {
 		n, _ := strconv.Atoi(q)
-		query.ToArrival = &n
+		query.Y = &n
+	}
+	if q := c.Query(`maxHealth`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.MaxHealth = &n
+	}
+	if q := c.Query(`health`); q != `` {
+		n, _ := strconv.Atoi(q)
+		query.Health = &n
 	}
 	if q := c.Query(`limit`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.Limit = &n
 	}
 
-	// Получение торговцев
-	traders := s.wRep.GetAll(accountID, query)
+	resp := s.service.GetAll(query, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
 	c.JSON(200, gin.H{
 		`error`:   ``,
-		`traders`: traders,
-		`count`:   len(traders),
+		`traders`: resp.Traders,
+		`count`:   len(resp.Traders),
 	})
 }
 
@@ -126,10 +133,12 @@ func (s *Controller) UpdateOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Перезапись accountID для безопасности
-	body.AccountID = accountID
+	resp := s.service.UpdateOne(body, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
-	s.wRep.UpdateOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
 
@@ -144,9 +153,11 @@ func (s *Controller) DeleteOne(c *gin.Context) {
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	// Перезапись accountId для безопасности
-	body.AccountID = accountID
+	resp := s.service.DeleteOne(body, accountID)
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+	}
 
-	s.wRep.DeleteOne(&body)
 	c.JSON(200, gin.H{`error`: ``})
 }
