@@ -190,6 +190,27 @@ type Tower struct {
 	AccountID     string `json:"accountId"`
 }
 
+// Структура поиска башни
+type TowerGetAll struct {
+	MaxDurability *int
+	Durability    *int
+	Level         *int
+	MaxStorage    *int
+	UsedStorage   *int
+	X             *int
+	Y             *int
+	Limit         *int
+}
+
+// Репозиторий башни
+type ITowerRepository interface {
+	Create(tower *Tower, accountID string)
+	GetOne(id string, accountID string) Tower
+	GetAll(query TowerGetAll, accountID string) []Tower
+	UpdateOne(tower *Tower)
+	DeleteOne(tower *Tower)
+}
+
 // Модель хранилища
 type Storage struct {
 	gorm.Model
