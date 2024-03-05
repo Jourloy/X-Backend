@@ -24,7 +24,7 @@ type warriorRepository struct {
 	db gorm.DB
 }
 
-// Init создает репозиторий
+// Init создает репозиторий воина
 func Init() {
 	// Автоматическая миграция
 	if err := storage.Database.AutoMigrate(&repositories.Warrior{}); err != nil {
@@ -36,7 +36,7 @@ func Init() {
 	}
 }
 
-// Create создает рабочего
+// Create создает воина
 func (r *warriorRepository) Create(warrior *repositories.Warrior, accountId string) {
 	r.db.Create(&repositories.Warrior{
 		ID:          uuid.NewString(),
@@ -50,7 +50,7 @@ func (r *warriorRepository) Create(warrior *repositories.Warrior, accountId stri
 	})
 }
 
-// GetOne возвращает первого рабочего, попавшего под условие
+// GetOne возвращает первого воина, попавшего под условие
 func (r *warriorRepository) GetOne(id string, accountID string) repositories.Warrior {
 	var warrior = repositories.Warrior{
 		ID:        id,
@@ -60,7 +60,7 @@ func (r *warriorRepository) GetOne(id string, accountID string) repositories.War
 	return warrior
 }
 
-// GetAll возвращает всех рабочих
+// GetAll возвращает всех воинов
 func (r *warriorRepository) GetAll(query repositories.WarriorGetAll, accountID string) []repositories.Warrior {
 	var warrior = repositories.Warrior{
 		MaxStorage:  *query.MaxStorage,
@@ -82,12 +82,12 @@ func (r *warriorRepository) GetAll(query repositories.WarriorGetAll, accountID s
 	return warriors
 }
 
-// UpdateOne обновляет рабочего
+// UpdateOne обновляет воина
 func (r *warriorRepository) UpdateOne(warrior *repositories.Warrior) {
 	r.db.Save(&warrior)
 }
 
-// DeleteOne удаляет рабочего
+// DeleteOne удаляет воина
 func (r *warriorRepository) DeleteOne(warrior *repositories.Warrior) {
 	r.db.Delete(&warrior)
 }

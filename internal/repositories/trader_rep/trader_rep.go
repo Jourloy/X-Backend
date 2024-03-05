@@ -24,7 +24,7 @@ type traderRepository struct {
 	db gorm.DB
 }
 
-// Init создает репозиторий
+// Init создает репозиторий торговца
 func Init() {
 	// Автоматическая миграция
 	if err := storage.Database.AutoMigrate(&repositories.Trader{}); err != nil {

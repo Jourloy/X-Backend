@@ -461,6 +461,41 @@ type IWorkerRepository interface {
 	DeleteOne(worker *Worker)
 }
 
+// Модель разведчика
+type Scout struct {
+	gorm.Model
+	ID          string `json:"id"`
+	MaxStorage  int    `json:"maxStorage"`
+	UsedStorage int    `json:"usedStorage"`
+	X           int    `json:"x"`
+	Y           int    `json:"y"`
+	MaxHealth   int    `json:"maxHealth"`
+	Health      int    `json:"health"`
+	Storage     []Item `json:"storage"`
+	SectorID    string `json:"sectorId"`
+	AccountID   string `json:"accountId"`
+}
+
+// Структура поиска разведчика
+type ScoutGetAll struct {
+	MaxStorage  *int
+	UsedStorage *int
+	X           *int
+	Y           *int
+	MaxHealth   *int
+	Health      *int
+	Limit       *int
+}
+
+// Репозиторий разведчика
+type IScoutRepository interface {
+	Create(scout *Scout, accountID string)
+	GetOne(id string, accountID string) Scout
+	GetAll(query ScoutGetAll, accountID string) []Scout
+	UpdateOne(scout *Scout)
+	DeleteOne(scout *Scout)
+}
+
 // Модель воина
 type Warrior struct {
 	gorm.Model
