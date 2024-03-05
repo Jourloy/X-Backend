@@ -11,6 +11,7 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/item_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/market_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/plan_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/resourceTemplate_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/resource_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/storage_rep"
@@ -63,6 +64,7 @@ func initReps() {
 	tower_rep.Init()
 	townhall_rep.Init()
 	market_rep.Init()
+	resourceTemplate_rep.Init()
 }
 
 type WriteFunc func([]byte) (int, error)

@@ -127,6 +127,32 @@ type IResourceRepository interface {
 	DeleteOne(resource *Resource)
 }
 
+// Модель шаблона ресурсов
+type ResourceTemplate struct {
+	gorm.Model
+	ID     string `json:"id"`
+	Type   string `json:"type"`
+	Amount int    `json:"amount"`
+	Weight int    `json:"weight"`
+}
+
+// Структура поиска шаблона ресурсов
+type ResourceTemplateGetAll struct {
+	Type   *string
+	Amount *int
+	Weight *int
+	Limit  *int
+}
+
+// Репозиторий шаблона ресурсов
+type IResourceTemplateRepository interface {
+	Create(resourceTemplate *ResourceTemplate)
+	GetOne(id string) ResourceTemplate
+	GetAll(query ResourceTemplateGetAll) []ResourceTemplate
+	UpdateOne(resource *ResourceTemplate)
+	DeleteOne(resource *ResourceTemplate)
+}
+
 // Модель вещи
 type Item struct {
 	gorm.Model
