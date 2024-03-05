@@ -338,6 +338,44 @@ type IPlanRepository interface {
 	DeleteOne(plan *Plan)
 }
 
+// Модель рынка
+type Market struct {
+	gorm.Model
+	ID            string     `json:"id"`
+	MaxDurability int        `json:"maxDurability"`
+	Durability    int        `json:"durability"`
+	Level         int        `json:"level"`
+	MaxStorage    int        `json:"maxStorage"`
+	UsedStorage   int        `json:"usedStorage"`
+	X             int        `json:"x"`
+	Y             int        `json:"y"`
+	Resources     []Resource `json:"resources"`
+	Items         []Item     `json:"items"`
+	SectorID      string     `json:"sectorId"`
+	AccountID     string     `json:"accountId"`
+}
+
+// Структура поиска рынка
+type MarketGetAll struct {
+	MaxDurability *int
+	Durability    *int
+	Level         *int
+	MaxStorage    *int
+	UsedStorage   *int
+	X             *int
+	Y             *int
+	Limit         *int
+}
+
+// Репозиторий рынка
+type IMarketRepository interface {
+	Create(market *Market, accountID string)
+	GetOne(id string, accountID string) Market
+	GetAll(query MarketGetAll, accountID string) []Market
+	UpdateOne(market *Market)
+	DeleteOne(market *Market)
+}
+
 //////// Существа ////////
 
 // Модель рабочего
