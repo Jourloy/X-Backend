@@ -30,7 +30,7 @@ type Service struct {
 	cache  redis.Client
 }
 
-// Init создает сервис вещи
+// Init создает сервис предмета
 func Init() *Service {
 
 	iteRep := item_rep.Repository
@@ -53,7 +53,7 @@ type createResp struct {
 	Err error
 }
 
-// Create создает вещь
+// Create создает предмет
 func (s *Service) Create(body repositories.Item, parentID string, parentType string, accountID string) createResp {
 	if parentType == `worker` {
 		w := s.worRep.GetOne(parentID, accountID)
@@ -83,7 +83,7 @@ type getOneResp struct {
 	Item repositories.Item
 }
 
-// GetOne получает вещь по id
+// GetOne получает предмет по id
 func (s *Service) GetOne(id string) getOneResp {
 	i := s.iteRep.GetOne(id)
 	return getOneResp{
@@ -97,9 +97,9 @@ type getAllResp struct {
 	Items []repositories.Item
 }
 
-// GetAll возвращает все вещи
+// GetAll возвращает все предметы
 func (s *Service) GetAll(query repositories.ItemGetAll) getAllResp {
-	// Получение вещей
+	// Получение предметов
 	items := s.iteRep.GetAll(query)
 
 	return getAllResp{
@@ -112,7 +112,7 @@ type updateOneResp struct {
 	Err error
 }
 
-// UpdateOne обновляет вещь
+// UpdateOne обновляет предмет
 func (s *Service) UpdateOne(body repositories.Item) updateOneResp {
 	s.iteRep.UpdateOne(&body)
 	return updateOneResp{
@@ -124,7 +124,7 @@ type deleteOneResp struct {
 	Err error
 }
 
-// DeleteOne удаляет вещь
+// DeleteOne удаляет предмет
 func (s *Service) DeleteOne(body repositories.Item) deleteOneResp {
 	s.iteRep.DeleteOne(&body)
 	return deleteOneResp{

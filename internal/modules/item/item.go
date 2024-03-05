@@ -23,7 +23,7 @@ type Controller struct {
 	service item_service.Service
 }
 
-// InitItemService создает сервис вещи
+// InitItemService создает сервис предмета
 func InitItemService() *Controller {
 	service := item_service.Init()
 	logger.Info(`Controller initialized`)
@@ -32,7 +32,7 @@ func InitItemService() *Controller {
 	}
 }
 
-// Create создает вещь
+// Create создает предмет
 func (s *Controller) Create(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
@@ -66,7 +66,7 @@ func (s *Controller) Create(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-// GetOne получает вещь по id
+// GetOne получает предмет по id
 func (s *Controller) GetOne(c *gin.Context) {
 	// Получение ID рабочего
 	id := c.Query(`itemID`)
@@ -84,7 +84,7 @@ func (s *Controller) GetOne(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``, `item`: resp.Item})
 }
 
-// GetAll возвращает все вещи
+// GetAll возвращает все пердметы
 func (s *Controller) GetAll(c *gin.Context) {
 	// Создание фильтров
 	query := repositories.ItemGetAll{}
@@ -129,7 +129,7 @@ func (s *Controller) GetAll(c *gin.Context) {
 	})
 }
 
-// UpdateOne обновляет вещь
+// UpdateOne обновляет пердмет
 func (s *Controller) UpdateOne(c *gin.Context) {
 	// Парсинг body
 	var body repositories.Item
@@ -147,7 +147,7 @@ func (s *Controller) UpdateOne(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-// DeleteOne удаляет вещь
+// DeleteOne удаляет предмет
 func (s *Controller) DeleteOne(c *gin.Context) {
 	// Парсинг body
 	var body repositories.Item

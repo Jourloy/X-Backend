@@ -24,7 +24,7 @@ type ItemRepository struct {
 	db gorm.DB
 }
 
-// Init создает репозиторий
+// Init создает репозиторий предмета
 func Init() {
 	// Автоматическая миграция
 	if err := storage.Database.AutoMigrate(&repositories.Item{}); err != nil {
@@ -36,7 +36,7 @@ func Init() {
 	}
 }
 
-// Create создает вещь
+// Create создает предмет
 func (r *ItemRepository) Create(item *repositories.Item) {
 	r.db.Create(&repositories.Item{
 		ID:         uuid.NewString(),
@@ -50,7 +50,7 @@ func (r *ItemRepository) Create(item *repositories.Item) {
 	})
 }
 
-// GetOne возвращает первую вещь, попавшую под условие
+// GetOne возвращает первый пердмет, попавший под условие
 func (r *ItemRepository) GetOne(id string) repositories.Item {
 	var item = repositories.Item{
 		ID: id,
@@ -59,7 +59,7 @@ func (r *ItemRepository) GetOne(id string) repositories.Item {
 	return item
 }
 
-// GetAll возвращает все вещи
+// GetAll возвращает все предметы
 func (r *ItemRepository) GetAll(query repositories.ItemGetAll) []repositories.Item {
 	var item = repositories.Item{
 		Type:       *query.Type,
@@ -81,12 +81,12 @@ func (r *ItemRepository) GetAll(query repositories.ItemGetAll) []repositories.It
 	return items
 }
 
-// UpdateOne обновляет вещь
+// UpdateOne обновляет предмет
 func (r *ItemRepository) UpdateOne(item *repositories.Item) {
 	r.db.Save(&item)
 }
 
-// DeleteOne удаляет вещь
+// DeleteOne удаляет предмет
 func (r *ItemRepository) DeleteOne(item *repositories.Item) {
 	r.db.Delete(&item)
 }

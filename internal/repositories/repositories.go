@@ -153,7 +153,7 @@ type IResourceTemplateRepository interface {
 	DeleteOne(resource *ResourceTemplate)
 }
 
-// Модель вещи
+// Модель предмета
 type Item struct {
 	gorm.Model
 	ID         string `json:"id"`
@@ -166,7 +166,7 @@ type Item struct {
 	CreatorID  string `json:"creatorId"`
 }
 
-// Структура поиска вещи
+// Структура поиска предмета
 type ItemGetAll struct {
 	Type       *string
 	X          *int
@@ -178,13 +178,35 @@ type ItemGetAll struct {
 	Limit      *int
 }
 
-// Репозиторий вещи
+// Репозиторий предмета
 type IItemRepository interface {
 	Create(item *Item)
 	GetOne(id string) Item
 	GetAll(query ItemGetAll) []Item
 	UpdateOne(item *Item)
 	DeleteOne(item *Item)
+}
+
+// Модель шаблона предмета
+type ItemTemplate struct {
+	gorm.Model
+	ID   string `json:"id"`
+	Type string `json:"type"`
+}
+
+// Структура поиска шаблона предмета
+type ItemTemplateGetAll struct {
+	Type  *string
+	Limit *int
+}
+
+// Репозиторий шаблона предмета
+type IItemTemplateRepository interface {
+	Create(itemTemplate *ItemTemplate)
+	GetOne(id string) ItemTemplate
+	GetAll(query ItemTemplateGetAll) []ItemTemplate
+	UpdateOne(itemTemplate *ItemTemplate)
+	DeleteOne(itemTemplate *ItemTemplate)
 }
 
 //////// Постройки ////////
