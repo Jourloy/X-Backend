@@ -48,6 +48,7 @@ func (r *WorkerRepository) Create(worker *repositories.Worker, accountId string)
 		Health:       worker.Health,
 		RequireCoins: 0.5,
 		RequireFood:  0.5,
+		Fatigue:      0,
 		AccountID:    accountId,
 	})
 }
@@ -73,6 +74,7 @@ func (r *WorkerRepository) GetAll(query repositories.WorkerGetAll, accountID str
 		Health:       *query.Health,
 		RequireCoins: *query.RequireCoins,
 		RequireFood:  *query.RequireFood,
+		Fatigue:      *query.Fatigue,
 		AccountID:    accountID,
 	}
 	var workers = []repositories.Worker{}

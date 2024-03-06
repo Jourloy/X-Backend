@@ -48,6 +48,7 @@ func (r *ScoutRepository) Create(scout *repositories.Scout, accountId string) {
 		Health:       scout.Health,
 		RequireCoins: 0.5,
 		RequireFood:  0.5,
+		Fatigue:      0,
 		AccountID:    accountId,
 	})
 }
@@ -73,6 +74,7 @@ func (r *ScoutRepository) GetAll(query repositories.ScoutGetAll, accountID strin
 		Health:       *query.Health,
 		RequireCoins: *query.RequireCoins,
 		RequireFood:  *query.RequireFood,
+		Fatigue:      *query.Fatigue,
 		AccountID:    accountID,
 	}
 	var scouts = []repositories.Scout{}

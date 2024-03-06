@@ -438,6 +438,7 @@ type Worker struct {
 	Health       int     `json:"health"`
 	RequireCoins float64 `json:"requireCoins"`
 	RequireFood  float64 `json:"requireFood"`
+	Fatigue      float64 `json:"fatigue"`
 	Storage      []Item  `json:"storage"`
 	SectorID     string  `json:"sectorId"`
 	AccountID    string  `json:"accountId"`
@@ -453,6 +454,7 @@ type WorkerGetAll struct {
 	Health       *int
 	RequireCoins *float64
 	RequireFood  *float64
+	Fatigue      *float64
 	Limit        *int
 }
 
@@ -477,6 +479,7 @@ type Scout struct {
 	Health       int     `json:"health"`
 	RequireCoins float64 `json:"requireCoins"`
 	RequireFood  float64 `json:"requireFood"`
+	Fatigue      float64 `json:"fatigue"`
 	Storage      []Item  `json:"storage"`
 	SectorID     string  `json:"sectorId"`
 	AccountID    string  `json:"accountId"`
@@ -492,6 +495,7 @@ type ScoutGetAll struct {
 	Health       *int
 	RequireCoins *float64
 	RequireFood  *float64
+	Fatigue      *float64
 	Limit        *int
 }
 
@@ -516,6 +520,7 @@ type Warrior struct {
 	Health       int     `json:"health"`
 	RequireCoins float64 `json:"requireCoins"`
 	RequireFood  float64 `json:"requireFood"`
+	Fatigue      float64 `json:"fatigue"`
 	Storage      []Item  `json:"storage"`
 	SectorID     string  `json:"sectorId"`
 	AccountID    string  `json:"accountId"`
@@ -531,6 +536,7 @@ type WarriorGetAll struct {
 	Health       *int
 	RequireCoins *float64
 	RequireFood  *float64
+	Fatigue      *float64
 	Limit        *int
 }
 
@@ -555,6 +561,7 @@ type Trader struct {
 	Health       int     `json:"health"`
 	RequireCoins float64 `json:"requireCoins"`
 	RequireFood  float64 `json:"requireFood"`
+	Fatigue      float64 `json:"fatigue"`
 	Storage      []Item  `json:"storage"`
 	SectorID     string  `json:"sectorId"`
 	AccountID    string  `json:"accountId"`
@@ -570,6 +577,7 @@ type TraderGetAll struct {
 	Health       *int
 	RequireCoins *float64
 	RequireFood  *float64
+	Fatigue      *float64
 	Limit        *int
 }
 

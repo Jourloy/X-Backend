@@ -48,6 +48,7 @@ func (r *warriorRepository) Create(warrior *repositories.Warrior, accountId stri
 		Health:       warrior.Health,
 		RequireCoins: 0.5,
 		RequireFood:  0.5,
+		Fatigue:      0,
 		AccountID:    accountId,
 	})
 }
@@ -73,6 +74,7 @@ func (r *warriorRepository) GetAll(query repositories.WarriorGetAll, accountID s
 		Health:       *query.Health,
 		RequireCoins: *query.RequireCoins,
 		RequireFood:  *query.RequireFood,
+		Fatigue:      *query.Fatigue,
 		AccountID:    accountID,
 	}
 	var warriors = []repositories.Warrior{}

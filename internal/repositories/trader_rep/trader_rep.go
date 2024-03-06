@@ -48,6 +48,7 @@ func (r *traderRepository) Create(trader *repositories.Trader, accountId string)
 		Health:       trader.Health,
 		RequireCoins: 0.5,
 		RequireFood:  0.5,
+		Fatigue:      0,
 		AccountID:    accountId,
 	})
 }
@@ -72,6 +73,7 @@ func (r *traderRepository) GetAll(query repositories.TraderGetAll, accountID str
 		Health:       *query.Health,
 		RequireCoins: *query.RequireCoins,
 		RequireFood:  *query.RequireFood,
+		Fatigue:      *query.Fatigue,
 		AccountID:    accountID,
 	}
 	var traders = []repositories.Trader{}

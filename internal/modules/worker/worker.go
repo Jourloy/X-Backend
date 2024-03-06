@@ -110,6 +110,10 @@ func (s *Controller) GetAll(c *gin.Context) {
 		n, _ := strconv.Atoi(q)
 		query.Health = &n
 	}
+	if q := c.Query(`fatigue`); q != `` {
+		n, _ := strconv.ParseFloat(q, 64)
+		query.Fatigue = &n
+	}
 	if q := c.Query(`limit`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.Limit = &n
