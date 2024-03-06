@@ -26,7 +26,9 @@ type Controller struct {
 // Init создает контроллер стены
 func Init() *Controller {
 	service := wall_service.Init()
-	logger.Info(`Controller initialized`)
+
+	logger.Info(`Wall controller initialized`)
+
 	return &Controller{
 		service: *service,
 	}

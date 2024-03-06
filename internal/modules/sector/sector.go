@@ -23,12 +23,11 @@ type Controller struct {
 	service sector_service.Service
 }
 
-// InitSectorService создает сервис сектора
-func InitSectorService() *Controller {
+// Init создает сервис сектора
+func Init() *Controller {
+	service := sector_service.Init()
 
-	service := sector_service.InitSectorService()
-
-	logger.Info(`Controller initialized`)
+	logger.Info(`Sector controller initialized`)
 
 	return &Controller{
 		service: *service,

@@ -2,9 +2,7 @@ package plan_service
 
 import (
 	"errors"
-	"os"
 
-	"github.com/charmbracelet/log"
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
@@ -12,13 +10,6 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/plan_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[plan-service]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 type Service struct {
@@ -35,8 +26,6 @@ func Init() *Service {
 	secRep := sector_rep.Repository
 	accRep := account_rep.Repository
 
-	logger.Info(`Service initialized`)
-
 	return &Service{
 		plaRep: plaRep,
 		secRep: secRep,
@@ -52,8 +41,9 @@ type createResp struct {
 // Create создает планируемую постройку
 func (s *Service) Create(body repositories.Plan, accountID string) createResp {
 	// Проверка существования аккаунта
-	account := s.accRep.GetOne(repositories.Account{ID: accountID})
-	if account.ID == `` {
+	account := repositories.Account{ID: accountID}
+	s.accRep.GetOne(&account)
+	if account.Username == `` {
 		return createResp{Err: errors.New(`account not found`)}
 	}
 

@@ -26,11 +26,6 @@ type DepositRepository struct {
 
 // Init создает репозиторий залежей
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Deposit{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &DepositRepository{
 		db: *storage.Database,
 	}
@@ -47,9 +42,8 @@ func (r *DepositRepository) Create(deposit *repositories.Deposit) {
 }
 
 // GetOne возвращает первую залежь, попавшую под условие
-func (r *DepositRepository) GetOne(deposit repositories.Deposit) repositories.Deposit {
+func (r *DepositRepository) GetOne(deposit *repositories.Deposit) {
 	r.db.First(&deposit)
-	return deposit
 }
 
 // GetAll возвращает все залежи

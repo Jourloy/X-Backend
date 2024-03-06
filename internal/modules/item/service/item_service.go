@@ -2,9 +2,7 @@ package item_service
 
 import (
 	"errors"
-	"os"
 
-	"github.com/charmbracelet/log"
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
@@ -13,13 +11,6 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/trader_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/warrior_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/worker_rep"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[item-service]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 type Service struct {
@@ -37,8 +28,6 @@ func Init() *Service {
 	worRep := worker_rep.Repository
 	warRep := warrior_rep.Repository
 	traRep := trader_rep.Repository
-
-	logger.Info(`Service initialized`)
 
 	return &Service{
 		iteRep: iteRep,

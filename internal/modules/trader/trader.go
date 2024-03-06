@@ -27,7 +27,7 @@ type Controller struct {
 func Init() *Controller {
 
 	service := trader_service.Init()
-	logger.Info(`Controller initialized`)
+	logger.Info(`Trader controller initialized`)
 
 	return &Controller{
 		service: *service,

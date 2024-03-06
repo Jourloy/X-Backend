@@ -2,22 +2,13 @@ package deposit_service
 
 import (
 	"errors"
-	"os"
 
-	"github.com/charmbracelet/log"
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/repositories/deposit_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[deposit-service]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 type Service struct {
@@ -31,8 +22,6 @@ func Init() *Service {
 
 	depRep := deposit_rep.Repository
 	secRep := sector_rep.Repository
-
-	logger.Info(`Service initialized`)
 
 	return &Service{
 		depRep: depRep,
@@ -63,7 +52,8 @@ type getOneResp struct {
 }
 
 func (s *Service) GetOne(id string, sectorID string) getOneResp {
-	deposit := s.depRep.GetOne(id, sectorID)
+	deposit := repositories.Deposit{ID: id, SectorID: sectorID}
+	s.depRep.GetOne(&deposit)
 	return getOneResp{
 		Err:     nil,
 		Deposit: deposit,

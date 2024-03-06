@@ -1,14 +1,20 @@
 package repositories
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 // Модель аккаунта
 type Account struct {
-	gorm.Model
-	ID       string `json:"id"`
-	ApiKey   string `json:"apiKey"`
-	Username string `json:"username"`
-	Balance  int    `json:"balance"`
+	ID        string         `json:"id"`
+	ApiKey    string         `json:"apiKey"`
+	Username  string         `json:"username"`
+	Balance   int            `json:"balance"`
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 type AccountCreate struct {
@@ -16,15 +22,14 @@ type AccountCreate struct {
 }
 
 type IAccountRepository interface {
-	Create(create *AccountCreate) (Account, error)
-	GetOne(account *Account)
+	Create(create *AccountCreate) (*Account, error)
+	GetOne(account *Account) error
 	UpdateOne(account *Account)
 	DeleteOne(account *Account)
 }
 
 // Модель сектора
 type Sector struct {
-	gorm.Model
 	ID string `json:"id"`
 
 	X int `json:"x"`
@@ -53,6 +58,10 @@ type Sector struct {
 	// Предметы
 
 	Items []Item `json:"items" gorm:"foreignKey:ParentID"`
+
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 // Модель поиска сектора
@@ -73,11 +82,13 @@ type ISectorRepository interface {
 
 // Модель залежи ресурсов
 type Deposit struct {
-	gorm.Model
-	ID       string `json:"id"`
-	Type     string `json:"type"`
-	Amount   int    `json:"amount"`
-	SectorID string `json:"sectorId"`
+	ID        string         `json:"id"`
+	Type      string         `json:"type"`
+	Amount    int            `json:"amount"`
+	SectorID  string         `json:"sectorId"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска залежей
@@ -90,7 +101,7 @@ type DepositGetAll struct {
 // Репозиторий залежей
 type IDepositRepository interface {
 	Create(deposit *Deposit)
-	GetOne(deposit Deposit) Deposit
+	GetOne(deposit *Deposit)
 	GetAll(query DepositGetAll, sectorID string) []Deposit
 	UpdateOne(deposit *Deposit)
 	DeleteOne(deposit *Deposit)
@@ -98,17 +109,19 @@ type IDepositRepository interface {
 
 // Модель ресурсов
 type Resource struct {
-	gorm.Model
-	ID         string `json:"id"`
-	Type       string `json:"type"`
-	Amount     int    `json:"amount"`
-	Weight     int    `json:"weight"`
-	X          int    `json:"x"`
-	Y          int    `json:"y"`
-	ParentID   string `json:"parentId"`
-	ParentType string `json:"parentType"`
-	SectorID   string `json:"sectorId"`
-	CreatorID  string `json:"creatorId"`
+	ID         string         `json:"id"`
+	Type       string         `json:"type"`
+	Amount     int            `json:"amount"`
+	Weight     int            `json:"weight"`
+	X          int            `json:"x"`
+	Y          int            `json:"y"`
+	ParentID   string         `json:"parentId"`
+	ParentType string         `json:"parentType"`
+	SectorID   string         `json:"sectorId"`
+	CreatorID  string         `json:"creatorId"`
+	CreatedAt  time.Time      `json:"createdAt"`
+	UpdatedAt  time.Time      `json:"updatedAt"`
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска ресурсов
@@ -136,11 +149,13 @@ type IResourceRepository interface {
 
 // Модель шаблона ресурсов
 type ResourceTemplate struct {
-	gorm.Model
-	ID     string `json:"id"`
-	Type   string `json:"type"`
-	Amount int    `json:"amount"`
-	Weight int    `json:"weight"`
+	ID        string         `json:"id"`
+	Type      string         `json:"type"`
+	Amount    int            `json:"amount"`
+	Weight    int            `json:"weight"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска шаблона ресурсов
@@ -162,15 +177,17 @@ type IResourceTemplateRepository interface {
 
 // Модель предмета
 type Item struct {
-	gorm.Model
-	ID         string `json:"id" gorm:"primarykey"`
-	Type       string `json:"type"`
-	X          int    `json:"x"`
-	Y          int    `json:"y"`
-	ParentID   string `json:"parentId"`
-	ParentType string `json:"parentType"`
-	SectorID   string `json:"sectorId"`
-	CreatorID  string `json:"creatorId"`
+	ID         string         `json:"id" gorm:"primarykey"`
+	Type       string         `json:"type"`
+	X          int            `json:"x"`
+	Y          int            `json:"y"`
+	ParentID   string         `json:"parentId"`
+	ParentType string         `json:"parentType"`
+	SectorID   string         `json:"sectorId"`
+	CreatorID  string         `json:"creatorId"`
+	CreatedAt  time.Time      `json:"createdAt"`
+	UpdatedAt  time.Time      `json:"updatedAt"`
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска предмета
@@ -196,9 +213,11 @@ type IItemRepository interface {
 
 // Модель шаблона предмета
 type ItemTemplate struct {
-	gorm.Model
-	ID   string `json:"id"`
-	Type string `json:"type"`
+	ID        string         `json:"id"`
+	Type      string         `json:"type"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска шаблона предмета
@@ -220,17 +239,19 @@ type IItemTemplateRepository interface {
 
 // Модель главного здания
 type Townhall struct {
-	gorm.Model
-	ID            string `json:"id" gorm:"primarykey"`
-	MaxDurability int    `json:"maxDurability"`
-	Durability    int    `json:"durability"`
-	MaxStorage    int    `json:"maxStorage"`
-	UsedStorage   int    `json:"usedStorage"`
-	X             int    `json:"x"`
-	Y             int    `json:"y"`
-	Storage       []Item `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID      string `json:"sectorId"`
-	AccountID     string `json:"accountId"`
+	ID            string         `json:"id" gorm:"primarykey"`
+	MaxDurability int            `json:"maxDurability"`
+	Durability    int            `json:"durability"`
+	MaxStorage    int            `json:"maxStorage"`
+	UsedStorage   int            `json:"usedStorage"`
+	X             int            `json:"x"`
+	Y             int            `json:"y"`
+	Storage       []Item         `json:"storage" gorm:"foreignKey:ParentID"`
+	SectorID      string         `json:"sectorId"`
+	AccountID     string         `json:"accountId"`
+	CreatedAt     time.Time      `json:"createdAt"`
+	UpdatedAt     time.Time      `json:"updatedAt"`
+	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска главного здания
@@ -255,18 +276,20 @@ type ITownhallRepository interface {
 
 // Модель башни
 type Tower struct {
-	gorm.Model
-	ID            string `json:"id"`
-	MaxDurability int    `json:"maxDurability"`
-	Durability    int    `json:"durability"`
-	Level         int    `json:"level"`
-	MaxStorage    int    `json:"maxStorage"`
-	UsedStorage   int    `json:"usedStorage"`
-	X             int    `json:"x"`
-	Y             int    `json:"y"`
-	Storage       []Item `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID      string `json:"sectorId"`
-	AccountID     string `json:"accountId"`
+	ID            string         `json:"id"`
+	MaxDurability int            `json:"maxDurability"`
+	Durability    int            `json:"durability"`
+	Level         int            `json:"level"`
+	MaxStorage    int            `json:"maxStorage"`
+	UsedStorage   int            `json:"usedStorage"`
+	X             int            `json:"x"`
+	Y             int            `json:"y"`
+	Storage       []Item         `json:"storage" gorm:"foreignKey:ParentID"`
+	SectorID      string         `json:"sectorId"`
+	AccountID     string         `json:"accountId"`
+	CreatedAt     time.Time      `json:"createdAt"`
+	UpdatedAt     time.Time      `json:"updatedAt"`
+	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска башни
@@ -292,18 +315,20 @@ type ITowerRepository interface {
 
 // Модель хранилища
 type Storage struct {
-	gorm.Model
-	ID            string `json:"id"`
-	MaxDurability int    `json:"maxDurability"`
-	Durability    int    `json:"durability"`
-	Level         int    `json:"level"`
-	MaxStorage    int    `json:"maxStorage"`
-	UsedStorage   int    `json:"usedStorage"`
-	X             int    `json:"x"`
-	Y             int    `json:"y"`
-	Storage       []Item `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID      string `json:"sectorId"`
-	AccountID     string `json:"accountId"`
+	ID            string         `json:"id"`
+	MaxDurability int            `json:"maxDurability"`
+	Durability    int            `json:"durability"`
+	Level         int            `json:"level"`
+	MaxStorage    int            `json:"maxStorage"`
+	UsedStorage   int            `json:"usedStorage"`
+	X             int            `json:"x"`
+	Y             int            `json:"y"`
+	Storage       []Item         `json:"storage" gorm:"foreignKey:ParentID"`
+	SectorID      string         `json:"sectorId"`
+	AccountID     string         `json:"accountId"`
+	CreatedAt     time.Time      `json:"createdAt"`
+	UpdatedAt     time.Time      `json:"updatedAt"`
+	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска хранилища
@@ -329,16 +354,18 @@ type IStorageRepository interface {
 
 // Модель стены
 type Wall struct {
-	gorm.Model
-	ID            string `json:"id"`
-	MaxDurability int    `json:"maxDurability"`
-	Durability    int    `json:"durability"`
-	Level         int    `json:"level"`
-	X             int    `json:"x"`
-	Y             int    `json:"y"`
-	Storage       []Item `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID      string `json:"sectorId"`
-	AccountID     string `json:"accountId"`
+	ID            string         `json:"id"`
+	MaxDurability int            `json:"maxDurability"`
+	Durability    int            `json:"durability"`
+	Level         int            `json:"level"`
+	X             int            `json:"x"`
+	Y             int            `json:"y"`
+	Storage       []Item         `json:"storage" gorm:"foreignKey:ParentID"`
+	SectorID      string         `json:"sectorId"`
+	AccountID     string         `json:"accountId"`
+	CreatedAt     time.Time      `json:"createdAt"`
+	UpdatedAt     time.Time      `json:"updatedAt"`
+	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска стены
@@ -362,16 +389,18 @@ type IWallRepository interface {
 
 // Модель планируемой постройки
 type Plan struct {
-	gorm.Model
-	ID          string `json:"id"`
-	MaxProgress int    `json:"maxProgress"`
-	Progress    int    `json:"progress"`
-	Type        string `json:"type"`
-	X           int    `json:"x"`
-	Y           int    `json:"y"`
-	Storage     []Item `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID    string `json:"sectorId"`
-	AccountID   string `json:"accountId"`
+	ID          string         `json:"id"`
+	MaxProgress int            `json:"maxProgress"`
+	Progress    int            `json:"progress"`
+	Type        string         `json:"type"`
+	X           int            `json:"x"`
+	Y           int            `json:"y"`
+	Storage     []Item         `json:"storage" gorm:"foreignKey:ParentID"`
+	SectorID    string         `json:"sectorId"`
+	AccountID   string         `json:"accountId"`
+	CreatedAt   time.Time      `json:"createdAt"`
+	UpdatedAt   time.Time      `json:"updatedAt"`
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска планируемой постройки
@@ -395,19 +424,21 @@ type IPlanRepository interface {
 
 // Модель рынка
 type Market struct {
-	gorm.Model
-	ID            string     `json:"id"`
-	MaxDurability int        `json:"maxDurability"`
-	Durability    int        `json:"durability"`
-	Level         int        `json:"level"`
-	MaxStorage    int        `json:"maxStorage"`
-	UsedStorage   int        `json:"usedStorage"`
-	X             int        `json:"x"`
-	Y             int        `json:"y"`
-	Resources     []Resource `json:"resources" gorm:"foreignKey:ParentID"`
-	Items         []Item     `json:"items" gorm:"foreignKey:ParentID"`
-	SectorID      string     `json:"sectorId"`
-	AccountID     string     `json:"accountId"`
+	ID            string         `json:"id"`
+	MaxDurability int            `json:"maxDurability"`
+	Durability    int            `json:"durability"`
+	Level         int            `json:"level"`
+	MaxStorage    int            `json:"maxStorage"`
+	UsedStorage   int            `json:"usedStorage"`
+	X             int            `json:"x"`
+	Y             int            `json:"y"`
+	Resources     []Resource     `json:"resources" gorm:"foreignKey:ParentID"`
+	Items         []Item         `json:"items" gorm:"foreignKey:ParentID"`
+	SectorID      string         `json:"sectorId"`
+	AccountID     string         `json:"accountId"`
+	CreatedAt     time.Time      `json:"createdAt"`
+	UpdatedAt     time.Time      `json:"updatedAt"`
+	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска рынка
@@ -435,20 +466,22 @@ type IMarketRepository interface {
 
 // Модель рабочего
 type Worker struct {
-	gorm.Model
-	ID           string  `json:"id"`
-	MaxStorage   int     `json:"maxStorage"`
-	UsedStorage  int     `json:"usedStorage"`
-	X            int     `json:"x"`
-	Y            int     `json:"y"`
-	MaxHealth    int     `json:"maxHealth"`
-	Health       int     `json:"health"`
-	RequireCoins float64 `json:"requireCoins"`
-	RequireFood  float64 `json:"requireFood"`
-	Fatigue      float64 `json:"fatigue"`
-	Storage      []Item  `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID     string  `json:"sectorId"`
-	AccountID    string  `json:"accountId"`
+	ID           string         `json:"id"`
+	MaxStorage   int            `json:"maxStorage"`
+	UsedStorage  int            `json:"usedStorage"`
+	X            int            `json:"x"`
+	Y            int            `json:"y"`
+	MaxHealth    int            `json:"maxHealth"`
+	Health       int            `json:"health"`
+	RequireCoins float64        `json:"requireCoins"`
+	RequireFood  float64        `json:"requireFood"`
+	Fatigue      float64        `json:"fatigue"`
+	Storage      []Item         `json:"storage" gorm:"foreignKey:ParentID"`
+	SectorID     string         `json:"sectorId"`
+	AccountID    string         `json:"accountId"`
+	CreatedAt    time.Time      `json:"createdAt"`
+	UpdatedAt    time.Time      `json:"updatedAt"`
+	DeletedAt    gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска рабочего
@@ -476,20 +509,22 @@ type IWorkerRepository interface {
 
 // Модель разведчика
 type Scout struct {
-	gorm.Model
-	ID           string  `json:"id"`
-	MaxStorage   int     `json:"maxStorage"`
-	UsedStorage  int     `json:"usedStorage"`
-	X            int     `json:"x"`
-	Y            int     `json:"y"`
-	MaxHealth    int     `json:"maxHealth"`
-	Health       int     `json:"health"`
-	RequireCoins float64 `json:"requireCoins"`
-	RequireFood  float64 `json:"requireFood"`
-	Fatigue      float64 `json:"fatigue"`
-	Storage      []Item  `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID     string  `json:"sectorId"`
-	AccountID    string  `json:"accountId"`
+	ID           string         `json:"id"`
+	MaxStorage   int            `json:"maxStorage"`
+	UsedStorage  int            `json:"usedStorage"`
+	X            int            `json:"x"`
+	Y            int            `json:"y"`
+	MaxHealth    int            `json:"maxHealth"`
+	Health       int            `json:"health"`
+	RequireCoins float64        `json:"requireCoins"`
+	RequireFood  float64        `json:"requireFood"`
+	Fatigue      float64        `json:"fatigue"`
+	Storage      []Item         `json:"storage" gorm:"foreignKey:ParentID"`
+	SectorID     string         `json:"sectorId"`
+	AccountID    string         `json:"accountId"`
+	CreatedAt    time.Time      `json:"createdAt"`
+	UpdatedAt    time.Time      `json:"updatedAt"`
+	DeletedAt    gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска разведчика
@@ -517,20 +552,22 @@ type IScoutRepository interface {
 
 // Модель воина
 type Warrior struct {
-	gorm.Model
-	ID           string  `json:"id"`
-	MaxStorage   int     `json:"maxStorage"`
-	UsedStorage  int     `json:"usedStorage"`
-	X            int     `json:"x"`
-	Y            int     `json:"y"`
-	MaxHealth    int     `json:"maxHealth"`
-	Health       int     `json:"health"`
-	RequireCoins float64 `json:"requireCoins"`
-	RequireFood  float64 `json:"requireFood"`
-	Fatigue      float64 `json:"fatigue"`
-	Storage      []Item  `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID     string  `json:"sectorId"`
-	AccountID    string  `json:"accountId"`
+	ID           string         `json:"id"`
+	MaxStorage   int            `json:"maxStorage"`
+	UsedStorage  int            `json:"usedStorage"`
+	X            int            `json:"x"`
+	Y            int            `json:"y"`
+	MaxHealth    int            `json:"maxHealth"`
+	Health       int            `json:"health"`
+	RequireCoins float64        `json:"requireCoins"`
+	RequireFood  float64        `json:"requireFood"`
+	Fatigue      float64        `json:"fatigue"`
+	Storage      []Item         `json:"storage" gorm:"foreignKey:ParentID"`
+	SectorID     string         `json:"sectorId"`
+	AccountID    string         `json:"accountId"`
+	CreatedAt    time.Time      `json:"createdAt"`
+	UpdatedAt    time.Time      `json:"updatedAt"`
+	DeletedAt    gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска воинов
@@ -558,20 +595,22 @@ type IWarriorRepository interface {
 
 // Модель торговца
 type Trader struct {
-	gorm.Model
-	ID           string  `json:"id"`
-	MaxStorage   int     `json:"maxStorage"`
-	UsedStorage  int     `json:"usedStorage"`
-	X            int     `json:"x"`
-	Y            int     `json:"y"`
-	MaxHealth    int     `json:"maxHealth"`
-	Health       int     `json:"health"`
-	RequireCoins float64 `json:"requireCoins"`
-	RequireFood  float64 `json:"requireFood"`
-	Fatigue      float64 `json:"fatigue"`
-	Storage      []Item  `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID     string  `json:"sectorId"`
-	AccountID    string  `json:"accountId"`
+	ID           string         `json:"id"`
+	MaxStorage   int            `json:"maxStorage"`
+	UsedStorage  int            `json:"usedStorage"`
+	X            int            `json:"x"`
+	Y            int            `json:"y"`
+	MaxHealth    int            `json:"maxHealth"`
+	Health       int            `json:"health"`
+	RequireCoins float64        `json:"requireCoins"`
+	RequireFood  float64        `json:"requireFood"`
+	Fatigue      float64        `json:"fatigue"`
+	Storage      []Item         `json:"storage" gorm:"foreignKey:ParentID"`
+	SectorID     string         `json:"sectorId"`
+	AccountID    string         `json:"accountId"`
+	CreatedAt    time.Time      `json:"createdAt"`
+	UpdatedAt    time.Time      `json:"updatedAt"`
+	DeletedAt    gorm.DeletedAt `gorm:"index"`
 }
 
 // Структура поиска торговца

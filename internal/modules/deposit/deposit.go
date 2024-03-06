@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
+
 	deposit_service "github.com/jourloy/X-Backend/internal/modules/deposit/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/tools"
@@ -25,7 +26,9 @@ type Controller struct {
 // Init создает контроллер залежи
 func Init() *Controller {
 	service := deposit_service.Init()
-	logger.Info(`Controller initialized`)
+
+	logger.Info(`Deposit controller initialized`)
+
 	return &Controller{
 		service: *service,
 	}

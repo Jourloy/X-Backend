@@ -9,12 +9,12 @@ import (
 	"github.com/jourloy/X-Backend/internal/handlers"
 	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/deposit_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/itemTemplate_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/item_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/item_template_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/market_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/plan_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/resourceTemplate_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/resource_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/resource_template_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/scout_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/storage_rep"
@@ -103,8 +103,8 @@ func initReps() {
 	storage_rep.Init()
 	tower_rep.Init()
 	market_rep.Init()
-	resourceTemplate_rep.Init()
-	itemTemplate_rep.Init()
+	resource_template_rep.Init()
+	item_template_rep.Init()
 	scout_rep.Init()
 }
 

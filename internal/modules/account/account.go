@@ -22,10 +22,12 @@ type Controller struct {
 	service account_service.Service
 }
 
-// InitAccountService создает сервис аккаунта
-func InitAccountService() *Controller {
-	service := account_service.InitAccountService()
-	logger.Info(`Controller initialized`)
+// Init создает сервис аккаунта
+func Init() *Controller {
+	service := account_service.Init()
+
+	logger.Info(`Account controller initialized`)
+
 	return &Controller{
 		service: *service,
 	}
@@ -43,9 +45,10 @@ func (s *Controller) Create(c *gin.Context) {
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+		return
 	}
 
-	c.JSON(200, gin.H{`error`: ``})
+	c.JSON(200, gin.H{`error`: ``, `account`: resp.Account})
 }
 
 // GetOne получает аккаунт авторизованного пользователя

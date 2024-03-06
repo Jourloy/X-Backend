@@ -26,7 +26,9 @@ type Controller struct {
 // Init создает контроллер главного здания
 func Init() *Controller {
 	service := townhall_service.Init()
-	logger.Info(`Controller initialized`)
+
+	logger.Info(`Townhall controller initialized`)
+
 	return &Controller{
 		service: *service,
 	}

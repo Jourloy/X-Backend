@@ -26,11 +26,6 @@ type sectorRepository struct {
 
 // Init создает репозиторий
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Sector{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &sectorRepository{
 		db: *storage.Database,
 	}

@@ -26,11 +26,6 @@ type ItemRepository struct {
 
 // Init создает репозиторий предмета
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Item{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &ItemRepository{
 		db: *storage.Database,
 	}

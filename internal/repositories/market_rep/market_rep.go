@@ -26,11 +26,6 @@ type MarketRepository struct {
 
 // Init создает репозиторий рынка
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Market{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &MarketRepository{
 		db: *storage.Database,
 	}

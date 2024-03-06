@@ -26,7 +26,9 @@ type Controller struct {
 // Init создает контроллер планируемой постройки
 func Init() *Controller {
 	service := plan_service.Init()
-	logger.Info(`Controller initialized`)
+
+	logger.Info(`Plan controller initialized`)
+
 	return &Controller{
 		service: *service,
 	}

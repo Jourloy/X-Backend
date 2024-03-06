@@ -26,11 +26,6 @@ type WallRepository struct {
 
 // Init создает репозиторий стены
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Wall{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &WallRepository{
 		db: *storage.Database,
 	}

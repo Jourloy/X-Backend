@@ -7,7 +7,7 @@ import (
 
 func InitItem(g *gin.RouterGroup) {
 
-	controller := item.InitItemService()
+	controller := item.Init()
 
 	g.POST(``, controller.Create)
 	g.GET(``, controller.GetOne)

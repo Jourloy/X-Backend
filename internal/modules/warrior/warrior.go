@@ -26,7 +26,9 @@ type Controller struct {
 // Init создает контроллер воина
 func Init() *Controller {
 	service := warrior_service.Init()
-	logger.Info(`Controller initialized`)
+
+	logger.Info(`Warrior controller initialized`)
+
 	return &Controller{
 		service: *service,
 	}

@@ -26,11 +26,6 @@ type planRepository struct {
 
 // Init создает репозиторий планируемой постройки
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Plan{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &planRepository{
 		db: *storage.Database,
 	}

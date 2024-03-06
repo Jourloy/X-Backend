@@ -23,10 +23,12 @@ type Controller struct {
 	service item_service.Service
 }
 
-// InitItemService создает сервис предмета
-func InitItemService() *Controller {
+// Init создает сервис предмета
+func Init() *Controller {
 	service := item_service.Init()
-	logger.Info(`Controller initialized`)
+
+	logger.Info(`Item controller initialized`)
+
 	return &Controller{
 		service: *service,
 	}

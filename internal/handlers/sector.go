@@ -7,7 +7,7 @@ import (
 
 func InitSector(g *gin.RouterGroup) {
 
-	controller := sector.InitSectorService()
+	controller := sector.Init()
 
 	g.POST(``, controller.Create)
 	g.GET(``, controller.GetOne)

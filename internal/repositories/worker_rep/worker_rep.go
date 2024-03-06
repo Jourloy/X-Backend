@@ -26,11 +26,6 @@ type WorkerRepository struct {
 
 // Init создает репозиторий рабочего
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Worker{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &WorkerRepository{
 		db: *storage.Database,
 	}

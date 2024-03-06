@@ -26,11 +26,6 @@ type TownhallRepository struct {
 
 // Init создает репозиторий главного здания
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Townhall{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &TownhallRepository{
 		db: *storage.Database,
 	}

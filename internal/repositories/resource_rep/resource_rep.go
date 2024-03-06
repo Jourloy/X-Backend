@@ -26,11 +26,6 @@ type ResourceRepository struct {
 
 // Init создает репозиторий
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Resource{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &ResourceRepository{
 		db: *storage.Database,
 	}

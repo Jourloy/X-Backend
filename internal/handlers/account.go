@@ -7,7 +7,7 @@ import (
 
 func InitAccount(g *gin.RouterGroup) {
 
-	controller := account.InitAccountService()
+	controller := account.Init()
 
 	g.POST(``, controller.Create)
 	g.GET(``, controller.GetMe)

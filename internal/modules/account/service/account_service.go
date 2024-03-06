@@ -1,9 +1,6 @@
 package account_service
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
@@ -11,24 +8,15 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
 )
 
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[account-service]`,
-		Level:  log.DebugLevel,
-	})
-)
-
 type Service struct {
 	aRep  repositories.IAccountRepository
 	cache redis.Client
 }
 
-// InitAccountService создает сервис аккаунта
-func InitAccountService() *Service {
+// Init создает сервис аккаунта
+func Init() *Service {
 
 	aRep := account_rep.Repository
-
-	logger.Info(`Service initialized`)
 
 	return &Service{
 		aRep:  aRep,
@@ -37,14 +25,16 @@ func InitAccountService() *Service {
 }
 
 type createResp struct {
-	Err error
+	Account *repositories.Account
+	Err     error
 }
 
 // Create создает аккаунт
 func (s *Service) Create(body repositories.AccountCreate) createResp {
-	s.aRep.Create(&body)
+	account, err := s.aRep.Create(&body)
 	return createResp{
-		Err: nil,
+		Err:     err,
+		Account: account,
 	}
 }
 

@@ -26,11 +26,6 @@ type warriorRepository struct {
 
 // Init создает репозиторий воина
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Warrior{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &warriorRepository{
 		db: *storage.Database,
 	}

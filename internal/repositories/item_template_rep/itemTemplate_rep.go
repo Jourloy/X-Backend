@@ -1,4 +1,4 @@
-package itemTemplate_rep
+package item_template_rep
 
 import (
 	"os"
@@ -26,11 +26,6 @@ type ItemTemplateRepository struct {
 
 // Init создает репозиторий шаблона предмета
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.ItemTemplate{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &ItemTemplateRepository{
 		db: *storage.Database,
 	}

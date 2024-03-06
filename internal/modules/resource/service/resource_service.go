@@ -2,22 +2,13 @@ package resource_service
 
 import (
 	"errors"
-	"os"
 
-	"github.com/charmbracelet/log"
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/repositories/resource_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[resource-service]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 type ResourceService struct {
@@ -33,8 +24,6 @@ func Init() *ResourceService {
 	resRep := resource_rep.Repository
 	secRep := sector_rep.Repository
 
-	logger.Info(`ResourceService initialized`)
-
 	return &ResourceService{
 		resRep: resRep,
 		secRep: secRep,
@@ -49,8 +38,9 @@ type createResp struct {
 // Create создает ресурс
 func (s *ResourceService) Create(body repositories.Resource) createResp {
 	// Проверка существования аккаунта
-	account := s.accRep.GetOne(repositories.Account{ID: body.CreatorID})
-	if account.ID == `` {
+	account := repositories.Account{ID: body.CreatorID}
+	s.accRep.GetOne(&account)
+	if account.Username == `` {
 		return createResp{Err: errors.New(`account not found`)}
 	}
 
@@ -71,7 +61,8 @@ type getOneResp struct {
 
 // GetOne получает ресурс по id
 func (s *ResourceService) GetOne(resourceID string) getOneResp {
-	resource := s.resRep.GetOne(resourceID)
+	resource := repositories.Resource{ID: resourceID}
+	s.resRep.GetOne(resource)
 	return getOneResp{
 		Err:      nil,
 		Resource: resource,

@@ -26,11 +26,6 @@ type TowerRepository struct {
 
 // Init создает репозиторий башни
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Tower{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &TowerRepository{
 		db: *storage.Database,
 	}

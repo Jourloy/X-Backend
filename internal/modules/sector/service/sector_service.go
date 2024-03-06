@@ -1,9 +1,6 @@
 package sector_service
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
@@ -11,24 +8,15 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 )
 
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[sector-service]`,
-		Level:  log.DebugLevel,
-	})
-)
-
 type Service struct {
 	secRep repositories.ISectorRepository
 	cache  redis.Client
 }
 
-// InitSectorService создает сервис сектора
-func InitSectorService() *Service {
+// Init создает сервис сектора
+func Init() *Service {
 
 	secRep := sector_rep.Repository
-
-	logger.Info(`Service initialized`)
 
 	return &Service{
 		secRep: secRep,

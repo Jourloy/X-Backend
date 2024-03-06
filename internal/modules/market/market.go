@@ -26,7 +26,9 @@ type Controller struct {
 // Init создает контроллер рынка
 func Init() *Controller {
 	service := market_service.Init()
-	logger.Info(`Controller initialized`)
+
+	logger.Info(`Market controller initialized`)
+
 	return &Controller{
 		service: *service,
 	}

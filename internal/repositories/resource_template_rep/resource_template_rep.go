@@ -1,4 +1,4 @@
-package resourceTemplate_rep
+package resource_template_rep
 
 import (
 	"os"
@@ -26,11 +26,6 @@ type ResourceTemplateRepository struct {
 
 // Init создает шаблон ресурсов
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.ResourceTemplate{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &ResourceTemplateRepository{
 		db: *storage.Database,
 	}

@@ -26,11 +26,6 @@ type ScoutRepository struct {
 
 // Init создает репозиторий разведчика
 func Init() {
-	// Автоматическая миграция
-	if err := storage.Database.AutoMigrate(&repositories.Scout{}); err != nil {
-		logger.Fatal(`Migration failed`)
-	}
-
 	Repository = &ScoutRepository{
 		db: *storage.Database,
 	}
