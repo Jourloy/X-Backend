@@ -429,27 +429,31 @@ type IMarketRepository interface {
 // Модель рабочего
 type Worker struct {
 	gorm.Model
-	ID          string `json:"id"`
-	MaxStorage  int    `json:"maxStorage"`
-	UsedStorage int    `json:"usedStorage"`
-	X           int    `json:"x"`
-	Y           int    `json:"y"`
-	MaxHealth   int    `json:"maxHealth"`
-	Health      int    `json:"health"`
-	Storage     []Item `json:"storage"`
-	SectorID    string `json:"sectorId"`
-	AccountID   string `json:"accountId"`
+	ID           string  `json:"id"`
+	MaxStorage   int     `json:"maxStorage"`
+	UsedStorage  int     `json:"usedStorage"`
+	X            int     `json:"x"`
+	Y            int     `json:"y"`
+	MaxHealth    int     `json:"maxHealth"`
+	Health       int     `json:"health"`
+	RequireCoins float64 `json:"requireCoins"`
+	RequireFood  float64 `json:"requireFood"`
+	Storage      []Item  `json:"storage"`
+	SectorID     string  `json:"sectorId"`
+	AccountID    string  `json:"accountId"`
 }
 
 // Структура поиска рабочего
 type WorkerGetAll struct {
-	MaxStorage  *int
-	UsedStorage *int
-	X           *int
-	Y           *int
-	MaxHealth   *int
-	Health      *int
-	Limit       *int
+	MaxStorage   *int
+	UsedStorage  *int
+	X            *int
+	Y            *int
+	MaxHealth    *int
+	Health       *int
+	RequireCoins *float64
+	RequireFood  *float64
+	Limit        *int
 }
 
 // Репозиторий рабочего
@@ -464,27 +468,31 @@ type IWorkerRepository interface {
 // Модель разведчика
 type Scout struct {
 	gorm.Model
-	ID          string `json:"id"`
-	MaxStorage  int    `json:"maxStorage"`
-	UsedStorage int    `json:"usedStorage"`
-	X           int    `json:"x"`
-	Y           int    `json:"y"`
-	MaxHealth   int    `json:"maxHealth"`
-	Health      int    `json:"health"`
-	Storage     []Item `json:"storage"`
-	SectorID    string `json:"sectorId"`
-	AccountID   string `json:"accountId"`
+	ID           string  `json:"id"`
+	MaxStorage   int     `json:"maxStorage"`
+	UsedStorage  int     `json:"usedStorage"`
+	X            int     `json:"x"`
+	Y            int     `json:"y"`
+	MaxHealth    int     `json:"maxHealth"`
+	Health       int     `json:"health"`
+	RequireCoins float64 `json:"requireCoins"`
+	RequireFood  float64 `json:"requireFood"`
+	Storage      []Item  `json:"storage"`
+	SectorID     string  `json:"sectorId"`
+	AccountID    string  `json:"accountId"`
 }
 
 // Структура поиска разведчика
 type ScoutGetAll struct {
-	MaxStorage  *int
-	UsedStorage *int
-	X           *int
-	Y           *int
-	MaxHealth   *int
-	Health      *int
-	Limit       *int
+	MaxStorage   *int
+	UsedStorage  *int
+	X            *int
+	Y            *int
+	MaxHealth    *int
+	Health       *int
+	RequireCoins *float64
+	RequireFood  *float64
+	Limit        *int
 }
 
 // Репозиторий разведчика
@@ -499,27 +507,31 @@ type IScoutRepository interface {
 // Модель воина
 type Warrior struct {
 	gorm.Model
-	ID          string `json:"id"`
-	MaxStorage  int    `json:"maxStorage"`
-	UsedStorage int    `json:"usedStorage"`
-	X           int    `json:"x"`
-	Y           int    `json:"y"`
-	MaxHealth   int    `json:"maxHealth"`
-	Health      int    `json:"health"`
-	Storage     []Item `json:"storage"`
-	SectorID    string `json:"sectorId"`
-	AccountID   string `json:"accountId"`
+	ID           string  `json:"id"`
+	MaxStorage   int     `json:"maxStorage"`
+	UsedStorage  int     `json:"usedStorage"`
+	X            int     `json:"x"`
+	Y            int     `json:"y"`
+	MaxHealth    int     `json:"maxHealth"`
+	Health       int     `json:"health"`
+	RequireCoins float64 `json:"requireCoins"`
+	RequireFood  float64 `json:"requireFood"`
+	Storage      []Item  `json:"storage"`
+	SectorID     string  `json:"sectorId"`
+	AccountID    string  `json:"accountId"`
 }
 
 // Структура поиска воинов
 type WarriorGetAll struct {
-	MaxStorage  *int
-	UsedStorage *int
-	X           *int
-	Y           *int
-	MaxHealth   *int
-	Health      *int
-	Limit       *int
+	MaxStorage   *int
+	UsedStorage  *int
+	X            *int
+	Y            *int
+	MaxHealth    *int
+	Health       *int
+	RequireCoins *float64
+	RequireFood  *float64
+	Limit        *int
 }
 
 // Репозиторий воина
@@ -534,27 +546,31 @@ type IWarriorRepository interface {
 // Модель торговца
 type Trader struct {
 	gorm.Model
-	ID          string `json:"id"`
-	MaxStorage  int    `json:"maxStorage"`
-	UsedStorage int    `json:"usedStorage"`
-	X           int    `json:"x"`
-	Y           int    `json:"y"`
-	MaxHealth   int    `json:"maxHealth"`
-	Health      int    `json:"health"`
-	Storage     []Item `json:"storage"`
-	SectorID    string `json:"sectorId"`
-	AccountID   string `json:"accountId"`
+	ID           string  `json:"id"`
+	MaxStorage   int     `json:"maxStorage"`
+	UsedStorage  int     `json:"usedStorage"`
+	X            int     `json:"x"`
+	Y            int     `json:"y"`
+	MaxHealth    int     `json:"maxHealth"`
+	Health       int     `json:"health"`
+	RequireCoins float64 `json:"requireCoins"`
+	RequireFood  float64 `json:"requireFood"`
+	Storage      []Item  `json:"storage"`
+	SectorID     string  `json:"sectorId"`
+	AccountID    string  `json:"accountId"`
 }
 
 // Структура поиска торговца
 type TraderGetAll struct {
-	MaxStorage  *int
-	UsedStorage *int
-	X           *int
-	Y           *int
-	MaxHealth   *int
-	Health      *int
-	Limit       *int
+	MaxStorage   *int
+	UsedStorage  *int
+	X            *int
+	Y            *int
+	MaxHealth    *int
+	Health       *int
+	RequireCoins *float64
+	RequireFood  *float64
+	Limit        *int
 }
 
 // Репозиторий торговца

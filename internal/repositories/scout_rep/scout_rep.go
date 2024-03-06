@@ -39,14 +39,16 @@ func Init() {
 // Create создает разведчика
 func (r *ScoutRepository) Create(scout *repositories.Scout, accountId string) {
 	r.db.Create(&repositories.Scout{
-		ID:          uuid.NewString(),
-		MaxStorage:  scout.MaxStorage,
-		UsedStorage: scout.UsedStorage,
-		X:           scout.X,
-		Y:           scout.Y,
-		MaxHealth:   scout.MaxHealth,
-		Health:      scout.Health,
-		AccountID:   accountId,
+		ID:           uuid.NewString(),
+		MaxStorage:   scout.MaxStorage,
+		UsedStorage:  scout.UsedStorage,
+		X:            scout.X,
+		Y:            scout.Y,
+		MaxHealth:    scout.MaxHealth,
+		Health:       scout.Health,
+		RequireCoins: scout.RequireCoins,
+		RequireFood:  scout.RequireFood,
+		AccountID:    accountId,
 	})
 }
 
@@ -63,13 +65,15 @@ func (r *ScoutRepository) GetOne(id string, accountID string) repositories.Scout
 // GetAll возвращает всех разведчиков
 func (r *ScoutRepository) GetAll(query repositories.ScoutGetAll, accountID string) []repositories.Scout {
 	var scout = repositories.Scout{
-		MaxStorage:  *query.MaxStorage,
-		UsedStorage: *query.UsedStorage,
-		X:           *query.X,
-		Y:           *query.Y,
-		MaxHealth:   *query.MaxHealth,
-		Health:      *query.Health,
-		AccountID:   accountID,
+		MaxStorage:   *query.MaxStorage,
+		UsedStorage:  *query.UsedStorage,
+		X:            *query.X,
+		Y:            *query.Y,
+		MaxHealth:    *query.MaxHealth,
+		Health:       *query.Health,
+		RequireCoins: *query.RequireCoins,
+		RequireFood:  *query.RequireFood,
+		AccountID:    accountID,
 	}
 	var scouts = []repositories.Scout{}
 

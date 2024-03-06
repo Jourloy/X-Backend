@@ -39,14 +39,16 @@ func Init() {
 // Create создает рабочего
 func (r *WorkerRepository) Create(worker *repositories.Worker, accountId string) {
 	r.db.Create(&repositories.Worker{
-		ID:          uuid.NewString(),
-		MaxStorage:  worker.MaxStorage,
-		UsedStorage: worker.UsedStorage,
-		X:           worker.X,
-		Y:           worker.Y,
-		MaxHealth:   worker.MaxHealth,
-		Health:      worker.Health,
-		AccountID:   accountId,
+		ID:           uuid.NewString(),
+		MaxStorage:   worker.MaxStorage,
+		UsedStorage:  worker.UsedStorage,
+		X:            worker.X,
+		Y:            worker.Y,
+		MaxHealth:    worker.MaxHealth,
+		Health:       worker.Health,
+		RequireCoins: worker.RequireCoins,
+		RequireFood:  worker.RequireFood,
+		AccountID:    accountId,
 	})
 }
 
@@ -63,13 +65,15 @@ func (r *WorkerRepository) GetOne(id string, accountID string) repositories.Work
 // GetAll возвращает всех рабочих
 func (r *WorkerRepository) GetAll(query repositories.WorkerGetAll, accountID string) []repositories.Worker {
 	var worker = repositories.Worker{
-		MaxStorage:  *query.MaxStorage,
-		UsedStorage: *query.UsedStorage,
-		X:           *query.X,
-		Y:           *query.Y,
-		MaxHealth:   *query.MaxHealth,
-		Health:      *query.Health,
-		AccountID:   accountID,
+		MaxStorage:   *query.MaxStorage,
+		UsedStorage:  *query.UsedStorage,
+		X:            *query.X,
+		Y:            *query.Y,
+		MaxHealth:    *query.MaxHealth,
+		Health:       *query.Health,
+		RequireCoins: *query.RequireCoins,
+		RequireFood:  *query.RequireFood,
+		AccountID:    accountID,
 	}
 	var workers = []repositories.Worker{}
 

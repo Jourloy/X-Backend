@@ -82,6 +82,14 @@ func (s *Controller) GetAll(c *gin.Context) {
 		n, _ := strconv.Atoi(q)
 		query.UsedStorage = &n
 	}
+	if q := c.Query(`requireCoins`); q != `` {
+		n, _ := strconv.ParseFloat(q, 64)
+		query.RequireCoins = &n
+	}
+	if q := c.Query(`requireFood`); q != `` {
+		n, _ := strconv.ParseFloat(q, 64)
+		query.RequireFood = &n
+	}
 	if q := c.Query(`maxStorage`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.MaxStorage = &n

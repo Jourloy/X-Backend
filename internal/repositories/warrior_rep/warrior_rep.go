@@ -39,14 +39,16 @@ func Init() {
 // Create создает воина
 func (r *warriorRepository) Create(warrior *repositories.Warrior, accountId string) {
 	r.db.Create(&repositories.Warrior{
-		ID:          uuid.NewString(),
-		MaxStorage:  warrior.MaxStorage,
-		UsedStorage: warrior.UsedStorage,
-		X:           warrior.X,
-		Y:           warrior.Y,
-		MaxHealth:   warrior.MaxHealth,
-		Health:      warrior.Health,
-		AccountID:   accountId,
+		ID:           uuid.NewString(),
+		MaxStorage:   warrior.MaxStorage,
+		UsedStorage:  warrior.UsedStorage,
+		X:            warrior.X,
+		Y:            warrior.Y,
+		MaxHealth:    warrior.MaxHealth,
+		Health:       warrior.Health,
+		RequireCoins: warrior.RequireCoins,
+		RequireFood:  warrior.RequireFood,
+		AccountID:    accountId,
 	})
 }
 
@@ -63,13 +65,15 @@ func (r *warriorRepository) GetOne(id string, accountID string) repositories.War
 // GetAll возвращает всех воинов
 func (r *warriorRepository) GetAll(query repositories.WarriorGetAll, accountID string) []repositories.Warrior {
 	var warrior = repositories.Warrior{
-		MaxStorage:  *query.MaxStorage,
-		UsedStorage: *query.UsedStorage,
-		X:           *query.X,
-		Y:           *query.Y,
-		MaxHealth:   *query.MaxHealth,
-		Health:      *query.Health,
-		AccountID:   accountID,
+		MaxStorage:   *query.MaxStorage,
+		UsedStorage:  *query.UsedStorage,
+		X:            *query.X,
+		Y:            *query.Y,
+		MaxHealth:    *query.MaxHealth,
+		Health:       *query.Health,
+		RequireCoins: *query.RequireCoins,
+		RequireFood:  *query.RequireFood,
+		AccountID:    accountID,
 	}
 	var warriors = []repositories.Warrior{}
 

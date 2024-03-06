@@ -39,14 +39,16 @@ func Init() {
 // Create создает торговца
 func (r *traderRepository) Create(trader *repositories.Trader, accountId string) {
 	r.db.Create(&repositories.Trader{
-		ID:          uuid.NewString(),
-		MaxStorage:  trader.MaxStorage,
-		UsedStorage: trader.UsedStorage,
-		X:           trader.X,
-		Y:           trader.Y,
-		MaxHealth:   trader.MaxHealth,
-		Health:      trader.Health,
-		AccountID:   accountId,
+		ID:           uuid.NewString(),
+		MaxStorage:   trader.MaxStorage,
+		UsedStorage:  trader.UsedStorage,
+		X:            trader.X,
+		Y:            trader.Y,
+		MaxHealth:    trader.MaxHealth,
+		Health:       trader.Health,
+		RequireCoins: trader.RequireCoins,
+		RequireFood:  trader.RequireFood,
+		AccountID:    accountId,
 	})
 }
 
@@ -62,13 +64,15 @@ func (r *traderRepository) GetOne(id string, accountID string) repositories.Trad
 
 func (r *traderRepository) GetAll(query repositories.TraderGetAll, accountID string) []repositories.Trader {
 	var trader = repositories.Trader{
-		MaxStorage:  *query.MaxStorage,
-		UsedStorage: *query.UsedStorage,
-		X:           *query.X,
-		Y:           *query.Y,
-		MaxHealth:   *query.MaxHealth,
-		Health:      *query.Health,
-		AccountID:   accountID,
+		MaxStorage:   *query.MaxStorage,
+		UsedStorage:  *query.UsedStorage,
+		X:            *query.X,
+		Y:            *query.Y,
+		MaxHealth:    *query.MaxHealth,
+		Health:       *query.Health,
+		RequireCoins: *query.RequireCoins,
+		RequireFood:  *query.RequireFood,
+		AccountID:    accountID,
 	}
 	var traders = []repositories.Trader{}
 
