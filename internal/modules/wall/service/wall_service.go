@@ -52,7 +52,7 @@ type createResp struct {
 // Create создает стену
 func (s *Service) Create(body repositories.Wall, accountID string) createResp {
 	// Проверка существования аккаунта
-	account := s.accRep.GetOne(accountID)
+	account := s.accRep.GetOne(repositories.Account{ID: accountID})
 	if account.ID == `` {
 		return createResp{Err: errors.New(`account not found`)}
 	}

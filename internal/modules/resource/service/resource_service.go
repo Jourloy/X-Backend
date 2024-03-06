@@ -49,7 +49,7 @@ type createResp struct {
 // Create создает ресурс
 func (s *ResourceService) Create(body repositories.Resource) createResp {
 	// Проверка существования аккаунта
-	account := s.accRep.GetOne(body.CreatorID)
+	account := s.accRep.GetOne(repositories.Account{ID: body.CreatorID})
 	if account.ID == `` {
 		return createResp{Err: errors.New(`account not found`)}
 	}
