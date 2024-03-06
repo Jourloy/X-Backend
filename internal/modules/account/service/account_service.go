@@ -55,10 +55,11 @@ type getOneResp struct {
 
 // GetOne получает аккаунт по id
 func (s *Service) GetOne(accountID string) getOneResp {
-	a := s.aRep.GetOne(repositories.Account{ID: accountID})
+	user := repositories.Account{ID: accountID}
+	s.aRep.GetOne(&user)
 	return getOneResp{
 		Err:     nil,
-		Account: a,
+		Account: user,
 	}
 }
 

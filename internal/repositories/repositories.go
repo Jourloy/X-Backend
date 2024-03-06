@@ -17,7 +17,7 @@ type AccountCreate struct {
 
 type IAccountRepository interface {
 	Create(create *AccountCreate) (Account, error)
-	GetOne(account Account) Account
+	GetOne(account *Account)
 	UpdateOne(account *Account)
 	DeleteOne(account *Account)
 }

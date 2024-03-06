@@ -1,7 +1,6 @@
 package account_rep
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/charmbracelet/log"
@@ -39,8 +38,10 @@ func Init() {
 
 // Create создает аккаунт
 func (r *AccountRepository) Create(create *repositories.AccountCreate) (repositories.Account, error) {
-	u := r.GetOne(repositories.Account{Username: create.Username})
-	fmt.Println(u)
+	u := repositories.Account{Username: create.Username}
+	r.GetOne(&u)
+	logger.Debug(create.Username)
+	logger.Debug(u.Username)
 
 	user := repositories.Account{
 		ID:       uuid.NewString(),
@@ -53,9 +54,8 @@ func (r *AccountRepository) Create(create *repositories.AccountCreate) (reposito
 }
 
 // GetOne возвращает первый аккаунт, попавший под условие
-func (r *AccountRepository) GetOne(account repositories.Account) repositories.Account {
+func (r *AccountRepository) GetOne(account *repositories.Account) {
 	r.db.First(&account)
-	return account
 }
 
 // UpdateOne обновляет аккаунт
