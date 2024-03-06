@@ -2,6 +2,7 @@ package repositories
 
 import "gorm.io/gorm"
 
+// Модель аккаунта
 type Account struct {
 	gorm.Model
 	ID      string `json:"id"`

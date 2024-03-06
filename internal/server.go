@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
 
+	"github.com/jourloy/X-Backend/internal/handlers"
 	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/deposit_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/itemTemplate_rep"
@@ -43,6 +44,12 @@ func StartServer() {
 	// Middlewares
 	r.Use(middlewares.Logger())
 	r.Use(gin.Recovery())
+
+	// Группы
+	account := r.Group(`account`)
+
+	// Инициализация групп
+	handlers.InitAccount(account)
 
 	// Запуск сервера
 	log.Info(`Server started on port 10000`)
