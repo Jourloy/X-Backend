@@ -16,7 +16,7 @@ type AccountCreate struct {
 }
 
 type IAccountRepository interface {
-	Create(account *AccountCreate) (Account, error)
+	Create(create *AccountCreate) (Account, error)
 	GetOne(account Account) Account
 	UpdateOne(account *Account)
 	DeleteOne(account *Account)
@@ -43,6 +43,7 @@ type Sector struct {
 	Workers  []Worker  `json:"workes"`
 	Warriors []Warrior `json:"warriors"`
 	Traders  []Trader  `json:"traders"`
+	Scouts   []Scout   `json:"scouts"`
 
 	// Ресурсы
 

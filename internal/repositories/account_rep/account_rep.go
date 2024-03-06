@@ -38,14 +38,14 @@ func Init() {
 }
 
 // Create создает аккаунт
-func (r *AccountRepository) Create(account *repositories.AccountCreate) (repositories.Account, error) {
-	u := r.GetOne(repositories.Account{Username: account.Username})
+func (r *AccountRepository) Create(create *repositories.AccountCreate) (repositories.Account, error) {
+	u := r.GetOne(repositories.Account{Username: create.Username})
 	fmt.Println(u)
 
 	user := repositories.Account{
 		ID:       uuid.NewString(),
 		ApiKey:   uuid.NewString(),
-		Username: account.Username,
+		Username: create.Username,
 		Balance:  0,
 	}
 	res := r.db.Create(&user)
