@@ -40,8 +40,8 @@ func Init() {
 func (r *traderRepository) Create(trader *repositories.Trader, accountId string) {
 	r.db.Create(&repositories.Trader{
 		ID:           uuid.NewString(),
-		MaxStorage:   trader.MaxStorage,
-		UsedStorage:  100,
+		MaxStorage:   100,
+		UsedStorage:  0,
 		X:            trader.X,
 		Y:            trader.Y,
 		MaxHealth:    100,
