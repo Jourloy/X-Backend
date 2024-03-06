@@ -40,11 +40,11 @@ func Init() {
 func (r *TowerRepository) Create(tower *repositories.Tower, accountId string) {
 	r.db.Create(&repositories.Tower{
 		ID:            uuid.NewString(),
-		MaxDurability: tower.MaxDurability,
-		Durability:    tower.Durability,
-		Level:         tower.Level,
-		MaxStorage:    tower.MaxStorage,
-		UsedStorage:   tower.UsedStorage,
+		MaxDurability: 500,
+		Durability:    500,
+		Level:         1,
+		MaxStorage:    500,
+		UsedStorage:   0,
 		X:             tower.X,
 		Y:             tower.Y,
 		AccountID:     accountId,

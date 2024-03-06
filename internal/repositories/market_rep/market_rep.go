@@ -43,7 +43,7 @@ func (r *MarketRepository) Create(market *repositories.Market, accountId string)
 		MaxDurability: 1000,
 		Durability:    1000,
 		Level:         1,
-		MaxStorage:    10000,
+		MaxStorage:    1000,
 		UsedStorage:   0,
 		X:             market.X,
 		Y:             market.Y,

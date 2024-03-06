@@ -40,10 +40,10 @@ func Init() {
 func (r *TownhallRepository) Create(townhall *repositories.Townhall, accountId string) {
 	r.db.Create(&repositories.Townhall{
 		ID:            uuid.NewString(),
-		MaxDurability: townhall.MaxDurability,
-		Durability:    townhall.Durability,
-		MaxStorage:    townhall.MaxStorage,
-		UsedStorage:   townhall.UsedStorage,
+		MaxDurability: 5000,
+		Durability:    5000,
+		MaxStorage:    500,
+		UsedStorage:   0,
 		X:             townhall.X,
 		Y:             townhall.Y,
 		AccountID:     accountId,

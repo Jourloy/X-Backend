@@ -40,11 +40,11 @@ func Init() {
 func (r *WallRepository) Create(wall *repositories.Wall, accountId string) {
 	r.db.Create(&repositories.Wall{
 		ID:            uuid.NewString(),
-		MaxDurability: wall.MaxDurability,
-		Durability:    wall.Durability,
+		MaxDurability: 1000,
+		Durability:    1000,
 		X:             wall.X,
 		Y:             wall.Y,
-		Level:         wall.Level,
+		Level:         1,
 		AccountID:     accountId,
 	})
 }

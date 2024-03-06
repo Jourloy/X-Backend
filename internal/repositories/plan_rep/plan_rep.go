@@ -41,7 +41,7 @@ func (r *planRepository) Create(plan *repositories.Plan, accountId string) {
 	r.db.Create(&repositories.Plan{
 		ID:          uuid.NewString(),
 		MaxProgress: plan.MaxProgress,
-		Progress:    plan.Progress,
+		Progress:    0,
 		X:           plan.X,
 		Y:           plan.Y,
 		Type:        plan.Type,
