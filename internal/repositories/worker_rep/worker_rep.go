@@ -41,7 +41,7 @@ func (r *WorkerRepository) Create(worker *repositories.Worker, accountId string)
 	r.db.Create(&repositories.Worker{
 		ID:           uuid.NewString(),
 		MaxStorage:   worker.MaxStorage,
-		UsedStorage:  worker.UsedStorage,
+		UsedStorage:  50,
 		X:            worker.X,
 		Y:            worker.Y,
 		MaxHealth:    100,

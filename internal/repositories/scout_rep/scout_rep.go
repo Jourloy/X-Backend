@@ -41,7 +41,7 @@ func (r *ScoutRepository) Create(scout *repositories.Scout, accountId string) {
 	r.db.Create(&repositories.Scout{
 		ID:           uuid.NewString(),
 		MaxStorage:   scout.MaxStorage,
-		UsedStorage:  scout.UsedStorage,
+		UsedStorage:  10,
 		X:            scout.X,
 		Y:            scout.Y,
 		MaxHealth:    100,

@@ -41,7 +41,7 @@ func (r *warriorRepository) Create(warrior *repositories.Warrior, accountId stri
 	r.db.Create(&repositories.Warrior{
 		ID:           uuid.NewString(),
 		MaxStorage:   warrior.MaxStorage,
-		UsedStorage:  warrior.UsedStorage,
+		UsedStorage:  10,
 		X:            warrior.X,
 		Y:            warrior.Y,
 		MaxHealth:    100,
