@@ -5,14 +5,19 @@ import "gorm.io/gorm"
 // Модель аккаунта
 type Account struct {
 	gorm.Model
-	ID      string `json:"id"`
-	ApiKey  string `json:"apiKey"`
-	Balance int    `json:"balance"`
+	ID       string `json:"id"`
+	ApiKey   string `json:"apiKey"`
+	Username string `json:"username"`
+	Balance  int    `json:"balance"`
+}
+
+type AccountCreate struct {
+	Username string `json:"username"`
 }
 
 type IAccountRepository interface {
-	Create(account *Account)
-	GetOne(apiKey string) Account
+	Create(account *AccountCreate) (Account, error)
+	GetOne(account Account) Account
 	UpdateOne(account *Account)
 	DeleteOne(account *Account)
 }
@@ -42,11 +47,11 @@ type Sector struct {
 	// Ресурсы
 
 	Deposits  []Deposit  `json:"deposits"`
-	Resources []Resource `json:"resources"`
+	Resources []Resource `json:"resources" gorm:"foreignKey:ParentID"`
 
 	// Предметы
 
-	Items []Item `json:"items"`
+	Items []Item `json:"items" gorm:"foreignKey:ParentID"`
 }
 
 // Модель поиска сектора
@@ -157,11 +162,11 @@ type IResourceTemplateRepository interface {
 // Модель предмета
 type Item struct {
 	gorm.Model
-	ID         string `json:"id"`
+	ID         string `json:"id" gorm:"primarykey"`
 	Type       string `json:"type"`
 	X          int    `json:"x"`
 	Y          int    `json:"y"`
-	ParentID   string `json:"workerId"`
+	ParentID   string `json:"parentId"`
 	ParentType string `json:"parentType"`
 	SectorID   string `json:"sectorId"`
 	CreatorID  string `json:"creatorId"`
@@ -215,14 +220,14 @@ type IItemTemplateRepository interface {
 // Модель главного здания
 type Townhall struct {
 	gorm.Model
-	ID            string `json:"id"`
+	ID            string `json:"id" gorm:"primarykey"`
 	MaxDurability int    `json:"maxDurability"`
 	Durability    int    `json:"durability"`
 	MaxStorage    int    `json:"maxStorage"`
 	UsedStorage   int    `json:"usedStorage"`
 	X             int    `json:"x"`
 	Y             int    `json:"y"`
-	Storage       []Item `json:"storage"`
+	Storage       []Item `json:"storage" gorm:"foreignKey:ParentID"`
 	SectorID      string `json:"sectorId"`
 	AccountID     string `json:"accountId"`
 }
@@ -258,7 +263,7 @@ type Tower struct {
 	UsedStorage   int    `json:"usedStorage"`
 	X             int    `json:"x"`
 	Y             int    `json:"y"`
-	Storage       []Item `json:"storage"`
+	Storage       []Item `json:"storage" gorm:"foreignKey:ParentID"`
 	SectorID      string `json:"sectorId"`
 	AccountID     string `json:"accountId"`
 }
@@ -295,7 +300,7 @@ type Storage struct {
 	UsedStorage   int    `json:"usedStorage"`
 	X             int    `json:"x"`
 	Y             int    `json:"y"`
-	Storage       []Item `json:"storage"`
+	Storage       []Item `json:"storage" gorm:"foreignKey:ParentID"`
 	SectorID      string `json:"sectorId"`
 	AccountID     string `json:"accountId"`
 }
@@ -330,7 +335,7 @@ type Wall struct {
 	Level         int    `json:"level"`
 	X             int    `json:"x"`
 	Y             int    `json:"y"`
-	Storage       []Item `json:"storage"`
+	Storage       []Item `json:"storage" gorm:"foreignKey:ParentID"`
 	SectorID      string `json:"sectorId"`
 	AccountID     string `json:"accountId"`
 }
@@ -363,7 +368,7 @@ type Plan struct {
 	Type        string `json:"type"`
 	X           int    `json:"x"`
 	Y           int    `json:"y"`
-	Storage     []Item `json:"storage"`
+	Storage     []Item `json:"storage" gorm:"foreignKey:ParentID"`
 	SectorID    string `json:"sectorId"`
 	AccountID   string `json:"accountId"`
 }
@@ -398,8 +403,8 @@ type Market struct {
 	UsedStorage   int        `json:"usedStorage"`
 	X             int        `json:"x"`
 	Y             int        `json:"y"`
-	Resources     []Resource `json:"resources"`
-	Items         []Item     `json:"items"`
+	Resources     []Resource `json:"resources" gorm:"foreignKey:ParentID"`
+	Items         []Item     `json:"items" gorm:"foreignKey:ParentID"`
 	SectorID      string     `json:"sectorId"`
 	AccountID     string     `json:"accountId"`
 }
@@ -440,7 +445,7 @@ type Worker struct {
 	RequireCoins float64 `json:"requireCoins"`
 	RequireFood  float64 `json:"requireFood"`
 	Fatigue      float64 `json:"fatigue"`
-	Storage      []Item  `json:"storage"`
+	Storage      []Item  `json:"storage" gorm:"foreignKey:ParentID"`
 	SectorID     string  `json:"sectorId"`
 	AccountID    string  `json:"accountId"`
 }
@@ -481,7 +486,7 @@ type Scout struct {
 	RequireCoins float64 `json:"requireCoins"`
 	RequireFood  float64 `json:"requireFood"`
 	Fatigue      float64 `json:"fatigue"`
-	Storage      []Item  `json:"storage"`
+	Storage      []Item  `json:"storage" gorm:"foreignKey:ParentID"`
 	SectorID     string  `json:"sectorId"`
 	AccountID    string  `json:"accountId"`
 }
@@ -522,7 +527,7 @@ type Warrior struct {
 	RequireCoins float64 `json:"requireCoins"`
 	RequireFood  float64 `json:"requireFood"`
 	Fatigue      float64 `json:"fatigue"`
-	Storage      []Item  `json:"storage"`
+	Storage      []Item  `json:"storage" gorm:"foreignKey:ParentID"`
 	SectorID     string  `json:"sectorId"`
 	AccountID    string  `json:"accountId"`
 }
@@ -563,7 +568,7 @@ type Trader struct {
 	RequireCoins float64 `json:"requireCoins"`
 	RequireFood  float64 `json:"requireFood"`
 	Fatigue      float64 `json:"fatigue"`
-	Storage      []Item  `json:"storage"`
+	Storage      []Item  `json:"storage" gorm:"foreignKey:ParentID"`
 	SectorID     string  `json:"sectorId"`
 	AccountID    string  `json:"accountId"`
 }

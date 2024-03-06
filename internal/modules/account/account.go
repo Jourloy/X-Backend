@@ -33,7 +33,7 @@ func InitAccountService() *Controller {
 
 // Create создает аккаунт
 func (s *Controller) Create(c *gin.Context) {
-	var body repositories.Account
+	var body repositories.AccountCreate
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})

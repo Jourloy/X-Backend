@@ -41,7 +41,7 @@ type createResp struct {
 }
 
 // Create создает аккаунт
-func (s *Service) Create(body repositories.Account) createResp {
+func (s *Service) Create(body repositories.AccountCreate) createResp {
 	s.aRep.Create(&body)
 	return createResp{
 		Err: nil,

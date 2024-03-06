@@ -80,8 +80,8 @@ func StartServer() {
 	handlers.InitWorker(workerGroup)
 
 	// Запуск сервера
-	log.Info(`Server started on port 10000`)
-	if err := r.Run(`0.0.0.0:10000`); err != nil {
+	log.Info(`Server started on port 3001`)
+	if err := r.Run(`0.0.0.0:3001`); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -89,9 +89,12 @@ func StartServer() {
 // Инициализация репозиториев
 func initReps() {
 	account_rep.Init()
-	item_rep.Init()
-	resource_rep.Init()
+
 	sector_rep.Init()
+
+	item_rep.Init()
+	townhall_rep.Init()
+	resource_rep.Init()
 	trader_rep.Init()
 	warrior_rep.Init()
 	worker_rep.Init()
@@ -99,7 +102,6 @@ func initReps() {
 	deposit_rep.Init()
 	storage_rep.Init()
 	tower_rep.Init()
-	townhall_rep.Init()
 	market_rep.Init()
 	resourceTemplate_rep.Init()
 	itemTemplate_rep.Init()
