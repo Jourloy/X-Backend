@@ -6,7 +6,6 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 
 	sector_service "github.com/jourloy/X-Backend/internal/modules/sector/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
@@ -25,7 +24,7 @@ type Controller struct {
 }
 
 // InitSectorService создает сервис сектора
-func InitSectorService(db repositories.ISectorRepository, cache redis.Client) *Controller {
+func InitSectorService() *Controller {
 
 	service := sector_service.InitSectorService()
 
