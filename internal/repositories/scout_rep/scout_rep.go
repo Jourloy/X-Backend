@@ -46,8 +46,8 @@ func (r *ScoutRepository) Create(scout *repositories.Scout, accountId string) {
 		Y:            scout.Y,
 		MaxHealth:    scout.MaxHealth,
 		Health:       scout.Health,
-		RequireCoins: scout.RequireCoins,
-		RequireFood:  scout.RequireFood,
+		RequireCoins: 0.5,
+		RequireFood:  0.5,
 		AccountID:    accountId,
 	})
 }

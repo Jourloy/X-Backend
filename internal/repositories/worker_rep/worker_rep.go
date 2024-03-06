@@ -46,8 +46,8 @@ func (r *WorkerRepository) Create(worker *repositories.Worker, accountId string)
 		Y:            worker.Y,
 		MaxHealth:    worker.MaxHealth,
 		Health:       worker.Health,
-		RequireCoins: worker.RequireCoins,
-		RequireFood:  worker.RequireFood,
+		RequireCoins: 0.5,
+		RequireFood:  0.5,
 		AccountID:    accountId,
 	})
 }

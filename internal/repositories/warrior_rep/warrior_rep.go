@@ -46,8 +46,8 @@ func (r *warriorRepository) Create(warrior *repositories.Warrior, accountId stri
 		Y:            warrior.Y,
 		MaxHealth:    warrior.MaxHealth,
 		Health:       warrior.Health,
-		RequireCoins: warrior.RequireCoins,
-		RequireFood:  warrior.RequireFood,
+		RequireCoins: 0.5,
+		RequireFood:  0.5,
 		AccountID:    accountId,
 	})
 }

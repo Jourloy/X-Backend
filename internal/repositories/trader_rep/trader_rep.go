@@ -46,8 +46,8 @@ func (r *traderRepository) Create(trader *repositories.Trader, accountId string)
 		Y:            trader.Y,
 		MaxHealth:    trader.MaxHealth,
 		Health:       trader.Health,
-		RequireCoins: trader.RequireCoins,
-		RequireFood:  trader.RequireFood,
+		RequireCoins: 0.5,
+		RequireFood:  0.5,
 		AccountID:    accountId,
 	})
 }
