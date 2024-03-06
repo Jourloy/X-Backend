@@ -87,10 +87,10 @@ type DepositGetAll struct {
 	Limit  *int
 }
 
-// Репозиторий ресурсов
+// Репозиторий залежей
 type IDepositRepository interface {
 	Create(deposit *Deposit)
-	GetOne(id string, sectorID string) Deposit
+	GetOne(deposit Deposit) Deposit
 	GetAll(query DepositGetAll, sectorID string) []Deposit
 	UpdateOne(deposit *Deposit)
 	DeleteOne(deposit *Deposit)
@@ -128,7 +128,7 @@ type ResourceGetAll struct {
 // Репозиторий ресурсов
 type IResourceRepository interface {
 	Create(resource *Resource)
-	GetOne(id string) Resource
+	GetOne(resource Resource) Resource
 	GetAll(query ResourceGetAll) []Resource
 	UpdateOne(resource *Resource)
 	DeleteOne(resource *Resource)
@@ -154,7 +154,7 @@ type ResourceTemplateGetAll struct {
 // Репозиторий шаблона ресурсов
 type IResourceTemplateRepository interface {
 	Create(resourceTemplate *ResourceTemplate)
-	GetOne(id string) ResourceTemplate
+	GetOne(resourceTemplate ResourceTemplate) ResourceTemplate
 	GetAll(query ResourceTemplateGetAll) []ResourceTemplate
 	UpdateOne(resource *ResourceTemplate)
 	DeleteOne(resource *ResourceTemplate)

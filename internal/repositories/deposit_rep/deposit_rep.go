@@ -24,7 +24,7 @@ type DepositRepository struct {
 	db gorm.DB
 }
 
-// Init создает репозиторий
+// Init создает репозиторий залежей
 func Init() {
 	// Автоматическая миграция
 	if err := storage.Database.AutoMigrate(&repositories.Deposit{}); err != nil {
@@ -36,7 +36,7 @@ func Init() {
 	}
 }
 
-// Create создает ресурс
+// Create создает залежь
 func (r *DepositRepository) Create(deposit *repositories.Deposit) {
 	r.db.Create(&repositories.Resource{
 		ID:       uuid.NewString(),
@@ -46,17 +46,13 @@ func (r *DepositRepository) Create(deposit *repositories.Deposit) {
 	})
 }
 
-// GetOne возвращает первый ресурс, попавший под условие
-func (r *DepositRepository) GetOne(id string, sectorID string) repositories.Deposit {
-	var deposit = repositories.Deposit{
-		SectorID: sectorID,
-		ID:       id,
-	}
+// GetOne возвращает первую залежь, попавшую под условие
+func (r *DepositRepository) GetOne(deposit repositories.Deposit) repositories.Deposit {
 	r.db.First(&deposit)
 	return deposit
 }
 
-// GetAll возвращает все ресурсы
+// GetAll возвращает все залежи
 func (r *DepositRepository) GetAll(query repositories.DepositGetAll, sectorID string) []repositories.Deposit {
 	var deposit = repositories.Deposit{
 		Type:     *query.Type,
@@ -74,12 +70,12 @@ func (r *DepositRepository) GetAll(query repositories.DepositGetAll, sectorID st
 	return deposits
 }
 
-// UpdateOne обновляет ресурс
+// UpdateOne обновляет залежь
 func (r *DepositRepository) UpdateOne(deposit *repositories.Deposit) {
 	r.db.Save(&deposit)
 }
 
-// DeleteOne удаляет ресурс
+// DeleteOne удаляет залежь
 func (r *DepositRepository) DeleteOne(deposit *repositories.Deposit) {
 	r.db.Delete(&deposit)
 }

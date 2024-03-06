@@ -47,10 +47,7 @@ func (r *ResourceTemplateRepository) Create(resourceTemplate *repositories.Resou
 }
 
 // GetOne возвращает первый шаблон ресурсов, попавший под условие
-func (r *ResourceTemplateRepository) GetOne(id string) repositories.ResourceTemplate {
-	var resourceTemplate = repositories.ResourceTemplate{
-		ID: id,
-	}
+func (r *ResourceTemplateRepository) GetOne(resourceTemplate repositories.ResourceTemplate) repositories.ResourceTemplate {
 	r.db.First(&resourceTemplate)
 	return resourceTemplate
 }

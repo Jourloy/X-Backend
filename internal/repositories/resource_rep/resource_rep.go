@@ -13,7 +13,7 @@ import (
 
 var (
 	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-resource]`,
+		Prefix: `[resource-database]`,
 		Level:  log.DebugLevel,
 	})
 )
@@ -53,10 +53,7 @@ func (r *ResourceRepository) Create(resource *repositories.Resource) {
 }
 
 // GetOne возвращает первый ресурс, попавший под условие
-func (r *ResourceRepository) GetOne(id string) repositories.Resource {
-	var resource = repositories.Resource{
-		ID: id,
-	}
+func (r *ResourceRepository) GetOne(resource repositories.Resource) repositories.Resource {
 	r.db.First(&resource)
 	return resource
 }
