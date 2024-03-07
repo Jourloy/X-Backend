@@ -1,21 +1,11 @@
 package townhall_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-townhall]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.ITownhallRepository
@@ -46,13 +36,8 @@ func (r *TownhallRepository) Create(townhall *repositories.Townhall, accountId s
 }
 
 // GetOne возвращает первое главное здание, попавшее под условие
-func (r *TownhallRepository) GetOne(id string, accountID string) repositories.Townhall {
-	var townhall = repositories.Townhall{
-		ID:        id,
-		AccountID: accountID,
-	}
+func (r *TownhallRepository) GetOne(townhall *repositories.Townhall) {
 	r.db.First(&townhall)
-	return townhall
 }
 
 // GetAll возвращает все главные здания

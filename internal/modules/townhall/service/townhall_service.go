@@ -64,7 +64,8 @@ type getOneResp struct {
 }
 
 func (s *Service) GetOne(id string, accountID string) getOneResp {
-	townhall := s.towRep.GetOne(id, accountID)
+	townhall := repositories.Townhall{ID: id, AccountID: accountID}
+	s.towRep.GetOne(&townhall)
 	return getOneResp{
 		Err:      nil,
 		Townhall: townhall,

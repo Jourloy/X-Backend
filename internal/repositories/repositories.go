@@ -268,7 +268,7 @@ type TownhallGetAll struct {
 // Репозиторий главного здания
 type ITownhallRepository interface {
 	Create(townhall *Townhall, accountID string)
-	GetOne(id string, accountID string) Townhall
+	GetOne(townhall *Townhall)
 	GetAll(query TownhallGetAll, accountID string) []Townhall
 	UpdateOne(townhall *Townhall)
 	DeleteOne(townhall *Townhall)
