@@ -229,7 +229,7 @@ type ItemTemplateGetAll struct {
 // Репозиторий шаблона предмета
 type IItemTemplateRepository interface {
 	Create(itemTemplate *ItemTemplate)
-	GetOne(id string) ItemTemplate
+	GetOne(itemTemplate *ItemTemplate)
 	GetAll(query ItemTemplateGetAll) []ItemTemplate
 	UpdateOne(itemTemplate *ItemTemplate)
 	DeleteOne(itemTemplate *ItemTemplate)
