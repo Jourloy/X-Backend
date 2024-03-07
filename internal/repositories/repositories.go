@@ -416,7 +416,7 @@ type PlanGetAll struct {
 // Репозиторий планируемой постройки
 type IPlanRepository interface {
 	Create(plan *Plan, accountID string)
-	GetOne(id string, accountID string) Plan
+	GetOne(plan *Plan)
 	GetAll(query PlanGetAll, accountID string) []Plan
 	UpdateOne(plan *Plan)
 	DeleteOne(plan *Plan)
