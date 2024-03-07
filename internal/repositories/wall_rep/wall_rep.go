@@ -45,13 +45,8 @@ func (r *WallRepository) Create(wall *repositories.Wall, accountId string) {
 }
 
 // GetOne возвращает первую стену, попавую под условие
-func (r *WallRepository) GetOne(id string, accountID string) repositories.Wall {
-	var wall = repositories.Wall{
-		ID:        id,
-		AccountID: accountID,
-	}
-	r.db.First(&wall)
-	return wall
+func (r *WallRepository) GetOne(wall *repositories.Wall) {
+	r.db.First(&wall, wall)
 }
 
 // GetAll возвращает все стены

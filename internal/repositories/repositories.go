@@ -381,7 +381,7 @@ type WallGetAll struct {
 // Репозиторий  стены
 type IWallRepository interface {
 	Create(wall *Wall, accountID string)
-	GetOne(id string, accountID string) Wall
+	GetOne(wall *Wall)
 	GetAll(query WallGetAll, accountID string) []Wall
 	UpdateOne(wall *Wall)
 	DeleteOne(wall *Wall)
