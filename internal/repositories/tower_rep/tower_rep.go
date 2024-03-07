@@ -38,7 +38,7 @@ func (r *TowerRepository) Create(tower *repositories.Tower, accountId string) {
 
 // GetOne возвращает первую башню, попавшую под условие
 func (r *TowerRepository) GetOne(tower *repositories.Tower) {
-	r.db.First(&tower)
+	r.db.First(&tower, tower)
 }
 
 // GetAll возвращает все башни

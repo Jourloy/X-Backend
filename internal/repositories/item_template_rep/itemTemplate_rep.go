@@ -31,7 +31,7 @@ func (r *ItemTemplateRepository) Create(itemTemplate *repositories.ItemTemplate)
 
 // GetOne возвращает первый шаблон предмета, попавший под условие
 func (r *ItemTemplateRepository) GetOne(itemTemplate *repositories.ItemTemplate) {
-	r.db.First(&itemTemplate)
+	r.db.First(&itemTemplate, itemTemplate)
 }
 
 // GetAll возвращает все шаблоны предмета

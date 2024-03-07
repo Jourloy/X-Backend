@@ -37,7 +37,7 @@ func (r *ItemRepository) Create(item *repositories.Item) {
 
 // GetOne возвращает первый пердмет, попавший под условие
 func (r *ItemRepository) GetOne(item *repositories.Item) {
-	r.db.First(&item)
+	r.db.First(&item, item)
 }
 
 // GetAll возвращает все предметы

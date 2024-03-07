@@ -38,7 +38,7 @@ func (r *StorageRepository) Create(storage *repositories.Storage, accountId stri
 
 // GetOne возвращает первое хранилище, попавшее под условие
 func (r *StorageRepository) GetOne(storage *repositories.Storage) {
-	r.db.First(&storage)
+	r.db.First(&storage, storage)
 }
 
 // GetAll возвращает все хранилища

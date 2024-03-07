@@ -37,7 +37,7 @@ func (r *TownhallRepository) Create(townhall *repositories.Townhall, accountId s
 
 // GetOne возвращает первое главное здание, попавшее под условие
 func (r *TownhallRepository) GetOne(townhall *repositories.Townhall) {
-	r.db.First(&townhall)
+	r.db.First(&townhall, townhall)
 }
 
 // GetAll возвращает все главные здания
