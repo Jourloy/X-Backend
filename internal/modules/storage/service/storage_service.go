@@ -64,7 +64,8 @@ type getOneResp struct {
 }
 
 func (s *Service) GetOne(id string, accountID string) getOneResp {
-	storage := s.stoRep.GetOne(id, accountID)
+	storage := repositories.Storage{ID: id, AccountID: accountID}
+	s.stoRep.GetOne(&storage)
 	return getOneResp{
 		Err:     nil,
 		Storage: storage,

@@ -346,7 +346,7 @@ type StorageGetAll struct {
 // Репозиторий хранилища
 type IStorageRepository interface {
 	Create(storage *Storage, accountID string)
-	GetOne(id string, accountID string) Storage
+	GetOne(storage *Storage)
 	GetAll(query StorageGetAll, accountID string) []Storage
 	UpdateOne(storage *Storage)
 	DeleteOne(storage *Storage)
