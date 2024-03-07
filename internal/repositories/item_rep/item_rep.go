@@ -1,21 +1,11 @@
 package item_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-item]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.IItemRepository
@@ -46,12 +36,8 @@ func (r *ItemRepository) Create(item *repositories.Item) {
 }
 
 // GetOne возвращает первый пердмет, попавший под условие
-func (r *ItemRepository) GetOne(id string) repositories.Item {
-	var item = repositories.Item{
-		ID: id,
-	}
+func (r *ItemRepository) GetOne(item *repositories.Item) {
 	r.db.First(&item)
-	return item
 }
 
 // GetAll возвращает все предметы

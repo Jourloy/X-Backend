@@ -74,10 +74,11 @@ type getOneResp struct {
 
 // GetOne получает предмет по id
 func (s *Service) GetOne(id string) getOneResp {
-	i := s.iteRep.GetOne(id)
+	item := repositories.Item{ID: id}
+	s.iteRep.GetOne(&item)
 	return getOneResp{
 		Err:  nil,
-		Item: i,
+		Item: item,
 	}
 }
 

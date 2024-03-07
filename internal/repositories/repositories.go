@@ -205,7 +205,7 @@ type ItemGetAll struct {
 // Репозиторий предмета
 type IItemRepository interface {
 	Create(item *Item)
-	GetOne(id string) Item
+	GetOne(item *Item)
 	GetAll(query ItemGetAll) []Item
 	UpdateOne(item *Item)
 	DeleteOne(item *Item)
