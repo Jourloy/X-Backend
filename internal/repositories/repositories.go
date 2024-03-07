@@ -307,7 +307,7 @@ type TowerGetAll struct {
 // Репозиторий башни
 type ITowerRepository interface {
 	Create(tower *Tower, accountID string)
-	GetOne(id string, accountID string) Tower
+	GetOne(tower *Tower)
 	GetAll(query TowerGetAll, accountID string) []Tower
 	UpdateOne(tower *Tower)
 	DeleteOne(tower *Tower)

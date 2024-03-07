@@ -64,7 +64,8 @@ type getOneResp struct {
 }
 
 func (s *Service) GetOne(id string, accountID string) getOneResp {
-	tower := s.towRep.GetOne(id, accountID)
+	tower := repositories.Tower{ID: id, AccountID: accountID}
+	s.towRep.GetOne(&tower)
 	return getOneResp{
 		Err:   nil,
 		Tower: tower,
