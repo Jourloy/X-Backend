@@ -64,7 +64,8 @@ type getOneResp struct {
 }
 
 func (s *Service) GetOne(id string, accountID string) getOneResp {
-	worker := s.worRep.GetOne(id, accountID)
+	worker := repositories.Worker{ID: id, AccountID: accountID}
+	s.worRep.GetOne(&worker)
 	return getOneResp{
 		Err:    nil,
 		Worker: worker,

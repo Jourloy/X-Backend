@@ -64,7 +64,8 @@ type getOneResp struct {
 }
 
 func (s *Service) GetOne(id string, accountID string) getOneResp {
-	scout := s.scoRep.GetOne(id, accountID)
+	scout := repositories.Scout{ID: id, AccountID: accountID}
+	s.scoRep.GetOne(&scout)
 	return getOneResp{
 		Err:   nil,
 		Scout: scout,

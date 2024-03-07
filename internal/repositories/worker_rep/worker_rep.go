@@ -1,21 +1,11 @@
 package worker_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-worker]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.IWorkerRepository
@@ -49,13 +39,8 @@ func (r *WorkerRepository) Create(worker *repositories.Worker, accountId string)
 }
 
 // GetOne возвращает первого рабочего, попавшего под условие
-func (r *WorkerRepository) GetOne(id string, accountID string) repositories.Worker {
-	var worker = repositories.Worker{
-		ID:        id,
-		AccountID: accountID,
-	}
-	r.db.First(&worker)
-	return worker
+func (r *WorkerRepository) GetOne(worker *repositories.Worker) {
+	r.db.First(&worker, worker)
 }
 
 // GetAll возвращает всех рабочих

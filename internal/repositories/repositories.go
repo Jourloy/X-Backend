@@ -501,7 +501,7 @@ type WorkerGetAll struct {
 // Репозиторий рабочего
 type IWorkerRepository interface {
 	Create(worker *Worker, accountID string)
-	GetOne(id string, accountID string) Worker
+	GetOne(worker *Worker)
 	GetAll(query WorkerGetAll, accountID string) []Worker
 	UpdateOne(worker *Worker)
 	DeleteOne(worker *Worker)
@@ -544,7 +544,7 @@ type ScoutGetAll struct {
 // Репозиторий разведчика
 type IScoutRepository interface {
 	Create(scout *Scout, accountID string)
-	GetOne(id string, accountID string) Scout
+	GetOne(scout *Scout)
 	GetAll(query ScoutGetAll, accountID string) []Scout
 	UpdateOne(scout *Scout)
 	DeleteOne(scout *Scout)
@@ -587,7 +587,7 @@ type WarriorGetAll struct {
 // Репозиторий воина
 type IWarriorRepository interface {
 	Create(warrior *Warrior, accountID string)
-	GetOne(id string, accountID string) Warrior
+	GetOne(warrior *Warrior)
 	GetAll(query WarriorGetAll, accountID string) []Warrior
 	UpdateOne(warrior *Warrior)
 	DeleteOne(warrior *Warrior)

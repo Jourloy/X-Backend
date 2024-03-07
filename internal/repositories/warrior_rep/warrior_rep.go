@@ -1,21 +1,11 @@
 package warrior_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-warrior]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.IWarriorRepository
@@ -49,13 +39,8 @@ func (r *warriorRepository) Create(warrior *repositories.Warrior, accountId stri
 }
 
 // GetOne возвращает первого воина, попавшего под условие
-func (r *warriorRepository) GetOne(id string, accountID string) repositories.Warrior {
-	var warrior = repositories.Warrior{
-		ID:        id,
-		AccountID: accountID,
-	}
-	r.db.First(&warrior)
-	return warrior
+func (r *warriorRepository) GetOne(warrior *repositories.Warrior) {
+	r.db.First(&warrior, warrior)
 }
 
 // GetAll возвращает всех воинов

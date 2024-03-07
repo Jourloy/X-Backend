@@ -1,21 +1,11 @@
 package scout_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-scout]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.IScoutRepository
@@ -49,13 +39,8 @@ func (r *ScoutRepository) Create(scout *repositories.Scout, accountId string) {
 }
 
 // GetOne возвращает первого разведчика, попавшего под условие
-func (r *ScoutRepository) GetOne(id string, accountID string) repositories.Scout {
-	var scout = repositories.Scout{
-		ID:        id,
-		AccountID: accountID,
-	}
-	r.db.First(&scout)
-	return scout
+func (r *ScoutRepository) GetOne(scout *repositories.Scout) {
+	r.db.First(&scout, scout)
 }
 
 // GetAll возвращает всех разведчиков
