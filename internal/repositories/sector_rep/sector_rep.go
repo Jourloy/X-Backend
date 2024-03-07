@@ -13,7 +13,7 @@ import (
 
 var (
 	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-sector]`,
+		Prefix: `[sector-database]`,
 		Level:  log.DebugLevel,
 	})
 )
@@ -41,12 +41,8 @@ func (r *sectorRepository) Create(sector *repositories.Sector) {
 }
 
 // GetOne возвращает сектор по его ID
-func (r *sectorRepository) GetOne(id string) repositories.Sector {
-	var sector = repositories.Sector{
-		ID: id,
-	}
-	r.db.First(&sector)
-	return sector
+func (r *sectorRepository) GetOne(sector *repositories.Sector) {
+	r.db.First(&sector, sector)
 }
 
 // GetAll возвращает все сектора

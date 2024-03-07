@@ -45,7 +45,8 @@ func (s *ResourceService) Create(body repositories.Resource) createResp {
 	}
 
 	// Проверка существования сектора
-	sector := s.secRep.GetOne(body.SectorID)
+	sector := repositories.Sector{ID: body.SectorID}
+	s.secRep.GetOne(&sector)
 	if sector.ID == `` {
 		return createResp{Err: errors.New(`sector not found`)}
 	}

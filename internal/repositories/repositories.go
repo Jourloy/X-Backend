@@ -74,7 +74,7 @@ type SectorGetAll struct {
 // Репозиторий сектора
 type ISectorRepository interface {
 	Create(sector *Sector)
-	GetOne(id string) Sector
+	GetOne(sector *Sector)
 	GetAll(query SectorGetAll) []Sector
 	UpdateOne(sector *Sector)
 	DeleteOne(sector *Sector)

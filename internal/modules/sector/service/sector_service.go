@@ -41,7 +41,8 @@ type getOneResp struct {
 
 // GetOne получает сектор по id
 func (s *Service) GetOne(id string) getOneResp {
-	sector := s.secRep.GetOne(id)
+	sector := repositories.Sector{ID: id}
+	s.secRep.GetOne(&sector)
 	return getOneResp{
 		Err:    nil,
 		Sector: sector,
