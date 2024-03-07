@@ -2,6 +2,8 @@ package internal
 
 import (
 	"io"
+	"os"
+	"time"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
@@ -12,6 +14,7 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/item_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/item_template_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/market_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/node_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/plan_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/resource_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/resource_template_rep"
@@ -29,15 +32,33 @@ import (
 	"github.com/jourloy/X-Backend/internal/storage"
 )
 
+var (
+	logger = log.NewWithOptions(os.Stderr, log.Options{
+		Prefix: `[gin]`,
+		Level:  log.DebugLevel,
+	})
+)
+
 func StartServer() {
+	totalTime := time.Now()
+	tempTime := time.Now()
+
 	gin.DefaultWriter = NewDebugWrite()
 
-	// Инициализация модулей
+	// Инициализация хранилища
 	storage.InitDB()
+	logger.Debug(`Storage initialized`, `init time`, time.Since(tempTime))
+	tempTime = time.Now()
+
+	// Инициализация кэша
 	cache.InitCache()
+	logger.Debug(`Cache initialized`, `init time`, time.Since(tempTime))
+	tempTime = time.Now()
 
 	// Инициализация репозиториев
 	initReps()
+	logger.Debug(`Repositories initialized`, `init time`, time.Since(tempTime))
+	tempTime = time.Now()
 
 	r := gin.New()
 
@@ -79,8 +100,10 @@ func StartServer() {
 	handlers.InitWarrior(warriorGroup)
 	handlers.InitWorker(workerGroup)
 
+	logger.Debug(`Handlers initialized`, `init time`, time.Since(tempTime))
+
 	// Запуск сервера
-	log.Info(`Server started on port 3001`)
+	logger.Info(`Server started`, `port`, 3001, `launch time`, time.Since(totalTime))
 	if err := r.Run(`0.0.0.0:3001`); err != nil {
 		log.Fatal(err)
 	}
@@ -91,6 +114,7 @@ func initReps() {
 	account_rep.Init()
 
 	sector_rep.Init()
+	node_rep.Init()
 
 	item_rep.Init()
 	townhall_rep.Init()
@@ -116,7 +140,7 @@ func (fn WriteFunc) Write(data []byte) (int, error) {
 
 func NewDebugWrite() io.Writer {
 	return WriteFunc(func(data []byte) (int, error) {
-		// log.Debugf("%s", data)
+		// logger.Debugf("%s", data)
 		return 0, nil
 	})
 }

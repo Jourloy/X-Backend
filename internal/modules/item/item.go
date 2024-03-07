@@ -27,8 +27,6 @@ type Controller struct {
 func Init() *Controller {
 	service := item_service.Init()
 
-	logger.Info(`Item controller initialized`)
-
 	return &Controller{
 		service: *service,
 	}

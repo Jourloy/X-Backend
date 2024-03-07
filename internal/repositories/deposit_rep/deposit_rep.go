@@ -1,21 +1,11 @@
 package deposit_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[deposit-database]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.IDepositRepository
@@ -33,12 +23,8 @@ func Init() {
 
 // Create создает залежь
 func (r *DepositRepository) Create(deposit *repositories.Deposit) {
-	r.db.Create(&repositories.Resource{
-		ID:       uuid.NewString(),
-		Type:     deposit.Type,
-		Amount:   deposit.Amount,
-		SectorID: deposit.SectorID,
-	})
+	deposit.ID = uuid.NewString()
+	r.db.Create(&deposit)
 }
 
 // GetOne возвращает первую залежь, попавшую под условие

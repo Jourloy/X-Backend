@@ -35,17 +35,19 @@ type Sector struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 
+	Nodes []Node `json:"nodes"`
+
 	// Постройки
 
-	Townhalls []Townhall `json:"townhall"`
-	Towers    []Tower    `json:"tower"`
+	Townhalls []Townhall `json:"townhalls"`
+	Towers    []Tower    `json:"towers"`
 	Storages  []Storage  `json:"storages"`
 	Walls     []Wall     `json:"walls"`
 	Plans     []Plan     `json:"plans"`
 
 	// Существа
 
-	Workers  []Worker  `json:"workes"`
+	Workers  []Worker  `json:"workers"`
 	Warriors []Warrior `json:"warriors"`
 	Traders  []Trader  `json:"traders"`
 	Scouts   []Scout   `json:"scouts"`
@@ -59,9 +61,9 @@ type Sector struct {
 
 	Items []Item `json:"items" gorm:"foreignKey:ParentID"`
 
-	CreatedAt time.Time      `json:"createdAt"`
-	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 // Модель поиска сектора
@@ -80,21 +82,60 @@ type ISectorRepository interface {
 	DeleteOne(sector *Sector)
 }
 
+// Модель узла
+type Node struct {
+	ID string `json:"id"`
+
+	X         int  `json:"x"`
+	Y         int  `json:"y"`
+	Walkable  bool `json:"walkable"`
+	Difficult int  `json:"difficult"`
+
+	SectorID string `json:"sectorId"`
+
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+}
+
+// Модель поиска узла
+type NodeGetAll struct {
+	X         *int
+	Y         *int
+	Walkable  *bool
+	Difficult *int
+	SectorID  string
+	Limit     *int
+}
+
+// Репозиторий сектора
+type NodeRepository interface {
+	Create(node *Node)
+	GetOne(node *Node)
+	GetAll(dest *[]Node, query NodeGetAll)
+	UpdateOne(node *Node)
+	DeleteOne(node *Node)
+}
+
 // Модель залежи ресурсов
 type Deposit struct {
 	ID        string         `json:"id"`
 	Type      string         `json:"type"`
 	Amount    int            `json:"amount"`
+	X         int            `json:"x"`
+	Y         int            `json:"y"`
 	SectorID  string         `json:"sectorId"`
-	CreatedAt time.Time      `json:"createdAt"`
-	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 // Структура поиска залежей
 type DepositGetAll struct {
 	Type   *string
 	Amount *int
+	X      *int
+	Y      *int
 	Limit  *int
 }
 
@@ -119,9 +160,9 @@ type Resource struct {
 	ParentType string         `json:"parentType"`
 	SectorID   string         `json:"sectorId"`
 	CreatorID  string         `json:"creatorId"`
-	CreatedAt  time.Time      `json:"createdAt"`
-	UpdatedAt  time.Time      `json:"updatedAt"`
-	DeletedAt  gorm.DeletedAt `gorm:"index"`
+	CreatedAt  time.Time      `json:"-"`
+	UpdatedAt  time.Time      `json:"-"`
+	DeletedAt  gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 // Структура поиска ресурсов
@@ -141,7 +182,7 @@ type ResourceGetAll struct {
 // Репозиторий ресурсов
 type IResourceRepository interface {
 	Create(resource *Resource)
-	GetOne(resource Resource) Resource
+	GetOne(resource Resource)
 	GetAll(query ResourceGetAll) []Resource
 	UpdateOne(resource *Resource)
 	DeleteOne(resource *Resource)
@@ -153,9 +194,9 @@ type ResourceTemplate struct {
 	Type      string         `json:"type"`
 	Amount    int            `json:"amount"`
 	Weight    int            `json:"weight"`
-	CreatedAt time.Time      `json:"createdAt"`
-	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 // Структура поиска шаблона ресурсов
@@ -185,9 +226,9 @@ type Item struct {
 	ParentType string         `json:"parentType"`
 	SectorID   string         `json:"sectorId"`
 	CreatorID  string         `json:"creatorId"`
-	CreatedAt  time.Time      `json:"createdAt"`
-	UpdatedAt  time.Time      `json:"updatedAt"`
-	DeletedAt  gorm.DeletedAt `gorm:"index"`
+	CreatedAt  time.Time      `json:"-"`
+	UpdatedAt  time.Time      `json:"-"`
+	DeletedAt  gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 // Структура поиска предмета
@@ -215,9 +256,9 @@ type IItemRepository interface {
 type ItemTemplate struct {
 	ID        string         `json:"id"`
 	Type      string         `json:"type"`
-	CreatedAt time.Time      `json:"createdAt"`
-	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 // Структура поиска шаблона предмета

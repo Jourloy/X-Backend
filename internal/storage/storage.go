@@ -33,26 +33,27 @@ func InitDB() {
 
 	// Автоматическая миграция
 	if err := Database.AutoMigrate(
+		&repositories.Account{},
+
+		&repositories.Sector{},
+		&repositories.Node{},
+		&repositories.Deposit{},
+
+		&repositories.Townhall{},
+		&repositories.Storage{},
+		&repositories.Tower{},
+		&repositories.Wall{},
+		&repositories.Market{},
+		&repositories.Plan{},
+
 		&repositories.Worker{},
 		&repositories.Warrior{},
-		&repositories.Wall{},
 		&repositories.Trader{},
-		&repositories.Townhall{},
-		&repositories.Tower{},
-		&repositories.Storage{},
-		&repositories.Sector{},
 		&repositories.Scout{},
-		&repositories.ResourceTemplate{},
-		&repositories.Resource{},
-		&repositories.Plan{},
-		&repositories.Market{},
-		&repositories.ItemTemplate{},
+
 		&repositories.Item{},
-		&repositories.Deposit{},
-		&repositories.Account{},
+		&repositories.Resource{},
 	); err != nil {
 		logger.Fatal(`Migration failed`)
 	}
-
-	logger.Info(`Database connected`)
 }

@@ -25,9 +25,7 @@ type Controller struct {
 
 // Init создает сервис торговца
 func Init() *Controller {
-
 	service := trader_service.Init()
-	logger.Info(`Trader controller initialized`)
 
 	return &Controller{
 		service: *service,

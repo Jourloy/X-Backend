@@ -27,8 +27,6 @@ type Controller struct {
 func Init() *Controller {
 	service := wall_service.Init()
 
-	logger.Info(`Wall controller initialized`)
-
 	return &Controller{
 		service: *service,
 	}

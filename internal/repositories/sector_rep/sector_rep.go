@@ -1,21 +1,11 @@
 package sector_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[sector-database]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.ISectorRepository
@@ -33,11 +23,8 @@ func Init() {
 
 // Create создает сектор
 func (r *sectorRepository) Create(sector *repositories.Sector) {
-	r.db.Create(&repositories.Sector{
-		ID: uuid.NewString(),
-		X:  sector.X,
-		Y:  sector.Y,
-	})
+	sector.ID = uuid.NewString()
+	r.db.Create(&sector)
 }
 
 // GetOne возвращает сектор по его ID
@@ -47,11 +34,7 @@ func (r *sectorRepository) GetOne(sector *repositories.Sector) {
 
 // GetAll возвращает все сектора
 func (r *sectorRepository) GetAll(query repositories.SectorGetAll) []repositories.Sector {
-	var sector = repositories.Sector{
-		X: *query.X,
-		Y: *query.Y,
-	}
-
+	var sector = repositories.Sector{}
 	var sectors = []repositories.Sector{}
 
 	limit := -1
@@ -59,7 +42,7 @@ func (r *sectorRepository) GetAll(query repositories.SectorGetAll) []repositorie
 		limit = *query.Limit
 	}
 
-	r.db.Model(sector).Limit(limit).Find(&sectors)
+	r.db.Model(sector).Preload(`Nodes`).Preload(`Deposits`).Limit(limit).Find(&sectors, query)
 	return sectors
 }
 

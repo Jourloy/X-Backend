@@ -1,8 +1,6 @@
 package item_service
 
 import (
-	"errors"
-
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
@@ -44,7 +42,7 @@ type createResp struct {
 
 // Create создает предмет
 func (s *Service) Create(body repositories.Item, parentID string, parentType string, accountID string) createResp {
-	if parentType == `worker` {
+	/* if parentType == `worker` {
 		w := s.worRep.GetOne(parentID, accountID)
 		if w.ID == `` {
 			return createResp{Err: errors.New(`worker not found`)}
@@ -61,7 +59,7 @@ func (s *Service) Create(body repositories.Item, parentID string, parentType str
 		}
 	} else {
 		return createResp{Err: errors.New(`parentType is invalid`)}
-	}
+	} */
 
 	s.iteRep.Create(&body)
 	return createResp{Err: nil}

@@ -27,8 +27,6 @@ type Controller struct {
 func Init() *Controller {
 	service := sector_service.Init()
 
-	logger.Info(`Sector controller initialized`)
-
 	return &Controller{
 		service: *service,
 	}
@@ -37,7 +35,7 @@ func Init() *Controller {
 // Create создает сектор
 func (s *Controller) Create(c *gin.Context) {
 	// Парсинг body
-	var body repositories.Sector
+	var body sector_service.CreateOptions
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})

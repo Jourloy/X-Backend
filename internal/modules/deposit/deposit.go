@@ -27,8 +27,6 @@ type Controller struct {
 func Init() *Controller {
 	service := deposit_service.Init()
 
-	logger.Info(`Deposit controller initialized`)
-
 	return &Controller{
 		service: *service,
 	}
