@@ -34,15 +34,18 @@ func Init() {
 
 // Create создает аккаунт
 func (r *AccountRepository) Create(create *repositories.AccountCreate) (*repositories.Account, error) {
+	// Проверка, есть ли уже такой аккаунт
 	u := repositories.Account{Username: create.Username}
 	if err := r.GetOne(&u); err != nil {
 		return nil, err
 	}
 
+	// Если есть возвращаем ошибку
 	if u.ID != `` {
 		return nil, errors.New(`account already exist`)
 	}
 
+	// Создаем аккаунт
 	user := repositories.Account{
 		ID:       uuid.NewString(),
 		ApiKey:   uuid.NewString(),
@@ -51,7 +54,11 @@ func (r *AccountRepository) Create(create *repositories.AccountCreate) (*reposit
 	}
 
 	res := r.db.Create(&user)
-	return &user, res.Error
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &user, nil
 }
 
 // GetOne возвращает первый аккаунт, попавший под условие
@@ -70,5 +77,5 @@ func (r *AccountRepository) UpdateOne(account *repositories.Account) {
 
 // DeleteOne удаляет аккаунт
 func (r *AccountRepository) DeleteOne(account *repositories.Account) {
-	r.db.Delete(&account)
+	r.db.Delete(&account, account)
 }
