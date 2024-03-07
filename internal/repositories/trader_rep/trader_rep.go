@@ -1,21 +1,11 @@
 package trader_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-trader]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.ITraderRepository
@@ -49,13 +39,8 @@ func (r *traderRepository) Create(trader *repositories.Trader, accountId string)
 }
 
 // GetOne возвращает первого торговца, попавшего под условие
-func (r *traderRepository) GetOne(id string, accountID string) repositories.Trader {
-	var trader = repositories.Trader{
-		ID:        id,
-		AccountID: accountID,
-	}
-	r.db.First(&trader)
-	return trader
+func (r *traderRepository) GetOne(trader *repositories.Trader) {
+	r.db.First(&trader, trader)
 }
 
 func (r *traderRepository) GetAll(query repositories.TraderGetAll, accountID string) []repositories.Trader {
