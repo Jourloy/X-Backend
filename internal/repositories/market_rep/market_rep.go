@@ -1,21 +1,11 @@
 package market_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-market]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.IMarketRepository
@@ -47,13 +37,8 @@ func (r *MarketRepository) Create(market *repositories.Market, accountId string)
 }
 
 // GetOne возвращает первый рынок, попавший под условие
-func (r *MarketRepository) GetOne(id string, accountID string) repositories.Market {
-	var market = repositories.Market{
-		ID:        id,
-		AccountID: accountID,
-	}
-	r.db.First(&market)
-	return market
+func (r *MarketRepository) GetOne(market *repositories.Market) {
+	r.db.First(&market, market)
 }
 
 // GetAll возвращает все рынки

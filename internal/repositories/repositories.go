@@ -456,7 +456,7 @@ type MarketGetAll struct {
 // Репозиторий рынка
 type IMarketRepository interface {
 	Create(market *Market, accountID string)
-	GetOne(id string, accountID string) Market
+	GetOne(market *Market)
 	GetAll(query MarketGetAll, accountID string) []Market
 	UpdateOne(market *Market)
 	DeleteOne(market *Market)
