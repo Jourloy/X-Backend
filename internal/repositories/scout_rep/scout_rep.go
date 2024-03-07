@@ -22,7 +22,7 @@ func Init() {
 }
 
 // Create создает разведчика
-func (r *ScoutRepository) Create(scout *repositories.Scout, accountId string) {
+func (r *ScoutRepository) Create(scout *repositories.ScoutCreate) {
 	r.db.Create(&repositories.Scout{
 		ID:           uuid.NewString(),
 		MaxStorage:   10,
@@ -34,7 +34,7 @@ func (r *ScoutRepository) Create(scout *repositories.Scout, accountId string) {
 		RequireCoins: 0.5,
 		RequireFood:  0.5,
 		Fatigue:      0,
-		AccountID:    accountId,
+		AccountID:    scout.AccountID,
 	})
 }
 

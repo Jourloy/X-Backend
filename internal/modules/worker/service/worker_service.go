@@ -39,9 +39,9 @@ type createResp struct {
 }
 
 // Create создает рабочего
-func (s *Service) Create(body repositories.Worker, accountID string) createResp {
+func (s *Service) Create(body repositories.WorkerCreate) createResp {
 	// Проверка существования аккаунта
-	account := repositories.Account{ID: accountID}
+	account := repositories.Account{ID: body.AccountID}
 	s.accRep.GetOne(&account)
 	if account.Username == `` {
 		return createResp{Err: errors.New(`account not found`)}
@@ -54,7 +54,7 @@ func (s *Service) Create(body repositories.Worker, accountID string) createResp 
 		return createResp{Err: errors.New(`sector not found`)}
 	}
 
-	s.worRep.Create(&body, accountID)
+	s.worRep.Create(&body)
 	return createResp{Err: nil}
 }
 

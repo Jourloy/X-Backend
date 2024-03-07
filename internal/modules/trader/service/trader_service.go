@@ -39,9 +39,9 @@ type createResp struct {
 }
 
 // Create создает торговца
-func (s *Service) Create(body repositories.Trader, accountID string) createResp {
+func (s *Service) Create(body repositories.TraderCreate) createResp {
 	// Проверка существования аккаунта
-	account := repositories.Account{ID: accountID}
+	account := repositories.Account{ID: body.AccountID}
 	s.accRep.GetOne(&account)
 	if account.Username == `` {
 		return createResp{Err: errors.New(`account not found`)}
@@ -54,7 +54,7 @@ func (s *Service) Create(body repositories.Trader, accountID string) createResp 
 		return createResp{Err: errors.New(`sector not found`)}
 	}
 
-	s.traRep.Create(&body, accountID)
+	s.traRep.Create(&body)
 	return createResp{Err: nil}
 }
 

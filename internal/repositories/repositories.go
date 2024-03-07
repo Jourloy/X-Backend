@@ -403,6 +403,15 @@ type Plan struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
 
+// Структура создания планируемой постройки
+type PlanCreate struct {
+	X         int    `json:"x"`
+	Y         int    `json:"y"`
+	Type      string `json:"type"`
+	SectorID  string `json:"sectorId"`
+	AccountID string `json:"accountId"`
+}
+
 // Структура поиска планируемой постройки
 type PlanGetAll struct {
 	MaxProgress *int
@@ -415,7 +424,7 @@ type PlanGetAll struct {
 
 // Репозиторий планируемой постройки
 type IPlanRepository interface {
-	Create(plan *Plan, accountID string)
+	Create(plan *PlanCreate)
 	GetOne(plan *Plan)
 	GetAll(query PlanGetAll, accountID string) []Plan
 	UpdateOne(plan *Plan)
@@ -441,6 +450,14 @@ type Market struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
+// Структура создания рынка
+type MarketCreate struct {
+	X         int    `json:"x"`
+	Y         int    `json:"y"`
+	SectorID  string `json:"sectorId"`
+	AccountID string `json:"accountId"`
+}
+
 // Структура поиска рынка
 type MarketGetAll struct {
 	MaxDurability *int
@@ -455,7 +472,7 @@ type MarketGetAll struct {
 
 // Репозиторий рынка
 type IMarketRepository interface {
-	Create(market *Market, accountID string)
+	Create(market *MarketCreate)
 	GetOne(market *Market)
 	GetAll(query MarketGetAll, accountID string) []Market
 	UpdateOne(market *Market)
@@ -484,6 +501,14 @@ type Worker struct {
 	DeletedAt    gorm.DeletedAt `gorm:"index"`
 }
 
+// Структура создания рабочего
+type WorkerCreate struct {
+	X         int    `json:"x"`
+	Y         int    `json:"y"`
+	SectorID  string `json:"sectorId"`
+	AccountID string `json:"accountId"`
+}
+
 // Структура поиска рабочего
 type WorkerGetAll struct {
 	MaxStorage   *int
@@ -500,7 +525,7 @@ type WorkerGetAll struct {
 
 // Репозиторий рабочего
 type IWorkerRepository interface {
-	Create(worker *Worker, accountID string)
+	Create(worker *WorkerCreate)
 	GetOne(worker *Worker)
 	GetAll(query WorkerGetAll, accountID string) []Worker
 	UpdateOne(worker *Worker)
@@ -527,6 +552,14 @@ type Scout struct {
 	DeletedAt    gorm.DeletedAt `gorm:"index"`
 }
 
+// Структура создания разведчика
+type ScoutCreate struct {
+	X         int    `json:"x"`
+	Y         int    `json:"y"`
+	SectorID  string `json:"sectorId"`
+	AccountID string `json:"accountId"`
+}
+
 // Структура поиска разведчика
 type ScoutGetAll struct {
 	MaxStorage   *int
@@ -543,7 +576,7 @@ type ScoutGetAll struct {
 
 // Репозиторий разведчика
 type IScoutRepository interface {
-	Create(scout *Scout, accountID string)
+	Create(scout *ScoutCreate)
 	GetOne(scout *Scout)
 	GetAll(query ScoutGetAll, accountID string) []Scout
 	UpdateOne(scout *Scout)
@@ -570,6 +603,14 @@ type Warrior struct {
 	DeletedAt    gorm.DeletedAt `gorm:"index"`
 }
 
+// Структура создания воина
+type WarriorCreate struct {
+	X         int    `json:"x"`
+	Y         int    `json:"y"`
+	SectorID  string `json:"sectorId"`
+	AccountID string `json:"accountId"`
+}
+
 // Структура поиска воинов
 type WarriorGetAll struct {
 	MaxStorage   *int
@@ -586,7 +627,7 @@ type WarriorGetAll struct {
 
 // Репозиторий воина
 type IWarriorRepository interface {
-	Create(warrior *Warrior, accountID string)
+	Create(warrior *WarriorCreate)
 	GetOne(warrior *Warrior)
 	GetAll(query WarriorGetAll, accountID string) []Warrior
 	UpdateOne(warrior *Warrior)
@@ -613,6 +654,14 @@ type Trader struct {
 	DeletedAt    gorm.DeletedAt `gorm:"index"`
 }
 
+// Структура создания торговца
+type TraderCreate struct {
+	X         int    `json:"x"`
+	Y         int    `json:"y"`
+	SectorID  string `json:"sectorId"`
+	AccountID string `json:"accountId"`
+}
+
 // Структура поиска торговца
 type TraderGetAll struct {
 	MaxStorage   *int
@@ -629,7 +678,7 @@ type TraderGetAll struct {
 
 // Репозиторий торговца
 type ITraderRepository interface {
-	Create(trader *Trader, accountID string)
+	Create(trader *TraderCreate)
 	GetOne(trader *Trader)
 	GetAll(query TraderGetAll, accountID string) []Trader
 	UpdateOne(trader *Trader)

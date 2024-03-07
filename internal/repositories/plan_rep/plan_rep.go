@@ -22,15 +22,15 @@ func Init() {
 }
 
 // Create создает планируемую постройку
-func (r *planRepository) Create(plan *repositories.Plan, accountId string) {
+func (r *planRepository) Create(plan *repositories.PlanCreate) {
 	r.db.Create(&repositories.Plan{
 		ID:          uuid.NewString(),
-		MaxProgress: plan.MaxProgress,
+		MaxProgress: 100,
 		Progress:    0,
 		X:           plan.X,
 		Y:           plan.Y,
 		Type:        plan.Type,
-		AccountID:   accountId,
+		AccountID:   plan.AccountID,
 	})
 }
 

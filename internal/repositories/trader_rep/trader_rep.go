@@ -22,7 +22,7 @@ func Init() {
 }
 
 // Create создает торговца
-func (r *traderRepository) Create(trader *repositories.Trader, accountId string) {
+func (r *traderRepository) Create(trader *repositories.TraderCreate) {
 	r.db.Create(&repositories.Trader{
 		ID:           uuid.NewString(),
 		MaxStorage:   100,
@@ -34,7 +34,7 @@ func (r *traderRepository) Create(trader *repositories.Trader, accountId string)
 		RequireCoins: 0.5,
 		RequireFood:  0.5,
 		Fatigue:      0,
-		AccountID:    accountId,
+		AccountID:    trader.AccountID,
 	})
 }
 

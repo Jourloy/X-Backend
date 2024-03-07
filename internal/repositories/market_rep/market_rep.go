@@ -22,7 +22,7 @@ func Init() {
 }
 
 // Create создает рынок
-func (r *MarketRepository) Create(market *repositories.Market, accountId string) {
+func (r *MarketRepository) Create(market *repositories.MarketCreate) {
 	r.db.Create(&repositories.Market{
 		ID:            uuid.NewString(),
 		MaxDurability: 1000,
@@ -32,7 +32,7 @@ func (r *MarketRepository) Create(market *repositories.Market, accountId string)
 		UsedStorage:   0,
 		X:             market.X,
 		Y:             market.Y,
-		AccountID:     accountId,
+		AccountID:     market.AccountID,
 	})
 }
 

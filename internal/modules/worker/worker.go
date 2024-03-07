@@ -39,13 +39,15 @@ func (s *Controller) Create(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
-	var body repositories.Worker
+	var body repositories.WorkerCreate
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	resp := s.service.Create(body, accountID)
+	body.AccountID = accountID
+
+	resp := s.service.Create(body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})

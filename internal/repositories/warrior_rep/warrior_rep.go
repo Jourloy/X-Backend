@@ -22,7 +22,7 @@ func Init() {
 }
 
 // Create создает воина
-func (r *warriorRepository) Create(warrior *repositories.Warrior, accountId string) {
+func (r *warriorRepository) Create(warrior *repositories.WarriorCreate) {
 	r.db.Create(&repositories.Warrior{
 		ID:           uuid.NewString(),
 		MaxStorage:   10,
@@ -34,7 +34,7 @@ func (r *warriorRepository) Create(warrior *repositories.Warrior, accountId stri
 		RequireCoins: 0.5,
 		RequireFood:  0.5,
 		Fatigue:      0,
-		AccountID:    accountId,
+		AccountID:    warrior.AccountID,
 	})
 }
 

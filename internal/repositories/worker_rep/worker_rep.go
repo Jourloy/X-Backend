@@ -22,7 +22,7 @@ func Init() {
 }
 
 // Create создает рабочего
-func (r *WorkerRepository) Create(worker *repositories.Worker, accountId string) {
+func (r *WorkerRepository) Create(worker *repositories.WorkerCreate) {
 	r.db.Create(&repositories.Worker{
 		ID:           uuid.NewString(),
 		MaxStorage:   50,
@@ -34,7 +34,7 @@ func (r *WorkerRepository) Create(worker *repositories.Worker, accountId string)
 		RequireCoins: 0.5,
 		RequireFood:  0.5,
 		Fatigue:      0,
-		AccountID:    accountId,
+		AccountID:    worker.AccountID,
 	})
 }
 
