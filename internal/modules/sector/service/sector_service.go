@@ -36,19 +36,20 @@ func Init() *Service {
 
 type CreateOptions struct {
 	// Глобальные координаты
-	X, Y int
+	X int `json:"x"`
+	Y int `json:"y"`
 
 	// Насколько сложная местность. Минимум 0, максимум 100
-	Difficult int
+	Difficult int `json:"difficult"`
 
 	// Насколько непроходимая местность. Минимум 0, максимум 100
-	Walkable int
+	Walkable int `json:"walkable"`
 
 	// Обилие ресурсов. Минимум 0, максимум 100
-	Abundance int
+	Abundance int `json:"abundance"`
 
 	// Могут ли появится редкие ресурсы
-	IsRare bool
+	IsRare bool `json:"isRare"`
 }
 
 type createResp struct {
@@ -57,12 +58,21 @@ type createResp struct {
 
 // Генерация сектора
 func (s *Service) Create(body CreateOptions) createResp {
-	sector := repositories.Sector{}
+	sector := repositories.Sector{
+		X: body.X,
+		Y: body.Y,
+	}
 	s.secRep.Create(&sector)
 
-	nodes := []repositories.Node{}
+	go s.generateNodes(sector.ID)
+	go s.generateDeposits(sector.ID)
 
-	// Создание узлов
+	return createResp{
+		Err: nil,
+	}
+}
+
+func (s *Service) generateNodes(sectorID string) {
 	for y := 0; y < 10; y++ {
 		for x := 0; x < 10; x++ {
 			node := repositories.Node{
@@ -70,13 +80,17 @@ func (s *Service) Create(body CreateOptions) createResp {
 				Y:         y,
 				Walkable:  true,
 				Difficult: 0,
-				SectorID:  sector.ID,
+				SectorID:  sectorID,
 			}
 
 			s.nodeRep.Create(&node)
+		}
+	}
+}
 
-			nodes = append(nodes, node)
-
+func (s *Service) generateDeposits(sectorID string) {
+	for y := 0; y < 10; y++ {
+		for x := 0; x < 10; x++ {
 			resourceCreateRand := rand.Intn(10)
 			if resourceCreateRand > 5 {
 				resourceTypeRand := rand.Intn(2)
@@ -90,16 +104,12 @@ func (s *Service) Create(body CreateOptions) createResp {
 					X:        x,
 					Y:        y,
 					Type:     resourceType,
-					SectorID: sector.ID,
+					SectorID: sectorID,
 				}
 
 				s.depositRep.Create(&deposit)
 			}
 		}
-	}
-
-	return createResp{
-		Err: nil,
 	}
 }
 
