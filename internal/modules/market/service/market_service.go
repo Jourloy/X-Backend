@@ -64,7 +64,8 @@ type getOneResp struct {
 }
 
 func (s *Service) GetOne(id string, accountID string) getOneResp {
-	market := s.marRep.GetOne(id, accountID)
+	market := repositories.Market{ID: id, AccountID: accountID}
+	s.marRep.GetOne(&market)
 	return getOneResp{
 		Err:    nil,
 		Market: market,

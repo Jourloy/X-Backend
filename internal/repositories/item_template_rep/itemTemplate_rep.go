@@ -1,21 +1,11 @@
 package item_template_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-itemTemplate]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.IItemTemplateRepository
@@ -40,12 +30,8 @@ func (r *ItemTemplateRepository) Create(itemTemplate *repositories.ItemTemplate)
 }
 
 // GetOne возвращает первый шаблон предмета, попавший под условие
-func (r *ItemTemplateRepository) GetOne(id string) repositories.ItemTemplate {
-	var itemTemplate = repositories.ItemTemplate{
-		ID: id,
-	}
-	r.db.First(&itemTemplate)
-	return itemTemplate
+func (r *ItemTemplateRepository) GetOne(itemTemplate *repositories.ItemTemplate) {
+	r.db.First(&itemTemplate, itemTemplate)
 }
 
 // GetAll возвращает все шаблоны предмета

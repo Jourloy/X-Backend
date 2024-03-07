@@ -64,7 +64,8 @@ type getOneResp struct {
 }
 
 func (s *Service) GetOne(id string, accountID string) getOneResp {
-	wall := s.walRep.GetOne(id, accountID)
+	wall := repositories.Wall{ID: id, AccountID: accountID}
+	s.walRep.GetOne(&wall)
 	return getOneResp{
 		Err:  nil,
 		Wall: wall,

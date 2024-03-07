@@ -205,7 +205,7 @@ type ItemGetAll struct {
 // Репозиторий предмета
 type IItemRepository interface {
 	Create(item *Item)
-	GetOne(id string) Item
+	GetOne(item *Item)
 	GetAll(query ItemGetAll) []Item
 	UpdateOne(item *Item)
 	DeleteOne(item *Item)
@@ -229,7 +229,7 @@ type ItemTemplateGetAll struct {
 // Репозиторий шаблона предмета
 type IItemTemplateRepository interface {
 	Create(itemTemplate *ItemTemplate)
-	GetOne(id string) ItemTemplate
+	GetOne(itemTemplate *ItemTemplate)
 	GetAll(query ItemTemplateGetAll) []ItemTemplate
 	UpdateOne(itemTemplate *ItemTemplate)
 	DeleteOne(itemTemplate *ItemTemplate)
@@ -268,7 +268,7 @@ type TownhallGetAll struct {
 // Репозиторий главного здания
 type ITownhallRepository interface {
 	Create(townhall *Townhall, accountID string)
-	GetOne(id string, accountID string) Townhall
+	GetOne(townhall *Townhall)
 	GetAll(query TownhallGetAll, accountID string) []Townhall
 	UpdateOne(townhall *Townhall)
 	DeleteOne(townhall *Townhall)
@@ -307,7 +307,7 @@ type TowerGetAll struct {
 // Репозиторий башни
 type ITowerRepository interface {
 	Create(tower *Tower, accountID string)
-	GetOne(id string, accountID string) Tower
+	GetOne(tower *Tower)
 	GetAll(query TowerGetAll, accountID string) []Tower
 	UpdateOne(tower *Tower)
 	DeleteOne(tower *Tower)
@@ -346,7 +346,7 @@ type StorageGetAll struct {
 // Репозиторий хранилища
 type IStorageRepository interface {
 	Create(storage *Storage, accountID string)
-	GetOne(id string, accountID string) Storage
+	GetOne(storage *Storage)
 	GetAll(query StorageGetAll, accountID string) []Storage
 	UpdateOne(storage *Storage)
 	DeleteOne(storage *Storage)
@@ -381,7 +381,7 @@ type WallGetAll struct {
 // Репозиторий  стены
 type IWallRepository interface {
 	Create(wall *Wall, accountID string)
-	GetOne(id string, accountID string) Wall
+	GetOne(wall *Wall)
 	GetAll(query WallGetAll, accountID string) []Wall
 	UpdateOne(wall *Wall)
 	DeleteOne(wall *Wall)
@@ -416,7 +416,7 @@ type PlanGetAll struct {
 // Репозиторий планируемой постройки
 type IPlanRepository interface {
 	Create(plan *Plan, accountID string)
-	GetOne(id string, accountID string) Plan
+	GetOne(plan *Plan)
 	GetAll(query PlanGetAll, accountID string) []Plan
 	UpdateOne(plan *Plan)
 	DeleteOne(plan *Plan)
@@ -456,7 +456,7 @@ type MarketGetAll struct {
 // Репозиторий рынка
 type IMarketRepository interface {
 	Create(market *Market, accountID string)
-	GetOne(id string, accountID string) Market
+	GetOne(market *Market)
 	GetAll(query MarketGetAll, accountID string) []Market
 	UpdateOne(market *Market)
 	DeleteOne(market *Market)

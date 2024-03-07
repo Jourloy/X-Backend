@@ -1,21 +1,11 @@
 package tower_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-tower]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.ITowerRepository
@@ -47,13 +37,8 @@ func (r *TowerRepository) Create(tower *repositories.Tower, accountId string) {
 }
 
 // GetOne возвращает первую башню, попавшую под условие
-func (r *TowerRepository) GetOne(id string, accountID string) repositories.Tower {
-	var tower = repositories.Tower{
-		ID:        id,
-		AccountID: accountID,
-	}
-	r.db.First(&tower)
-	return tower
+func (r *TowerRepository) GetOne(tower *repositories.Tower) {
+	r.db.First(&tower, tower)
 }
 
 // GetAll возвращает все башни

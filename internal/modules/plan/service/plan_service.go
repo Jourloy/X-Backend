@@ -64,7 +64,8 @@ type getOneResp struct {
 }
 
 func (s *Service) GetOne(id string, accountID string) getOneResp {
-	plan := s.plaRep.GetOne(id, accountID)
+	plan := repositories.Plan{ID: id, AccountID: accountID}
+	s.plaRep.GetOne(&plan)
 	return getOneResp{
 		Err:  nil,
 		Plan: plan,

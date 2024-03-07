@@ -1,21 +1,11 @@
 package plan_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-plan]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.IPlanRepository
@@ -45,13 +35,8 @@ func (r *planRepository) Create(plan *repositories.Plan, accountId string) {
 }
 
 // GetOne возвращает первую планируемую постройку, попавшую под условие
-func (r *planRepository) GetOne(id string, accountID string) repositories.Plan {
-	var plan = repositories.Plan{
-		ID:        id,
-		AccountID: accountID,
-	}
-	r.db.First(&plan)
-	return plan
+func (r *planRepository) GetOne(plan *repositories.Plan) {
+	r.db.First(&plan, plan)
 }
 
 // GetAll возвращает все планируемые постройки

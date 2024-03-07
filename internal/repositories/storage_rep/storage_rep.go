@@ -1,21 +1,11 @@
 package storage_rep
 
 import (
-	"os"
-
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-)
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-storage]`,
-		Level:  log.DebugLevel,
-	})
 )
 
 var Repository repositories.IStorageRepository
@@ -47,13 +37,8 @@ func (r *StorageRepository) Create(storage *repositories.Storage, accountId stri
 }
 
 // GetOne возвращает первое хранилище, попавшее под условие
-func (r *StorageRepository) GetOne(id string, accountID string) repositories.Storage {
-	var storage = repositories.Storage{
-		ID:        id,
-		AccountID: accountID,
-	}
-	r.db.First(&storage)
-	return storage
+func (r *StorageRepository) GetOne(storage *repositories.Storage) {
+	r.db.First(&storage, storage)
 }
 
 // GetAll возвращает все хранилища
