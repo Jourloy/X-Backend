@@ -27,9 +27,12 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/warrior_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/worker_rep"
 
+	_ "github.com/jourloy/X-Backend/docs"
 	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/middlewares"
 	"github.com/jourloy/X-Backend/internal/storage"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 var (
@@ -65,6 +68,8 @@ func StartServer() {
 	// Middlewares
 	r.Use(middlewares.Logger())
 	r.Use(gin.Recovery())
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	// Группы
 	accountGroup := r.Group(`account`)

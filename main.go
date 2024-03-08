@@ -12,6 +12,17 @@ import (
 	"github.com/jourloy/X-Backend/internal/config"
 )
 
+// @Title X API
+// @Description Документация для REST API игры
+// @Version 1.0
+
+// @BasePath /
+// @Host localhost:3001
+
+// @SecurityDefinitions.apikey ApiKeyAuth
+// @In header
+// @Name api-key
+
 var clear map[string]func()
 
 func init() {

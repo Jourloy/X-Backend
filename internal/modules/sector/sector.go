@@ -37,8 +37,8 @@ func (s *Controller) Create(c *gin.Context) {
 	// Парсинг body
 	var body sector_service.CreateOptions
 	if err := tools.ParseBody(c, &body); err != nil {
-		logger.Error(`Parse body error`)
-		c.JSON(400, gin.H{`error`: `Parse body error`})
+		logger.Error(`parse body error`)
+		c.JSON(400, gin.H{`error`: `parse body error`})
 	}
 
 	resp := s.service.Create(body)
@@ -53,16 +53,18 @@ func (s *Controller) Create(c *gin.Context) {
 // GetOne получает сектор по id
 func (s *Controller) GetOne(c *gin.Context) {
 	// Получение ID сектора
-	sectorID := c.Query(`sectorID`)
+	sectorID := c.Query(`sectorId`)
 	if sectorID == `` {
-		logger.Error(`sectorID is required`)
-		c.JSON(400, gin.H{`error`: `sectorID is required`})
+		logger.Error(`sectorId is required`)
+		c.JSON(400, gin.H{`error`: `sectorId is required`})
+		return
 	}
 
 	resp := s.service.GetOne(sectorID)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+		return
 	}
 
 	c.JSON(200, gin.H{`error`: ``, `sector`: resp.Sector})

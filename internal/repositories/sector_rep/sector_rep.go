@@ -29,7 +29,7 @@ func (r *sectorRepository) Create(sector *repositories.Sector) {
 
 // GetOne возвращает сектор по его ID
 func (r *sectorRepository) GetOne(sector *repositories.Sector) {
-	r.db.First(&sector, sector)
+	r.db.Preload(`Nodes`).Preload(`Deposits`).First(&sector, sector)
 }
 
 // GetAll возвращает все сектора

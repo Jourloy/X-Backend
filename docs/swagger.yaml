@@ -1,0 +1,77 @@
+basePath: /
+definitions:
+  account.CreateResponse200:
+    properties:
+      account:
+        $ref: '#/definitions/repositories.Account'
+      error:
+        type: string
+    type: object
+  account.CreateResponse400:
+    properties:
+      error:
+        type: string
+    type: object
+  account.GetResponse200:
+    properties:
+      account:
+        $ref: '#/definitions/repositories.Account'
+      error:
+        type: string
+    type: object
+  account.GetResponse400:
+    properties:
+      error:
+        type: string
+    type: object
+  repositories.Account:
+    properties:
+      apiKey:
+        type: string
+      balance:
+        type: integer
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:3001
+info:
+  contact: {}
+  description: Документация для REST API игры
+  title: X API
+  version: "1.0"
+paths:
+  /account:
+    get:
+      responses:
+        "200":
+          description: Успех
+          schema:
+            $ref: '#/definitions/account.GetResponse200'
+        "400":
+          description: Ошибка, смотри параметр error
+          schema:
+            $ref: '#/definitions/account.GetResponse400'
+      summary: Получение аккаунта аккаунта
+      tags:
+      - Аккаунт
+    post:
+      responses:
+        "200":
+          description: Успех
+          schema:
+            $ref: '#/definitions/account.CreateResponse200'
+        "400":
+          description: Ошибка, смотри параметр error
+          schema:
+            $ref: '#/definitions/account.CreateResponse400'
+      summary: Создание аккаунта
+      tags:
+      - Аккаунт
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: api-key
+    type: apiKey
+swagger: "2.0"

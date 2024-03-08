@@ -31,35 +31,67 @@ func Init() *Controller {
 	}
 }
 
+type CreateResponse200 struct {
+	Error   string               `json:"error"`
+	Account repositories.Account `json:"account"`
+}
+
+type CreateResponse400 struct {
+	Error string `json:"error"`
+}
+
 // Create создает аккаунт
+//
+// @Tags Аккаунт
+// @Summary Создает аккаунт
+// @Success 200 {object} CreateResponse200 "Успех"
+// @Failure 400 {object} CreateResponse400 "Ошибка, смотри параметр error"
+// @Router /account [post]
 func (s *Controller) Create(c *gin.Context) {
 	var body repositories.AccountCreate
 	if err := tools.ParseBody(c, &body); err != nil {
-		logger.Error(`Parse body error`)
-		c.JSON(400, gin.H{`error`: `Parse body error`})
+		logger.Error(`parse body error`)
+		c.JSON(400, CreateResponse400{Error: `parse body error`})
+		return
 	}
 
 	resp := s.service.Create(body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
-		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+		c.JSON(400, CreateResponse400{Error: resp.Err.Error()})
 		return
 	}
 
-	c.JSON(200, gin.H{`error`: ``, `account`: resp.Account})
+	c.JSON(200, CreateResponse200{Account: *resp.Account})
 }
 
-// GetOne получает аккаунт авторизованного пользователя
+type GetResponse200 struct {
+	Error   string               `json:"error"`
+	Account repositories.Account `json:"account"`
+}
+
+type GetResponse400 struct {
+	Error string `json:"error"`
+}
+
+// GetMe получает аккаунт авторизованного пользователя
+//
+// @Tags Аккаунт
+// @Summary Gолучает аккаунт авторизованного пользователя
+// @Success 200 {object} GetResponse200 "Успех"
+// @Failure 400 {object} GetResponse400 "Ошибка, смотри параметр error"
+// @Router /account [get]
 func (s *Controller) GetMe(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	resp := s.service.GetOne(accountID)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
-		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+		c.JSON(400, GetResponse400{Error: resp.Err.Error()})
+		return
 	}
 
-	c.JSON(200, gin.H{`error`: ``, `account`: resp.Account})
+	c.JSON(200, GetResponse200{Account: resp.Account})
 }
 
 // UpdateOne обновляет аккаунт
