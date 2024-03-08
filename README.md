@@ -17,11 +17,17 @@ $ go mod tidy
 ## Запуск
 
 ```bash
-$ go run ./cmd/http/main.go
+$ go run main.go
 ```
 
 ## Тестирование
 
 ```bash
 $ go test ./...
+```
+
+## Линтер
+
+```bash
+$ golangci-lint run
 ```
