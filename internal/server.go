@@ -47,17 +47,17 @@ func StartServer() {
 
 	// Инициализация хранилища
 	storage.InitDB()
-	logger.Debug(`Storage initialized`, `init time`, time.Since(tempTime))
+	logger.Debug(`Storage initialized`, `latency`, time.Since(tempTime))
 	tempTime = time.Now()
 
 	// Инициализация кэша
 	cache.InitCache()
-	logger.Debug(`Cache initialized`, `init time`, time.Since(tempTime))
+	logger.Debug(`Cache initialized`, `latency`, time.Since(tempTime))
 	tempTime = time.Now()
 
 	// Инициализация репозиториев
 	initReps()
-	logger.Debug(`Repositories initialized`, `init time`, time.Since(tempTime))
+	logger.Debug(`Repositories initialized`, `latency`, time.Since(tempTime))
 	tempTime = time.Now()
 
 	r := gin.New()
@@ -100,10 +100,10 @@ func StartServer() {
 	handlers.InitWarrior(warriorGroup)
 	handlers.InitWorker(workerGroup)
 
-	logger.Debug(`Handlers initialized`, `init time`, time.Since(tempTime))
+	logger.Debug(`Handlers initialized`, `latency`, time.Since(tempTime))
 
 	// Запуск сервера
-	logger.Info(`Server started`, `port`, 3001, `launch time`, time.Since(totalTime))
+	logger.Info(`Server started`, `port`, 3001, `latency (total)`, time.Since(totalTime))
 	if err := r.Run(`0.0.0.0:3001`); err != nil {
 		log.Fatal(err)
 	}

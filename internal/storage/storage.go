@@ -2,6 +2,7 @@ package storage
 
 import (
 	"os"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -28,9 +29,13 @@ func InitDB() {
 	if err != nil {
 		log.Fatal(`Failed to connect database`)
 	}
-
 	Database = db
 
+	go runMigrations()
+}
+
+func runMigrations() {
+	t := time.Now()
 	// Автоматическая миграция
 	if err := Database.AutoMigrate(
 		&repositories.Account{},
@@ -56,4 +61,5 @@ func InitDB() {
 	); err != nil {
 		logger.Fatal(`Migration failed`)
 	}
+	logger.Debug(`Migration complete`, `latency`, time.Since(t))
 }
