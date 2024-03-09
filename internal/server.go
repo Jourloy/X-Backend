@@ -27,12 +27,9 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/warrior_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/worker_rep"
 
-	_ "github.com/jourloy/X-Backend/docs"
 	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/middlewares"
 	"github.com/jourloy/X-Backend/internal/storage"
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 var (
@@ -69,10 +66,21 @@ func StartServer() {
 	r.Use(middlewares.Logger())
 	r.Use(gin.Recovery())
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	initHandlers(r)
 
+	logger.Debug(`Handlers initialized`, `latency`, time.Since(tempTime))
+
+	// Запуск сервера
+	logger.Info(`Server started`, `port`, 3001, `latency (total)`, time.Since(totalTime))
+	if err := r.Run(`0.0.0.0:3001`); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func initHandlers(r *gin.Engine) {
 	// Группы
 	accountGroup := r.Group(`account`)
+	appGroup := r.Group(`app`)
 	depositGroup := r.Group(`deposit`)
 	itemGroup := r.Group(`item`)
 	marketGroup := r.Group(`market`)
@@ -90,6 +98,7 @@ func StartServer() {
 
 	// Инициализация групп
 	handlers.InitAccount(accountGroup)
+	handlers.InitApp(appGroup)
 	handlers.InitDeposit(depositGroup)
 	handlers.InitItem(itemGroup)
 	handlers.InitMarket(marketGroup)
@@ -104,14 +113,6 @@ func StartServer() {
 	handlers.InitWall(wallGroup)
 	handlers.InitWarrior(warriorGroup)
 	handlers.InitWorker(workerGroup)
-
-	logger.Debug(`Handlers initialized`, `latency`, time.Since(tempTime))
-
-	// Запуск сервера
-	logger.Info(`Server started`, `port`, 3001, `latency (total)`, time.Since(totalTime))
-	if err := r.Run(`0.0.0.0:3001`); err != nil {
-		log.Fatal(err)
-	}
 }
 
 // Инициализация репозиториев

@@ -41,12 +41,6 @@ type CreateResponse400 struct {
 }
 
 // Create создает аккаунт
-//
-// @Tags Аккаунт
-// @Summary Создает аккаунт
-// @Success 200 {object} CreateResponse200 "Успех"
-// @Failure 400 {object} CreateResponse400 "Ошибка, смотри параметр error"
-// @Router /account [post]
 func (s *Controller) Create(c *gin.Context) {
 	var body repositories.AccountCreate
 	if err := tools.ParseBody(c, &body); err != nil {
@@ -75,12 +69,6 @@ type GetResponse400 struct {
 }
 
 // GetMe получает аккаунт авторизованного пользователя
-//
-// @Tags Аккаунт
-// @Summary Gолучает аккаунт авторизованного пользователя
-// @Success 200 {object} GetResponse200 "Успех"
-// @Failure 400 {object} GetResponse400 "Ошибка, смотри параметр error"
-// @Router /account [get]
 func (s *Controller) GetMe(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 

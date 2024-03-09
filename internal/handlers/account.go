@@ -5,9 +5,6 @@ import (
 	"github.com/jourloy/X-Backend/internal/modules/account"
 )
 
-// @Tag.name Аккаунт
-// @Tag.description Эндпоинты для работы с аккаунтом
-
 func InitAccount(g *gin.RouterGroup) {
 
 	controller := account.Init()
