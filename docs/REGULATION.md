@@ -4,7 +4,7 @@
 
 1. Инициализация модели в `repositories.go`
 
-Всегда любым моделям нужно добавлять 4 поля: `ID`, `CreatedAT`, `UpdatedAT`, `DeletedAT`
+Всегда любым моделям нужно добавлять 4 поля: `ID`, `CreatedAt`, `UpdatedAt`, `DeletedAt`
 
 ```golang
 // Модель примера
@@ -29,38 +29,41 @@ type Example struct {
 }
 ```
 
-У модели обязательно должна быть структура для получения всего списка
+Модель обязательно должна иметь структуру для создания. В нее помещаются все динамические поля, им прописывается JSON на случай, если это будет POST запрос
 
-В нее добавляется `Limit`, динамические поля и отношения. Все типы должны быть с `*`. Если модель связана с пользователем,
-то его ID должен быть указан без `*`
+```golang
+type ExampleCreate struct {
+	Name string `json:"name"
+}
+```
+
+У модели обязательно должна быть структура для поиска. В нее добавляется `Limit`, динамические поля и отношения. Все типы должны быть с `*`
 
 ```golang
 // Структура поиска примера
-type ExampleGetAll struct {
+type ExampleGet struct {
+	ID *string
+
 	// Динамические поля
 	Name *string
 
 	// Отношения
 	ExampleID *string
-
-	// Обязательные отношения
-	ParentID string
+	ParentID *string
 
 	// Обязательно
 	Limit *int
 }
 ```
 
-У модели обязательно должна быть структура репозитория
-
-Все функции должны возвращать ошибку
+У модели обязательно должна быть структура репозитория. Все функции должны возвращать ошибку
 
 ```golang
 // Репозиторий примера
 type ExampleRepository interface {
-	Create(example *Example) error
-	GetOne(example *Example) error
-	GetAll(dest *[]Example, query ExampleGetAll) error
+	Create(example *ExampleCreate) (*Example, error)
+	GetOne(query *ExampleGet) (*Example, error)
+	GetAll(query *ExampleGet) (*[]Example, error)
 	UpdateOne(example *Example) error
 	DeleteOne(example *Example) error
 }
@@ -90,14 +93,18 @@ type ExampleRepository struct {
 ```golang
 // Init создает репозиторий примера
 func Init() {
+	go migration()
+
+	Repository = &ExampleRepository{
+		db: *storage.Database,
+	}
+}
+
+func migration() {
 	if err := Database.AutoMigrate(
 		&repositories.Example{},
 	); err != nil {
 		logger.Fatal(`Migration failed`)
-	}
-
-	Repository = &ExampleRepository{
-		db: *storage.Database,
 	}
 }
 ```
@@ -114,8 +121,8 @@ go example_rep.Init()
 
 ### Комментарий хендлера
 
-- `@Tag.name` - Название категории на русском
-- `@Tag.description` - Краткое описание цели категории
+-   `@Tag.name` - Название категории на русском
+-   `@Tag.description` - Краткое описание цели категории
 
 ```golang
 // @Tag.name Пример
