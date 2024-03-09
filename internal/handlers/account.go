@@ -5,7 +5,8 @@ import (
 	"github.com/jourloy/X-Backend/internal/modules/account"
 )
 
-func InitAccount(g *gin.RouterGroup) {
+func InitAccount(r *gin.Engine) {
+	g := r.Group(`account`)
 
 	controller := account.Init()
 

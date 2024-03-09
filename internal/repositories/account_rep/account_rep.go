@@ -14,12 +14,12 @@ import (
 
 var (
 	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database-account]`,
+		Prefix: `[account-database]`,
 		Level:  log.DebugLevel,
 	})
 )
 
-var Repository repositories.IAccountRepository
+var Repository repositories.AccountRepository
 
 type AccountRepository struct {
 	db gorm.DB
@@ -27,21 +27,31 @@ type AccountRepository struct {
 
 // Init создает репозиторий
 func Init() {
+	go migration()
+
 	Repository = &AccountRepository{
 		db: *storage.Database,
+	}
+}
+
+func migration() {
+	if err := storage.Database.AutoMigrate(
+		&repositories.Account{},
+	); err != nil {
+		logger.Fatal(`Migration failed`)
 	}
 }
 
 // Create создает аккаунт
 func (r *AccountRepository) Create(create *repositories.AccountCreate) (*repositories.Account, error) {
 	// Проверка, есть ли уже такой аккаунт
-	u := repositories.Account{Username: create.Username}
-	if err := r.GetOne(&u); err != nil {
+	u, err := r.GetOne(&repositories.AccountGet{Username: &create.Username})
+	if err != nil {
 		return nil, err
 	}
 
-	// Если есть возвращаем ошибку
-	if u.ID != `` {
+	// Если есть
+	if u != nil {
 		return nil, errors.New(`account already exist`)
 	}
 
@@ -62,20 +72,32 @@ func (r *AccountRepository) Create(create *repositories.AccountCreate) (*reposit
 }
 
 // GetOne возвращает первый аккаунт, попавший под условие
-func (r *AccountRepository) GetOne(account *repositories.Account) error {
-	res := r.db.First(&account, account)
+func (r *AccountRepository) GetOne(query *repositories.AccountGet) (*repositories.Account, error) {
+	account := repositories.Account{}
+
+	res := r.db.First(&account, query)
+
+	// Если ничего не нашли
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
-		return nil
+		return nil, nil
 	}
-	return res.Error
+
+	// Есои ошибка
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &account, nil
 }
 
 // UpdateOne обновляет аккаунт
-func (r *AccountRepository) UpdateOne(account *repositories.Account) {
-	r.db.Save(&account)
+func (r *AccountRepository) UpdateOne(account *repositories.Account) error {
+	res := r.db.Save(&account)
+	return res.Error
 }
 
 // DeleteOne удаляет аккаунт
-func (r *AccountRepository) DeleteOne(account *repositories.Account) {
-	r.db.Delete(&account, account)
+func (r *AccountRepository) DeleteOne(account *repositories.Account) error {
+	res := r.db.Delete(&account, account)
+	return res.Error
 }

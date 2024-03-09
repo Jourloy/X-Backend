@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
 )
@@ -13,11 +14,9 @@ func API() gin.HandlerFunc {
 
 		if api != `` {
 			accRep := account_rep.Repository
-			account := repositories.Account{ApiKey: api}
-			accRep.GetOne(&account)
-
-			if account.ID != `` {
-				c.Set(`account`, account)
+			account, _ := accRep.GetOne(&repositories.AccountGet{ApiKey: &api})
+			if account != nil {
+				c.Set(`account`, *account)
 			}
 		}
 

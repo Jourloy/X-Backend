@@ -13,7 +13,7 @@ import (
 )
 
 type Service struct {
-	secRep     repositories.ISectorRepository
+	secRep     repositories.SectorRepository
 	nodeRep    repositories.NodeRepository
 	depositRep repositories.IDepositRepository
 	cache      redis.Client
@@ -58,11 +58,10 @@ type createResp struct {
 
 // Генерация сектора
 func (s *Service) Create(body CreateOptions) createResp {
-	sector := repositories.Sector{
-		X: body.X,
-		Y: body.Y,
+	sector, err := s.secRep.Create(&repositories.SectorCreate{X: body.X, Y: body.Y})
+	if err != nil {
+		return createResp{Err: err}
 	}
-	s.secRep.Create(&sector)
 
 	go s.generateNodes(sector.ID)
 	go s.generateDeposits(sector.ID)
@@ -120,11 +119,14 @@ type getOneResp struct {
 
 // GetOne получает сектор по id
 func (s *Service) GetOne(id string) getOneResp {
-	sector := repositories.Sector{ID: id}
-	s.secRep.GetOne(&sector)
+	sector, err := s.secRep.GetOne(&repositories.SectorGet{ID: &id})
+	if err != nil {
+		return getOneResp{Err: err}
+	}
+
 	return getOneResp{
 		Err:    nil,
-		Sector: sector,
+		Sector: *sector,
 	}
 }
 
@@ -134,12 +136,16 @@ type getAllResp struct {
 }
 
 // GetAll возвращает все сектора
-func (s *Service) GetAll(query repositories.SectorGetAll) getAllResp {
+func (s *Service) GetAll(query repositories.SectorGet) getAllResp {
 	// Получение секторов
-	sectors := s.secRep.GetAll(query)
+	sectors, err := s.secRep.GetAll(&query)
+	if err != nil {
+		return getAllResp{Err: err}
+	}
+
 	return getAllResp{
 		Err:     nil,
-		Sectors: sectors,
+		Sectors: *sectors,
 	}
 }
 

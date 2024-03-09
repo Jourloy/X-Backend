@@ -13,8 +13,8 @@ import (
 
 type ResourceService struct {
 	resRep repositories.IResourceRepository
-	secRep repositories.ISectorRepository
-	accRep repositories.IAccountRepository
+	secRep repositories.SectorRepository
+	accRep repositories.AccountRepository
 	cache  redis.Client
 }
 
@@ -38,16 +38,21 @@ type createResp struct {
 // Create создает ресурс
 func (s *ResourceService) Create(body repositories.Resource) createResp {
 	// Проверка существования аккаунта
-	account := repositories.Account{ID: body.CreatorID}
-	s.accRep.GetOne(&account)
-	if account.Username == `` {
+	account, err := s.accRep.GetOne(&repositories.AccountGet{ID: &body.CreatorID})
+	if err != nil {
+		return createResp{Err: err}
+	}
+	if account == nil {
 		return createResp{Err: errors.New(`account not found`)}
 	}
 
 	// Проверка существования сектора
-	sector := repositories.Sector{ID: body.SectorID}
-	s.secRep.GetOne(&sector)
-	if sector.ID == `` {
+	sector, err := s.secRep.GetOne(&repositories.SectorGet{ID: &body.SectorID})
+	if err != nil {
+		return createResp{Err: err}
+	}
+
+	if sector == nil {
 		return createResp{Err: errors.New(`sector not found`)}
 	}
 

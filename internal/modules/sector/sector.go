@@ -39,12 +39,14 @@ func (s *Controller) Create(c *gin.Context) {
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`parse body error`)
 		c.JSON(400, gin.H{`error`: `parse body error`})
+		return
 	}
 
 	resp := s.service.Create(body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+		return
 	}
 
 	c.JSON(200, gin.H{`error`: ``})
@@ -74,7 +76,7 @@ func (s *Controller) GetOne(c *gin.Context) {
 func (s *Controller) GetAll(c *gin.Context) {
 
 	// Создание фильтров
-	query := repositories.SectorGetAll{}
+	query := repositories.SectorGet{}
 	if q := c.Query(`x`); q != `` {
 		n, _ := strconv.Atoi(q)
 		query.X = &n

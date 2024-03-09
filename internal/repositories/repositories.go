@@ -8,7 +8,7 @@ import (
 
 // Модель аккаунта
 type Account struct {
-	ID        string         `json:"id"`
+	ID        string         `json:"id" gorm:"primarykey"`
 	ApiKey    string         `json:"apiKey"`
 	Username  string         `json:"username"`
 	Balance   int            `json:"balance"`
@@ -21,24 +21,32 @@ type AccountCreate struct {
 	Username string `json:"username"`
 }
 
-type IAccountRepository interface {
+type AccountGet struct {
+	ID       *string `json:"id"`
+	ApiKey   *string `json:"apiKey"`
+	Username *string `json:"username"`
+	Balance  *int    `json:"balance"`
+}
+
+type AccountRepository interface {
 	Create(create *AccountCreate) (*Account, error)
-	GetOne(account *Account) error
-	UpdateOne(account *Account)
-	DeleteOne(account *Account)
+	GetOne(query *AccountGet) (*Account, error)
+	UpdateOne(account *Account) error
+	DeleteOne(account *Account) error
 }
 
 // Модель сектора
 type Sector struct {
 	ID string `json:"id"`
 
+	// Глобальные координаты
 	X int `json:"x"`
 	Y int `json:"y"`
 
+	// Графы
 	Nodes []Node `json:"nodes"`
 
 	// Постройки
-
 	Townhalls []Townhall `json:"townhalls"`
 	Towers    []Tower    `json:"towers"`
 	Storages  []Storage  `json:"storages"`
@@ -46,40 +54,41 @@ type Sector struct {
 	Plans     []Plan     `json:"plans"`
 
 	// Существа
-
-	Workers  []Worker  `json:"workers"`
-	Warriors []Warrior `json:"warriors"`
-	Traders  []Trader  `json:"traders"`
-	Scouts   []Scout   `json:"scouts"`
+	Creatures []Creature `json:"creatures"`
 
 	// Ресурсы
-
 	Deposits  []Deposit  `json:"deposits"`
 	Resources []Resource `json:"resources" gorm:"foreignKey:ParentID"`
 
 	// Предметы
-
 	Items []Item `json:"items" gorm:"foreignKey:ParentID"`
 
+	// Мета
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
-// Модель поиска сектора
-type SectorGetAll struct {
+type SectorCreate struct {
+	X int `json:"x"`
+	Y int `json:"y"`
+}
+
+// Структура поиска сектора
+type SectorGet struct {
+	ID    *string
 	X     *int
 	Y     *int
 	Limit *int
 }
 
 // Репозиторий сектора
-type ISectorRepository interface {
-	Create(sector *Sector)
-	GetOne(sector *Sector)
-	GetAll(query SectorGetAll) []Sector
-	UpdateOne(sector *Sector)
-	DeleteOne(sector *Sector)
+type SectorRepository interface {
+	Create(sector *SectorCreate) (*Sector, error)
+	GetOne(query *SectorGet) (*Sector, error)
+	GetAll(query *SectorGet) (*[]Sector, error)
+	UpdateOne(sector *Sector) error
+	DeleteOne(sector *Sector) error
 }
 
 // Модель узла
@@ -522,206 +531,79 @@ type IMarketRepository interface {
 
 //////// Существа ////////
 
-// Модель рабочего
-type Worker struct {
-	ID           string         `json:"id"`
-	MaxStorage   int            `json:"maxStorage"`
-	UsedStorage  int            `json:"usedStorage"`
-	X            int            `json:"x"`
-	Y            int            `json:"y"`
-	MaxHealth    int            `json:"maxHealth"`
-	Health       int            `json:"health"`
-	RequireCoins float64        `json:"requireCoins"`
-	RequireFood  float64        `json:"requireFood"`
-	Fatigue      float64        `json:"fatigue"`
-	Storage      []Item         `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID     string         `json:"sectorId"`
-	AccountID    string         `json:"accountId"`
-	CreatedAt    time.Time      `json:"createdAt"`
-	UpdatedAt    time.Time      `json:"updatedAt"`
-	DeletedAt    gorm.DeletedAt `gorm:"index"`
+// Модель существа
+type Creature struct {
+	ID string `json:"id" gorm:"primarykey"`
+
+	X int `json:"x"`
+	Y int `json:"y"`
+
+	// Динамические поля, задаются пользователем
+	Race      string `json:"race"`
+	IsWorker  bool   `json:"isWorker"`
+	IsTrader  bool   `json:"isTrader"`
+	IsWarrior bool   `json:"isWarrior"`
+
+	// Динамические поля, задаются шаблоном
+	MaxStorage         int     `json:"maxStorage"`
+	UsedStorage        int     `json:"usedStorage"`
+	RequireFood        float64 `json:"requireFood"`
+	FatiguePerStep     float64 `json:"fatiguePerStep"`
+	FatigueModificator float64 `json:"fatigueModificator"`
+	Fatigue            float64 `json:"fatigue"`
+	MaxHealth          int     `json:"maxHealth"`
+	Health             int     `json:"health"`
+
+	// Дети
+	Items []Item `json:"items" gorm:"foreignKey:ParentID"`
+
+	// Родители
+	SectorID  string `json:"sectorId"`
+	AccountID string `json:"accountId"`
+
+	// Мета
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
-// Структура создания рабочего
-type WorkerCreate struct {
+// Структура создания существа
+type CreatureCreate struct {
 	X         int    `json:"x"`
 	Y         int    `json:"y"`
+	Race      string `json:"race"`
+	IsWorker  bool   `json:"isWorker"`
+	IsTrader  bool   `json:"isTrader"`
+	IsWarrior bool   `json:"isWarrior"`
 	SectorID  string `json:"sectorId"`
 	AccountID string `json:"accountId"`
 }
 
-// Структура поиска рабочего
-type WorkerGetAll struct {
-	MaxStorage   *int
-	UsedStorage  *int
-	X            *int
-	Y            *int
-	MaxHealth    *int
-	Health       *int
-	RequireCoins *float64
-	RequireFood  *float64
-	Fatigue      *float64
-	Limit        *int
+// Структура поиска существа
+type CreatureGet struct {
+	ID                 *string  `json:"id,omitempty"`
+	Race               *string  `json:"race,omitempty"`
+	MaxStorage         *int     `json:"maxStorage,omitempty"`
+	UsedStorage        *int     `json:"usedStorage,omitempty"`
+	RequireCoins       *float64 `json:"requireCoins,omitempty"`
+	RequireFood        *float64 `json:"requireFood,omitempty"`
+	Fatigue            *float64 `json:"fatigue,omitempty"`
+	FatiguePerStep     *float64 `json:"fatiguePerStep,omitempty"`
+	FatigueModificator *float64 `json:"fatigueModificator,omitempty"`
+	MaxHealth          *int     `json:"maxHealth,omitempty"`
+	Health             *int     `json:"health,omitempty"`
+	IsWorker           *bool    `json:"isWorker,omitempty"`
+	IsTrader           *bool    `json:"isTrader,omitempty"`
+	IsWarrior          *bool    `json:"isWarrior,omitempty"`
+	SectorID           *string  `json:"sectorId,omitempty"`
+	AccountID          *string  `json:"accountId,omitempty"`
 }
 
-// Репозиторий рабочего
-type IWorkerRepository interface {
-	Create(worker *WorkerCreate)
-	GetOne(worker *Worker)
-	GetAll(query WorkerGetAll, accountID string) []Worker
-	UpdateOne(worker *Worker)
-	DeleteOne(worker *Worker)
-}
-
-// Модель разведчика
-type Scout struct {
-	ID           string         `json:"id"`
-	MaxStorage   int            `json:"maxStorage"`
-	UsedStorage  int            `json:"usedStorage"`
-	X            int            `json:"x"`
-	Y            int            `json:"y"`
-	MaxHealth    int            `json:"maxHealth"`
-	Health       int            `json:"health"`
-	RequireCoins float64        `json:"requireCoins"`
-	RequireFood  float64        `json:"requireFood"`
-	Fatigue      float64        `json:"fatigue"`
-	Storage      []Item         `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID     string         `json:"sectorId"`
-	AccountID    string         `json:"accountId"`
-	CreatedAt    time.Time      `json:"createdAt"`
-	UpdatedAt    time.Time      `json:"updatedAt"`
-	DeletedAt    gorm.DeletedAt `gorm:"index"`
-}
-
-// Структура создания разведчика
-type ScoutCreate struct {
-	X         int    `json:"x"`
-	Y         int    `json:"y"`
-	SectorID  string `json:"sectorId"`
-	AccountID string `json:"accountId"`
-}
-
-// Структура поиска разведчика
-type ScoutGetAll struct {
-	MaxStorage   *int
-	UsedStorage  *int
-	X            *int
-	Y            *int
-	MaxHealth    *int
-	Health       *int
-	RequireCoins *float64
-	RequireFood  *float64
-	Fatigue      *float64
-	Limit        *int
-}
-
-// Репозиторий разведчика
-type IScoutRepository interface {
-	Create(scout *ScoutCreate)
-	GetOne(scout *Scout)
-	GetAll(query ScoutGetAll, accountID string) []Scout
-	UpdateOne(scout *Scout)
-	DeleteOne(scout *Scout)
-}
-
-// Модель воина
-type Warrior struct {
-	ID           string         `json:"id"`
-	MaxStorage   int            `json:"maxStorage"`
-	UsedStorage  int            `json:"usedStorage"`
-	X            int            `json:"x"`
-	Y            int            `json:"y"`
-	MaxHealth    int            `json:"maxHealth"`
-	Health       int            `json:"health"`
-	RequireCoins float64        `json:"requireCoins"`
-	RequireFood  float64        `json:"requireFood"`
-	Fatigue      float64        `json:"fatigue"`
-	Storage      []Item         `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID     string         `json:"sectorId"`
-	AccountID    string         `json:"accountId"`
-	CreatedAt    time.Time      `json:"createdAt"`
-	UpdatedAt    time.Time      `json:"updatedAt"`
-	DeletedAt    gorm.DeletedAt `gorm:"index"`
-}
-
-// Структура создания воина
-type WarriorCreate struct {
-	X         int    `json:"x"`
-	Y         int    `json:"y"`
-	SectorID  string `json:"sectorId"`
-	AccountID string `json:"accountId"`
-}
-
-// Структура поиска воинов
-type WarriorGetAll struct {
-	MaxStorage   *int
-	UsedStorage  *int
-	X            *int
-	Y            *int
-	MaxHealth    *int
-	Health       *int
-	RequireCoins *float64
-	RequireFood  *float64
-	Fatigue      *float64
-	Limit        *int
-}
-
-// Репозиторий воина
-type IWarriorRepository interface {
-	Create(warrior *WarriorCreate)
-	GetOne(warrior *Warrior)
-	GetAll(query WarriorGetAll, accountID string) []Warrior
-	UpdateOne(warrior *Warrior)
-	DeleteOne(warrior *Warrior)
-}
-
-// Модель торговца
-type Trader struct {
-	ID           string         `json:"id"`
-	MaxStorage   int            `json:"maxStorage"`
-	UsedStorage  int            `json:"usedStorage"`
-	X            int            `json:"x"`
-	Y            int            `json:"y"`
-	MaxHealth    int            `json:"maxHealth"`
-	Health       int            `json:"health"`
-	RequireCoins float64        `json:"requireCoins"`
-	RequireFood  float64        `json:"requireFood"`
-	Fatigue      float64        `json:"fatigue"`
-	Storage      []Item         `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID     string         `json:"sectorId"`
-	AccountID    string         `json:"accountId"`
-	CreatedAt    time.Time      `json:"createdAt"`
-	UpdatedAt    time.Time      `json:"updatedAt"`
-	DeletedAt    gorm.DeletedAt `gorm:"index"`
-}
-
-// Структура создания торговца
-type TraderCreate struct {
-	X         int    `json:"x"`
-	Y         int    `json:"y"`
-	SectorID  string `json:"sectorId"`
-	AccountID string `json:"accountId"`
-}
-
-// Структура поиска торговца
-type TraderGetAll struct {
-	MaxStorage   *int
-	UsedStorage  *int
-	X            *int
-	Y            *int
-	MaxHealth    *int
-	Health       *int
-	RequireCoins *float64
-	RequireFood  *float64
-	Fatigue      *float64
-	Limit        *int
-}
-
-// Репозиторий торговца
-type ITraderRepository interface {
-	Create(trader *TraderCreate)
-	GetOne(trader *Trader)
-	GetAll(query TraderGetAll, accountID string) []Trader
-	UpdateOne(trader *Trader)
-	DeleteOne(trader *Trader)
+// Репозиторий существа
+type CreatureRepository interface {
+	Create(creatrue *CreatureCreate) (*Creature, error)
+	GetOne(query *CreatureGet) (*Creature, error)
+	GetAll(query *CreatureGet) (*[]Creature, error)
+	UpdateOne(creature *Creature) error
+	DeleteOne(creature *Creature) error
 }

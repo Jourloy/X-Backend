@@ -13,7 +13,7 @@ import (
 
 type Service struct {
 	depRep repositories.IDepositRepository
-	secRep repositories.ISectorRepository
+	secRep repositories.SectorRepository
 	cache  redis.Client
 }
 
@@ -37,9 +37,12 @@ type createResp struct {
 // Create создает рабочего
 func (s *Service) Create(body repositories.Deposit) createResp {
 	// Проверка существования сектора
-	sector := repositories.Sector{ID: body.SectorID}
-	s.secRep.GetOne(&sector)
-	if sector.ID == `` {
+	sector, err := s.secRep.GetOne(&repositories.SectorGet{ID: &body.SectorID})
+	if err != nil {
+		return createResp{Err: err}
+	}
+
+	if sector == nil {
 		return createResp{Err: errors.New(`sector not found`)}
 	}
 

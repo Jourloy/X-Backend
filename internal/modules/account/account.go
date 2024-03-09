@@ -70,24 +70,30 @@ type GetResponse400 struct {
 
 // GetMe получает аккаунт авторизованного пользователя
 func (s *Controller) GetMe(c *gin.Context) {
-	accountID := c.GetString(`accountID`)
-
-	resp := s.service.GetOne(accountID)
-	if resp.Err != nil {
-		logger.Error(resp.Err)
-		c.JSON(400, GetResponse400{Error: resp.Err.Error()})
+	a, exist := c.Get(`account`)
+	if !exist {
+		c.JSON(400, GetResponse400{Error: `api key is required`})
+		logger.Error(`api key is required`)
 		return
 	}
 
-	c.JSON(200, GetResponse200{Account: resp.Account})
+	account, ok := a.(repositories.Account)
+	if !ok {
+		logger.Debug(a)
+		c.JSON(400, GetResponse400{Error: `invalid account`})
+		logger.Error(`invalid account`)
+		return
+	}
+
+	c.JSON(200, GetResponse200{Account: account})
 }
 
 // UpdateOne обновляет аккаунт
 func (s *Controller) UpdateOne(c *gin.Context) {
 	var b repositories.Account
 	if err := tools.ParseBody(c, &b); err != nil {
-		logger.Error(`Parse body error`)
-		c.JSON(400, gin.H{`error`: `Parse body error`})
+		logger.Error(`parse body error`)
+		c.JSON(400, gin.H{`error`: `parse body error`})
 	}
 
 	resp := s.service.UpdateOne(b)
@@ -103,8 +109,8 @@ func (s *Controller) UpdateOne(c *gin.Context) {
 func (s *Controller) DeleteOne(c *gin.Context) {
 	var b repositories.Account
 	if err := tools.ParseBody(c, &b); err != nil {
-		logger.Error(`Parse body error`)
-		c.JSON(400, gin.H{`error`: `Parse body error`})
+		logger.Error(`parse body error`)
+		c.JSON(400, gin.H{`error`: `parse body error`})
 	}
 
 	resp := s.service.DeleteOne(b)

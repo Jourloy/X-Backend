@@ -9,7 +9,7 @@ import (
 )
 
 type Service struct {
-	aRep  repositories.IAccountRepository
+	aRep  repositories.AccountRepository
 	cache redis.Client
 }
 
@@ -44,12 +44,11 @@ type getOneResp struct {
 }
 
 // GetOne получает аккаунт по id
-func (s *Service) GetOne(accountID string) getOneResp {
-	user := repositories.Account{ID: accountID}
-	s.aRep.GetOne(&user)
+func (s *Service) GetOne(query *repositories.AccountGet) getOneResp {
+	user, err := s.aRep.GetOne(query)
 	return getOneResp{
-		Err:     nil,
-		Account: user,
+		Err:     err,
+		Account: *user,
 	}
 }
 

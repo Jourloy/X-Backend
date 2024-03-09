@@ -6,16 +6,10 @@ import (
 	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/repositories/item_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/trader_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/warrior_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/worker_rep"
 )
 
 type Service struct {
 	iteRep repositories.IItemRepository
-	warRep repositories.IWarriorRepository
-	worRep repositories.IWorkerRepository
-	traRep repositories.ITraderRepository
 	cache  redis.Client
 }
 
@@ -23,15 +17,9 @@ type Service struct {
 func Init() *Service {
 
 	iteRep := item_rep.Repository
-	worRep := worker_rep.Repository
-	warRep := warrior_rep.Repository
-	traRep := trader_rep.Repository
 
 	return &Service{
 		iteRep: iteRep,
-		worRep: worRep,
-		warRep: warRep,
-		traRep: traRep,
 		cache:  *cache.Client,
 	}
 }
@@ -42,25 +30,6 @@ type createResp struct {
 
 // Create создает предмет
 func (s *Service) Create(body repositories.Item, parentID string, parentType string, accountID string) createResp {
-	/* if parentType == `worker` {
-		w := s.worRep.GetOne(parentID, accountID)
-		if w.ID == `` {
-			return createResp{Err: errors.New(`worker not found`)}
-		}
-	} else if parentType == `warrior` {
-		w := s.warRep.GetOne(parentID, accountID)
-		if w.ID == `` {
-			return createResp{Err: errors.New(`warrior not found`)}
-		}
-	} else if parentType == `trader` {
-		w := s.warRep.GetOne(parentID, accountID)
-		if w.ID == `` {
-			return createResp{Err: errors.New(`trader not found`)}
-		}
-	} else {
-		return createResp{Err: errors.New(`parentType is invalid`)}
-	} */
-
 	s.iteRep.Create(&body)
 	return createResp{Err: nil}
 }

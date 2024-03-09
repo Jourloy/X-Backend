@@ -5,7 +5,8 @@ import (
 	"github.com/jourloy/X-Backend/internal/modules/sector"
 )
 
-func InitSector(g *gin.RouterGroup) {
+func InitSector(r *gin.Engine) {
+	g := r.Group(`sector`)
 
 	controller := sector.Init()
 
