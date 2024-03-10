@@ -12,7 +12,7 @@ func ParseENV() {
 		DatabaseDSN = env
 	}
 
-	if env, exist := os.LookupEnv(`Cache_DSN`); exist {
+	if env, exist := os.LookupEnv(`CACHE_DSN`); exist {
 		CacheDSN = env
 	}
 }

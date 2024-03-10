@@ -85,7 +85,13 @@ func (s *Controller) GetMe(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, GetResponse200{Account: account})
+	resp := s.service.GetOne(&repositories.AccountGet{ID: &account.ID})
+	if resp.Err != nil {
+		c.JSON(400, GetResponse400{Error: resp.Err.Error()})
+		return
+	}
+
+	c.JSON(200, GetResponse200{Account: resp.Account})
 }
 
 // UpdateOne обновляет аккаунт

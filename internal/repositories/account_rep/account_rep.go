@@ -61,6 +61,7 @@ func (r *AccountRepository) Create(create *repositories.AccountCreate) (*reposit
 		ApiKey:   uuid.NewString(),
 		Username: create.Username,
 		Balance:  0,
+		IsAdmin:  false,
 	}
 
 	res := r.db.Create(&user)

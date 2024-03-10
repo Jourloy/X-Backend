@@ -1,12 +1,16 @@
 package account_service
 
 import (
+	"context"
+
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
 )
+
+var ctx = context.Background()
 
 type Service struct {
 	aRep  repositories.AccountRepository

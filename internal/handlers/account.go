@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jourloy/X-Backend/internal/guards"
 	"github.com/jourloy/X-Backend/internal/modules/account"
 )
 
@@ -11,6 +12,9 @@ func InitAccount(r *gin.Engine) {
 	controller := account.Init()
 
 	g.POST(``, controller.Create)
+
+	g.Use(guards.CheckAPI())
+
 	g.GET(``, controller.GetMe)
 	g.PATCH(``, controller.UpdateOne)
 	g.DELETE(``, controller.DeleteOne)

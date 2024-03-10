@@ -16,6 +16,7 @@ type Account struct {
 
 	ApiKey  string `json:"apiKey"`
 	Balance int    `json:"balance"`
+	IsAdmin bool   `json:"-"`
 
 	// Мета
 	CreatedAt time.Time      `json:"-"`
