@@ -8,10 +8,16 @@ import (
 
 // Модель аккаунта
 type Account struct {
-	ID        string         `json:"id" gorm:"primarykey"`
-	ApiKey    string         `json:"apiKey"`
-	Username  string         `json:"username"`
-	Balance   int            `json:"balance"`
+	ID string `json:"id" gorm:"primarykey"`
+
+	// Динамические поля, задаются пользователем
+	Race     string `json:"race"`
+	Username string `json:"username"`
+
+	ApiKey  string `json:"apiKey"`
+	Balance int    `json:"balance"`
+
+	// Мета
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
@@ -43,14 +49,11 @@ type Sector struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 
-	// Графы
+	// Узлы
 	Nodes []Node `json:"nodes"`
 
 	// Постройки
-	Townhalls []Townhall `json:"townhalls"`
-	Towers    []Tower    `json:"towers"`
-	Storages  []Storage  `json:"storages"`
-	Walls     []Wall     `json:"walls"`
+	Buildings []Building `json:"buildings"`
 	Plans     []Plan     `json:"plans"`
 
 	// Существа
@@ -95,8 +98,9 @@ type SectorRepository interface {
 type Node struct {
 	ID string `json:"id"`
 
-	X         int  `json:"x"`
-	Y         int  `json:"y"`
+	X int `json:"x"`
+	Y int `json:"y"`
+
 	Walkable  bool `json:"walkable"`
 	Difficult int  `json:"difficult"`
 
@@ -128,12 +132,16 @@ type NodeRepository interface {
 
 // Модель залежи ресурсов
 type Deposit struct {
-	ID        string         `json:"id"`
-	Type      string         `json:"type"`
-	Amount    int            `json:"amount"`
-	X         int            `json:"x"`
-	Y         int            `json:"y"`
-	SectorID  string         `json:"sectorId"`
+	ID string `json:"id"`
+
+	X int `json:"x"`
+	Y int `json:"y"`
+
+	Type   string `json:"type"`
+	Amount int    `json:"amount"`
+
+	SectorID string `json:"sectorId"`
+
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
@@ -159,19 +167,23 @@ type IDepositRepository interface {
 
 // Модель ресурсов
 type Resource struct {
-	ID         string         `json:"id"`
-	Type       string         `json:"type"`
-	Amount     int            `json:"amount"`
-	Weight     int            `json:"weight"`
-	X          int            `json:"x"`
-	Y          int            `json:"y"`
-	ParentID   string         `json:"parentId"`
-	ParentType string         `json:"parentType"`
-	SectorID   string         `json:"sectorId"`
-	CreatorID  string         `json:"creatorId"`
-	CreatedAt  time.Time      `json:"-"`
-	UpdatedAt  time.Time      `json:"-"`
-	DeletedAt  gorm.DeletedAt `json:"-" gorm:"index"`
+	ID string `json:"id"`
+
+	X int `json:"x"`
+	Y int `json:"y"`
+
+	Type   string `json:"type"`
+	Amount int    `json:"amount"`
+	Weight int    `json:"weight"`
+
+	ParentID   string `json:"parentId"`
+	ParentType string `json:"parentType"`
+	SectorID   string `json:"sectorId"`
+	CreatorID  string `json:"creatorId"`
+
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 // Структура поиска ресурсов
@@ -197,47 +209,23 @@ type IResourceRepository interface {
 	DeleteOne(resource *Resource)
 }
 
-// Модель шаблона ресурсов
-type ResourceTemplate struct {
-	ID        string         `json:"id"`
-	Type      string         `json:"type"`
-	Amount    int            `json:"amount"`
-	Weight    int            `json:"weight"`
+// Модель предмета
+type Item struct {
+	ID string `json:"id" gorm:"primarykey"`
+
+	X int `json:"x"`
+	Y int `json:"y"`
+
+	Type string `json:"type"`
+
+	ParentID   string `json:"parentId"`
+	ParentType string `json:"parentType"`
+	SectorID   string `json:"sectorId"`
+	CreatorID  string `json:"creatorId"`
+
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
-}
-
-// Структура поиска шаблона ресурсов
-type ResourceTemplateGetAll struct {
-	Type   *string
-	Amount *int
-	Weight *int
-	Limit  *int
-}
-
-// Репозиторий шаблона ресурсов
-type IResourceTemplateRepository interface {
-	Create(resourceTemplate *ResourceTemplate)
-	GetOne(resourceTemplate ResourceTemplate) ResourceTemplate
-	GetAll(query ResourceTemplateGetAll) []ResourceTemplate
-	UpdateOne(resource *ResourceTemplate)
-	DeleteOne(resource *ResourceTemplate)
-}
-
-// Модель предмета
-type Item struct {
-	ID         string         `json:"id" gorm:"primarykey"`
-	Type       string         `json:"type"`
-	X          int            `json:"x"`
-	Y          int            `json:"y"`
-	ParentID   string         `json:"parentId"`
-	ParentType string         `json:"parentType"`
-	SectorID   string         `json:"sectorId"`
-	CreatorID  string         `json:"creatorId"`
-	CreatedAt  time.Time      `json:"-"`
-	UpdatedAt  time.Time      `json:"-"`
-	DeletedAt  gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 // Структура поиска предмета
@@ -261,196 +249,65 @@ type IItemRepository interface {
 	DeleteOne(item *Item)
 }
 
-// Модель шаблона предмета
-type ItemTemplate struct {
-	ID        string         `json:"id"`
-	Type      string         `json:"type"`
+//////// Постройки ////////
+
+// Модель постройки
+type Building struct {
+	ID string `json:"id" gorm:"primarykey"`
+
+	X int `json:"x"`
+	Y int `json:"y"`
+
+	// Динамические поля, задаются пользователем
+	Type string `json:"type"`
+
+	// Динамические поля, задаются шаблоном
+	MaxDurability int `json:"maxDurability"`
+	Durability    int `json:"durability"`
+	MaxStorage    int `json:"maxStorage"`
+	UsedStorage   int `json:"usedStorage"`
+	Level         int `json:"level"`
+	AttackRange   int `json:"attackRange"`
+
+	// Дети
+	Items     []Item     `json:"items" gorm:"foreignKey:ParentID"`
+	Resources []Resource `json:"resources" gorm:"foreignKey:ParentID"`
+
+	// Родители
+	SectorID  string `json:"sectorId"`
+	AccountID string `json:"accountId"`
+
+	// Мета
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
-// Структура поиска шаблона предмета
-type ItemTemplateGetAll struct {
-	Type  *string
-	Limit *int
-}
-
-// Репозиторий шаблона предмета
-type IItemTemplateRepository interface {
-	Create(itemTemplate *ItemTemplate)
-	GetOne(itemTemplate *ItemTemplate)
-	GetAll(query ItemTemplateGetAll) []ItemTemplate
-	UpdateOne(itemTemplate *ItemTemplate)
-	DeleteOne(itemTemplate *ItemTemplate)
-}
-
-//////// Постройки ////////
-
-// Модель главного здания
-type Townhall struct {
-	ID            string         `json:"id" gorm:"primarykey"`
-	MaxDurability int            `json:"maxDurability"`
-	Durability    int            `json:"durability"`
-	MaxStorage    int            `json:"maxStorage"`
-	UsedStorage   int            `json:"usedStorage"`
-	X             int            `json:"x"`
-	Y             int            `json:"y"`
-	Storage       []Item         `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID      string         `json:"sectorId"`
-	AccountID     string         `json:"accountId"`
-	CreatedAt     time.Time      `json:"createdAt"`
-	UpdatedAt     time.Time      `json:"updatedAt"`
-	DeletedAt     gorm.DeletedAt `gorm:"index"`
-}
-
-// Структура поиска главного здания
-type TownhallGetAll struct {
-	MaxDurability *int
-	Durability    *int
-	MaxStorage    *int
-	UsedStorage   *int
-	X             *int
-	Y             *int
-	Limit         *int
-}
-
-// Репозиторий главного здания
-type ITownhallRepository interface {
-	Create(townhall *Townhall, accountID string)
-	GetOne(townhall *Townhall)
-	GetAll(query TownhallGetAll, accountID string) []Townhall
-	UpdateOne(townhall *Townhall)
-	DeleteOne(townhall *Townhall)
-}
-
-// Модель башни
-type Tower struct {
-	ID            string         `json:"id"`
-	MaxDurability int            `json:"maxDurability"`
-	Durability    int            `json:"durability"`
-	Level         int            `json:"level"`
-	MaxStorage    int            `json:"maxStorage"`
-	UsedStorage   int            `json:"usedStorage"`
-	X             int            `json:"x"`
-	Y             int            `json:"y"`
-	Storage       []Item         `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID      string         `json:"sectorId"`
-	AccountID     string         `json:"accountId"`
-	CreatedAt     time.Time      `json:"createdAt"`
-	UpdatedAt     time.Time      `json:"updatedAt"`
-	DeletedAt     gorm.DeletedAt `gorm:"index"`
-}
-
-// Структура поиска башни
-type TowerGetAll struct {
-	MaxDurability *int
-	Durability    *int
-	Level         *int
-	MaxStorage    *int
-	UsedStorage   *int
-	X             *int
-	Y             *int
-	Limit         *int
-}
-
-// Репозиторий башни
-type ITowerRepository interface {
-	Create(tower *Tower, accountID string)
-	GetOne(tower *Tower)
-	GetAll(query TowerGetAll, accountID string) []Tower
-	UpdateOne(tower *Tower)
-	DeleteOne(tower *Tower)
-}
-
-// Модель хранилища
-type Storage struct {
-	ID            string         `json:"id"`
-	MaxDurability int            `json:"maxDurability"`
-	Durability    int            `json:"durability"`
-	Level         int            `json:"level"`
-	MaxStorage    int            `json:"maxStorage"`
-	UsedStorage   int            `json:"usedStorage"`
-	X             int            `json:"x"`
-	Y             int            `json:"y"`
-	Storage       []Item         `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID      string         `json:"sectorId"`
-	AccountID     string         `json:"accountId"`
-	CreatedAt     time.Time      `json:"createdAt"`
-	UpdatedAt     time.Time      `json:"updatedAt"`
-	DeletedAt     gorm.DeletedAt `gorm:"index"`
-}
-
-// Структура поиска хранилища
-type StorageGetAll struct {
-	MaxDurability *int
-	Durability    *int
-	Level         *int
-	MaxStorage    *int
-	UsedStorage   *int
-	X             *int
-	Y             *int
-	Limit         *int
-}
-
-// Репозиторий хранилища
-type IStorageRepository interface {
-	Create(storage *Storage, accountID string)
-	GetOne(storage *Storage)
-	GetAll(query StorageGetAll, accountID string) []Storage
-	UpdateOne(storage *Storage)
-	DeleteOne(storage *Storage)
-}
-
-// Модель стены
-type Wall struct {
-	ID            string         `json:"id"`
-	MaxDurability int            `json:"maxDurability"`
-	Durability    int            `json:"durability"`
-	Level         int            `json:"level"`
-	X             int            `json:"x"`
-	Y             int            `json:"y"`
-	Storage       []Item         `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID      string         `json:"sectorId"`
-	AccountID     string         `json:"accountId"`
-	CreatedAt     time.Time      `json:"createdAt"`
-	UpdatedAt     time.Time      `json:"updatedAt"`
-	DeletedAt     gorm.DeletedAt `gorm:"index"`
-}
-
-// Структура поиска стены
-type WallGetAll struct {
-	MaxDurability *int
-	Durability    *int
-	Level         *int
-	Y             *int
-	X             *int
-	Limit         *int
-}
-
-// Репозиторий  стены
-type IWallRepository interface {
-	Create(wall *Wall, accountID string)
-	GetOne(wall *Wall)
-	GetAll(query WallGetAll, accountID string) []Wall
-	UpdateOne(wall *Wall)
-	DeleteOne(wall *Wall)
-}
-
 // Модель планируемой постройки
 type Plan struct {
-	ID          string         `json:"id"`
-	MaxProgress int            `json:"maxProgress"`
-	Progress    int            `json:"progress"`
-	Type        string         `json:"type"`
-	X           int            `json:"x"`
-	Y           int            `json:"y"`
-	Storage     []Item         `json:"storage" gorm:"foreignKey:ParentID"`
-	SectorID    string         `json:"sectorId"`
-	AccountID   string         `json:"accountId"`
-	CreatedAt   time.Time      `json:"createdAt"`
-	UpdatedAt   time.Time      `json:"updatedAt"`
-	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	ID string `json:"id" gorm:"primarykey"`
+
+	X int `json:"x"`
+	Y int `json:"y"`
+
+	// Динамические поля, задаются пользователем
+	Type string `json:"type"`
+
+	MaxProgress int `json:"maxProgress"`
+	Progress    int `json:"progress"`
+
+	// Дети
+	Items     []Item     `json:"items" gorm:"foreignKey:ParentID"`
+	Resources []Resource `json:"resources" gorm:"foreignKey:ParentID"`
+
+	// Родители
+	SectorID  string `json:"sectorId"`
+	AccountID string `json:"accountId"`
+
+	// Мета
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 // Структура создания планируемой постройки
@@ -481,54 +338,6 @@ type IPlanRepository interface {
 	DeleteOne(plan *Plan)
 }
 
-// Модель рынка
-type Market struct {
-	ID            string         `json:"id"`
-	MaxDurability int            `json:"maxDurability"`
-	Durability    int            `json:"durability"`
-	Level         int            `json:"level"`
-	MaxStorage    int            `json:"maxStorage"`
-	UsedStorage   int            `json:"usedStorage"`
-	X             int            `json:"x"`
-	Y             int            `json:"y"`
-	Resources     []Resource     `json:"resources" gorm:"foreignKey:ParentID"`
-	Items         []Item         `json:"items" gorm:"foreignKey:ParentID"`
-	SectorID      string         `json:"sectorId"`
-	AccountID     string         `json:"accountId"`
-	CreatedAt     time.Time      `json:"createdAt"`
-	UpdatedAt     time.Time      `json:"updatedAt"`
-	DeletedAt     gorm.DeletedAt `gorm:"index"`
-}
-
-// Структура создания рынка
-type MarketCreate struct {
-	X         int    `json:"x"`
-	Y         int    `json:"y"`
-	SectorID  string `json:"sectorId"`
-	AccountID string `json:"accountId"`
-}
-
-// Структура поиска рынка
-type MarketGetAll struct {
-	MaxDurability *int
-	Durability    *int
-	Level         *int
-	MaxStorage    *int
-	UsedStorage   *int
-	X             *int
-	Y             *int
-	Limit         *int
-}
-
-// Репозиторий рынка
-type IMarketRepository interface {
-	Create(market *MarketCreate)
-	GetOne(market *Market)
-	GetAll(query MarketGetAll, accountID string) []Market
-	UpdateOne(market *Market)
-	DeleteOne(market *Market)
-}
-
 //////// Существа ////////
 
 // Модель существа
@@ -555,7 +364,8 @@ type Creature struct {
 	Health             int     `json:"health"`
 
 	// Дети
-	Items []Item `json:"items" gorm:"foreignKey:ParentID"`
+	Items     []Item     `json:"items" gorm:"foreignKey:ParentID"`
+	Resources []Resource `json:"resources" gorm:"foreignKey:ParentID"`
 
 	// Родители
 	SectorID  string `json:"sectorId"`

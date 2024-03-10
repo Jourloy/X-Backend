@@ -9,7 +9,7 @@ import (
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
-	creature_templates "github.com/jourloy/X-Backend/internal/templates/creature"
+	creature_templates "github.com/jourloy/X-Backend/internal/templates/creatures"
 )
 
 var (
@@ -58,31 +58,64 @@ func (r *CreatureRepository) Create(create *repositories.CreatureCreate) (*repos
 	// Шаблоны
 	switch create.Race {
 	case `human`:
+		requireFood := creature_templates.Human.RequireFood
+		if create.IsWorker {
+			requireFood += 0.2
+		}
+		if create.IsTrader {
+			requireFood += 0.2
+		}
+		if create.IsWarrior {
+			requireFood += 0.4
+		}
+
 		creature.MaxStorage = creature_templates.Human.MaxStorage
 		creature.UsedStorage = creature_templates.Human.UsedStorage
 		creature.FatiguePerStep = creature_templates.Human.FatiguePerStep
 		creature.Fatigue = creature_templates.Human.Fatigue
 		creature.MaxHealth = creature_templates.Human.MaxHealth
 		creature.Health = creature_templates.Human.Health
-		creature.RequireFood = creature_templates.Human.RequireFood
+		creature.RequireFood = requireFood
 		break
 	case `swarm`:
+		requireFood := creature_templates.Swarm.RequireFood
+		if create.IsWorker {
+			requireFood += 0.2
+		}
+		if create.IsTrader {
+			requireFood += 0.2
+		}
+		if create.IsWarrior {
+			requireFood += 0.4
+		}
+
 		creature.MaxStorage = creature_templates.Swarm.MaxStorage
 		creature.UsedStorage = creature_templates.Swarm.UsedStorage
 		creature.FatiguePerStep = creature_templates.Swarm.FatiguePerStep
 		creature.Fatigue = creature_templates.Swarm.Fatigue
 		creature.MaxHealth = creature_templates.Swarm.MaxHealth
 		creature.Health = creature_templates.Swarm.Health
-		creature.RequireFood = creature_templates.Swarm.RequireFood
+		creature.RequireFood = requireFood
 		break
 	case `robot`:
+		requireFood := creature_templates.Robot.RequireFood
+		if create.IsWorker {
+			requireFood += 0.2
+		}
+		if create.IsTrader {
+			requireFood += 0.2
+		}
+		if create.IsWarrior {
+			requireFood += 0.4
+		}
+
 		creature.MaxStorage = creature_templates.Robot.MaxStorage
 		creature.UsedStorage = creature_templates.Robot.UsedStorage
 		creature.FatiguePerStep = creature_templates.Robot.FatiguePerStep
 		creature.Fatigue = creature_templates.Robot.Fatigue
 		creature.MaxHealth = creature_templates.Robot.MaxHealth
 		creature.Health = creature_templates.Robot.Health
-		creature.RequireFood = creature_templates.Robot.RequireFood
+		creature.RequireFood = requireFood
 		break
 	}
 
