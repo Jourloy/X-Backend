@@ -250,6 +250,28 @@ type IItemRepository interface {
 	DeleteOne(item *Item)
 }
 
+// Модель операции
+type Operation struct {
+	// Динамические поля, задаются пользователем
+	Price      int    `json:"price"`
+	Amount     int    `json:"amount"`
+	Type       string `json:"type"`
+	Name       string `json:"name"`
+	IsResource bool   `json:"isResource"`
+	IsItem     bool   `json:"isItem"`
+
+	// Родители
+	BuildingID string `json:"buildingID"`
+	SectorID   string `json:"sectorId"`
+	AccountID  string `json:"accountId"`
+
+	// Мета
+	ID        string         `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+}
+
 //////// Постройки ////////
 
 // Модель постройки
@@ -271,8 +293,9 @@ type Building struct {
 	AttackRange   int `json:"attackRange"`
 
 	// Дети
-	Items     []Item     `json:"items" gorm:"foreignKey:ParentID"`
-	Resources []Resource `json:"resources" gorm:"foreignKey:ParentID"`
+	Items      []Item      `json:"items" gorm:"foreignKey:ParentID"`
+	Resources  []Resource  `json:"resources" gorm:"foreignKey:ParentID"`
+	Operations []Operation `json:"operations"`
 
 	// Родители
 	SectorID  string `json:"sectorId"`
