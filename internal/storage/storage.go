@@ -1,8 +1,6 @@
 package storage
 
 import (
-	"os"
-
 	"github.com/charmbracelet/log"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -11,13 +9,6 @@ import (
 )
 
 var Database *gorm.DB
-
-var (
-	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[database]`,
-		Level:  log.DebugLevel,
-	})
-)
 
 // InitDB подключается к базе данных
 func InitDB() {

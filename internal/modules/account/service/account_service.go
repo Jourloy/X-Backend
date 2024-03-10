@@ -1,16 +1,12 @@
 package account_service
 
 import (
-	"context"
-
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
 )
-
-var ctx = context.Background()
 
 type Service struct {
 	aRep  repositories.AccountRepository
@@ -62,10 +58,8 @@ type updateOneResp struct {
 
 // UpdateOne обновляет аккаунт
 func (s *Service) UpdateOne(body repositories.Account) updateOneResp {
-	s.aRep.UpdateOne(&body)
-	return updateOneResp{
-		Err: nil,
-	}
+	err := s.aRep.UpdateOne(&body)
+	return updateOneResp{Err: err}
 }
 
 type deleteOneResp struct {
@@ -74,8 +68,6 @@ type deleteOneResp struct {
 
 // DeleteOne удаляет аккаунт
 func (s *Service) DeleteOne(body repositories.Account) deleteOneResp {
-	s.aRep.DeleteOne(&body)
-	return deleteOneResp{
-		Err: nil,
-	}
+	err := s.aRep.DeleteOne(&body)
+	return deleteOneResp{Err: err}
 }

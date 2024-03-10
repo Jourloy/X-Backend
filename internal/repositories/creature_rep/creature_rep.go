@@ -76,7 +76,6 @@ func (r *CreatureRepository) Create(create *repositories.CreatureCreate) (*repos
 		creature.MaxHealth = creature_templates.Human.MaxHealth
 		creature.Health = creature_templates.Human.Health
 		creature.RequireFood = requireFood
-		break
 	case `swarm`:
 		requireFood := creature_templates.Swarm.RequireFood
 		if create.IsWorker {
@@ -96,7 +95,6 @@ func (r *CreatureRepository) Create(create *repositories.CreatureCreate) (*repos
 		creature.MaxHealth = creature_templates.Swarm.MaxHealth
 		creature.Health = creature_templates.Swarm.Health
 		creature.RequireFood = requireFood
-		break
 	case `robot`:
 		requireFood := creature_templates.Robot.RequireFood
 		if create.IsWorker {
@@ -116,7 +114,6 @@ func (r *CreatureRepository) Create(create *repositories.CreatureCreate) (*repos
 		creature.MaxHealth = creature_templates.Robot.MaxHealth
 		creature.Health = creature_templates.Robot.Health
 		creature.RequireFood = requireFood
-		break
 	}
 
 	res := r.db.Create(&creature)

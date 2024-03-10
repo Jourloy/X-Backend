@@ -124,10 +124,7 @@ func (s *Service) GetOne(id string) getOneResp {
 		return getOneResp{Err: err}
 	}
 
-	return getOneResp{
-		Err:    nil,
-		Sector: *sector,
-	}
+	return getOneResp{Sector: *sector}
 }
 
 type getAllResp struct {
@@ -155,10 +152,8 @@ type updateOneResp struct {
 
 // UpdateOne обновляет сектор
 func (s *Service) UpdateOne(body repositories.Sector) updateOneResp {
-	s.secRep.UpdateOne(&body)
-	return updateOneResp{
-		Err: nil,
-	}
+	err := s.secRep.UpdateOne(&body)
+	return updateOneResp{Err: err}
 }
 
 type deleteOneResp struct {
@@ -167,8 +162,6 @@ type deleteOneResp struct {
 
 // DeleteOne удаляет сектор
 func (s *Service) DeleteOne(body repositories.Sector) deleteOneResp {
-	s.secRep.UpdateOne(&body)
-	return deleteOneResp{
-		Err: nil,
-	}
+	err := s.secRep.UpdateOne(&body)
+	return deleteOneResp{Err: err}
 }
