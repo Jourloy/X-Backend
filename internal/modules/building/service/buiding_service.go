@@ -56,7 +56,7 @@ func (s *Service) Create(body repositories.BuildingCreate) createResp {
 	}
 
 	// Проверка сектора
-	if sector, err := s.accountRep.GetOne(&repositories.AccountGet{ID: &body.AccountID}); err != nil {
+	if sector, err := s.sectorRep.GetOne(&repositories.SectorGet{ID: &body.AccountID}); err != nil {
 		return createResp{
 			Err:  err,
 			Code: 400,
@@ -64,7 +64,7 @@ func (s *Service) Create(body repositories.BuildingCreate) createResp {
 	} else if sector == nil {
 		return createResp{
 			Err:  errors.New(`sector not found`),
-			Code: 400,
+			Code: 404,
 		}
 	}
 

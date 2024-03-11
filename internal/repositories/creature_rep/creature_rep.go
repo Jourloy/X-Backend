@@ -55,66 +55,27 @@ func (r *CreatureRepository) Create(create *repositories.CreatureCreate) (*repos
 		SectorID:  create.SectorID,
 	}
 
-	// Шаблоны
-	switch create.Race {
-	case `human`:
-		requireFood := creature_templates.Human.RequireFood
-		if create.IsWorker {
-			requireFood += 0.2
-		}
-		if create.IsTrader {
-			requireFood += 0.2
-		}
-		if create.IsWarrior {
-			requireFood += 0.4
-		}
+	// Шаблон
+	template := creature_templates.CreatureTemplate[create.Race]
 
-		creature.MaxStorage = creature_templates.Human.MaxStorage
-		creature.UsedStorage = creature_templates.Human.UsedStorage
-		creature.FatiguePerStep = creature_templates.Human.FatiguePerStep
-		creature.Fatigue = creature_templates.Human.Fatigue
-		creature.MaxHealth = creature_templates.Human.MaxHealth
-		creature.Health = creature_templates.Human.Health
-		creature.RequireFood = requireFood
-	case `swarm`:
-		requireFood := creature_templates.Swarm.RequireFood
-		if create.IsWorker {
-			requireFood += 0.2
-		}
-		if create.IsTrader {
-			requireFood += 0.2
-		}
-		if create.IsWarrior {
-			requireFood += 0.4
-		}
-
-		creature.MaxStorage = creature_templates.Swarm.MaxStorage
-		creature.UsedStorage = creature_templates.Swarm.UsedStorage
-		creature.FatiguePerStep = creature_templates.Swarm.FatiguePerStep
-		creature.Fatigue = creature_templates.Swarm.Fatigue
-		creature.MaxHealth = creature_templates.Swarm.MaxHealth
-		creature.Health = creature_templates.Swarm.Health
-		creature.RequireFood = requireFood
-	case `robot`:
-		requireFood := creature_templates.Robot.RequireFood
-		if create.IsWorker {
-			requireFood += 0.2
-		}
-		if create.IsTrader {
-			requireFood += 0.2
-		}
-		if create.IsWarrior {
-			requireFood += 0.4
-		}
-
-		creature.MaxStorage = creature_templates.Robot.MaxStorage
-		creature.UsedStorage = creature_templates.Robot.UsedStorage
-		creature.FatiguePerStep = creature_templates.Robot.FatiguePerStep
-		creature.Fatigue = creature_templates.Robot.Fatigue
-		creature.MaxHealth = creature_templates.Robot.MaxHealth
-		creature.Health = creature_templates.Robot.Health
-		creature.RequireFood = requireFood
+	requireFood := template.RequireFood
+	if create.IsWorker {
+		requireFood += 0.2
 	}
+	if create.IsTrader {
+		requireFood += 0.2
+	}
+	if create.IsWarrior {
+		requireFood += 0.4
+	}
+
+	creature.MaxStorage = template.MaxStorage
+	creature.UsedStorage = template.UsedStorage
+	creature.FatiguePerStep = template.FatiguePerStep
+	creature.Fatigue = template.Fatigue
+	creature.MaxHealth = template.MaxHealth
+	creature.Health = template.Health
+	creature.RequireFood = requireFood
 
 	res := r.db.Create(&creature)
 	if res.Error != nil {
