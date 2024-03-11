@@ -217,7 +217,8 @@ type Item struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 
-	Type string `json:"type"`
+	Type   string `json:"type"`
+	Weight int    `json:"weight"`
 
 	ParentID   string `json:"parentId"`
 	ParentType string `json:"parentType"`
