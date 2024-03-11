@@ -17,6 +17,8 @@ func API() gin.HandlerFunc {
 			account, _ := accRep.GetOne(&repositories.AccountGet{ApiKey: &api})
 			if account != nil {
 				c.Set(`account`, *account)
+				c.Set(`accountID`, account.Username)
+				c.Set(`accountUsername`, account.Username)
 			}
 		}
 

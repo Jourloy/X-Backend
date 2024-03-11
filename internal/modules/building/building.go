@@ -38,8 +38,9 @@ func (s *Controller) Create(c *gin.Context) {
 	// Парсинг body
 	var body repositories.BuildingCreate
 	if err := tools.ParseBody(c, &body); err != nil {
-		logger.Error(`Parse body error`)
-		c.JSON(400, gin.H{`error`: `Parse body error`})
+		logger.Error(`parse body error`)
+		c.JSON(400, gin.H{`error`: `parse body error`})
+		return
 	}
 
 	body.AccountID = accountID
@@ -47,26 +48,28 @@ func (s *Controller) Create(c *gin.Context) {
 	resp := s.service.Create(body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
-		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+		c.JSON(resp.Code, gin.H{`error`: resp.Err.Error()})
+		return
 	}
 
-	c.JSON(200, gin.H{`error`: ``})
+	c.JSON(resp.Code, gin.H{`error`: ``, `building`: resp.Building})
 }
 
 // GetOne получает постройку по его ID
 func (s *Controller) GetOne(c *gin.Context) {
-
 	// Парсинг body
 	var body repositories.BuildingGet
 	if err := tools.ParseBody(c, &body); err != nil {
-		logger.Error(`Parse body error`)
-		c.JSON(400, gin.H{`error`: `Parse body error`})
+		logger.Error(`parse body error`)
+		c.JSON(400, gin.H{`error`: `parse body error`})
+		return
 	}
 
 	resp := s.service.GetOne(&body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+		return
 	}
 
 	c.JSON(200, gin.H{`error`: ``, `worker`: resp.Building})
@@ -74,18 +77,19 @@ func (s *Controller) GetOne(c *gin.Context) {
 
 // GetAll возвращает все постройки
 func (s *Controller) GetAll(c *gin.Context) {
-
 	// Парсинг body
 	var body repositories.BuildingGet
 	if err := tools.ParseBody(c, &body); err != nil {
-		logger.Error(`Parse body error`)
-		c.JSON(400, gin.H{`error`: `Parse body error`})
+		logger.Error(`parse body error`)
+		c.JSON(400, gin.H{`error`: `parse body error`})
+		return
 	}
 
 	resp := s.service.GetAll(&body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+		return
 	}
 
 	c.JSON(200, gin.H{
@@ -102,8 +106,9 @@ func (s *Controller) UpdateOne(c *gin.Context) {
 	// Парсинг body
 	var body repositories.Building
 	if err := tools.ParseBody(c, &body); err != nil {
-		logger.Error(`Parse body error`)
-		c.JSON(400, gin.H{`error`: `Parse body error`})
+		logger.Error(`parse body error`)
+		c.JSON(400, gin.H{`error`: `parse body error`})
+		return
 	}
 
 	body.AccountID = accountID
@@ -112,6 +117,7 @@ func (s *Controller) UpdateOne(c *gin.Context) {
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+		return
 	}
 
 	c.JSON(200, gin.H{`error`: ``})
@@ -124,8 +130,9 @@ func (s *Controller) DeleteOne(c *gin.Context) {
 	// Парсинг body
 	var body repositories.Building
 	if err := tools.ParseBody(c, &body); err != nil {
-		logger.Error(`Parse body error`)
-		c.JSON(400, gin.H{`error`: `Parse body error`})
+		logger.Error(`parse body error`)
+		c.JSON(400, gin.H{`error`: `parse body error`})
+		return
 	}
 
 	body.AccountID = accountID
@@ -134,6 +141,7 @@ func (s *Controller) DeleteOne(c *gin.Context) {
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
+		return
 	}
 
 	c.JSON(200, gin.H{`error`: ``})
