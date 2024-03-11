@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/building_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/creature_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 
@@ -70,6 +71,7 @@ func StartServer() {
 func initHandlers(r *gin.Engine) {
 	handlers.InitAccount(r)
 	handlers.InitSector(r)
+	handlers.InitBuilding(r)
 }
 
 // Инициализация репозиториев
@@ -77,4 +79,5 @@ func initReps() {
 	account_rep.Init()
 	sector_rep.Init()
 	creature_rep.Init()
+	building_rep.Init()
 }

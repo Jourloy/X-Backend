@@ -307,6 +307,39 @@ type Building struct {
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
+// Структура создания постройки
+type BuildingCreate struct {
+	X         int    `json:"x"`
+	Y         int    `json:"y"`
+	Type      string `json:"type"`
+	SectorID  string `json:"sectorId"`
+	AccountID string `json:"accountId"`
+}
+
+// Структура поиска постройки
+type BuildingGet struct {
+	ID            *string  `json:"id,omitempty"`
+	Type          *string  `json:"type,omitempty"`
+	MaxDurability *int     `json:"maxDurability,omitempty"`
+	Durability    *int     `json:"durability,omitempty"`
+	MaxStorage    *float64 `json:"maxStorage,omitempty"`
+	UsedStorage   *float64 `json:"usedStorage,omitempty"`
+	Level         *float64 `json:"level,omitempty"`
+	AttackRange   *float64 `json:"attackRange,omitempty"`
+	SectorID      *string  `json:"sectorId,omitempty"`
+	AccountID     *string  `json:"accountId,omitempty"`
+	Limit         *int     `json:"limit,omitempty"`
+}
+
+// Репозиторий постройки
+type BuildingRepository interface {
+	Create(create *BuildingCreate) (*Building, error)
+	GetOne(query *BuildingGet) (*Building, error)
+	GetAll(query *BuildingGet) (*[]Building, error)
+	UpdateOne(building *Building) error
+	DeleteOne(building *Building) error
+}
+
 // Модель планируемой постройки
 type Plan struct {
 	ID string `json:"id" gorm:"primarykey"`
@@ -431,6 +464,7 @@ type CreatureGet struct {
 	IsWarrior          *bool    `json:"isWarrior,omitempty"`
 	SectorID           *string  `json:"sectorId,omitempty"`
 	AccountID          *string  `json:"accountId,omitempty"`
+	Limit              *int     `json:"limit,omitempty"`
 }
 
 // Репозиторий существа

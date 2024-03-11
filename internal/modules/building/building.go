@@ -1,43 +1,42 @@
-package plan
+package building
 
 import (
 	"os"
-	"strconv"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
 
-	plan_service "github.com/jourloy/X-Backend/internal/modules/plan/service"
+	building_service "github.com/jourloy/X-Backend/internal/modules/building/service"
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/tools"
 )
 
 var (
 	logger = log.NewWithOptions(os.Stderr, log.Options{
-		Prefix: `[plan]`,
+		Prefix: `[building]`,
 		Level:  log.DebugLevel,
 	})
 )
 
 type Controller struct {
-	service plan_service.Service
+	service building_service.Service
 }
 
-// Init создает контроллер планируемой постройки
+// Init создает контроллер постройки
 func Init() *Controller {
-	service := plan_service.Init()
+	service := building_service.Init()
 
 	return &Controller{
 		service: *service,
 	}
 }
 
-// Create создает планируемую постройку
+// Create создает постройку
 func (s *Controller) Create(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
-	var body repositories.PlanCreate
+	var body repositories.BuildingCreate
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
@@ -54,81 +53,62 @@ func (s *Controller) Create(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-// GetOne получает планируемую постройку по его ID
+// GetOne получает постройку по его ID
 func (s *Controller) GetOne(c *gin.Context) {
-	accountID := c.GetString(`accountID`)
 
-	// Получение ID планируемой постройки
-	planID := c.Query(`planID`)
-	if planID == `` {
-		logger.Error(`planID is required`)
-		c.JSON(400, gin.H{`error`: `planID is required`})
+	// Парсинг body
+	var body repositories.BuildingGet
+	if err := tools.ParseBody(c, &body); err != nil {
+		logger.Error(`Parse body error`)
+		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	resp := s.service.GetOne(planID, accountID)
+	resp := s.service.GetOne(&body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
-	c.JSON(200, gin.H{`error`: ``, `worker`: resp.Plan})
+	c.JSON(200, gin.H{`error`: ``, `worker`: resp.Building})
 }
 
-// GetAll возвращает все планируемые постройки
+// GetAll возвращает все постройки
 func (s *Controller) GetAll(c *gin.Context) {
-	accountID := c.GetString(`accountID`)
 
-	// Создание фильтров
-	query := repositories.PlanGetAll{}
-	if q := c.Query(`maxProgress`); q != `` {
-		n, _ := strconv.Atoi(q)
-		query.MaxProgress = &n
-	}
-	if q := c.Query(`progress`); q != `` {
-		n, _ := strconv.Atoi(q)
-		query.Progress = &n
-	}
-	if q := c.Query(`type`); q != `` {
-		query.Type = &q
-	}
-	if q := c.Query(`x`); q != `` {
-		n, _ := strconv.Atoi(q)
-		query.X = &n
-	}
-	if q := c.Query(`y`); q != `` {
-		n, _ := strconv.Atoi(q)
-		query.Y = &n
-	}
-	if q := c.Query(`limit`); q != `` {
-		n, _ := strconv.Atoi(q)
-		query.Limit = &n
+	// Парсинг body
+	var body repositories.BuildingGet
+	if err := tools.ParseBody(c, &body); err != nil {
+		logger.Error(`Parse body error`)
+		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	resp := s.service.GetAll(query, accountID)
+	resp := s.service.GetAll(&body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
 	}
 
 	c.JSON(200, gin.H{
-		`error`: ``,
-		`plans`: resp.Plans,
-		`count`: len(resp.Plans),
+		`error`:     ``,
+		`buildings`: resp.Buildings,
+		`count`:     len(resp.Buildings),
 	})
 }
 
-// UpdateOne обновляет планируемую постройку
+// UpdateOne обновляет постройку
 func (s *Controller) UpdateOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
-	var body repositories.Plan
+	var body repositories.Building
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	resp := s.service.UpdateOne(body, accountID)
+	body.AccountID = accountID
+
+	resp := s.service.UpdateOne(body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
@@ -137,18 +117,20 @@ func (s *Controller) UpdateOne(c *gin.Context) {
 	c.JSON(200, gin.H{`error`: ``})
 }
 
-// DeleteOne удаляет планируемую постройку
+// DeleteOne удаляет постройку
 func (s *Controller) DeleteOne(c *gin.Context) {
 	accountID := c.GetString(`accountID`)
 
 	// Парсинг body
-	var body repositories.Plan
+	var body repositories.Building
 	if err := tools.ParseBody(c, &body); err != nil {
 		logger.Error(`Parse body error`)
 		c.JSON(400, gin.H{`error`: `Parse body error`})
 	}
 
-	resp := s.service.DeleteOne(body, accountID)
+	body.AccountID = accountID
+
+	resp := s.service.DeleteOne(body)
 	if resp.Err != nil {
 		logger.Error(resp.Err)
 		c.JSON(400, gin.H{`error`: resp.Err.Error()})
