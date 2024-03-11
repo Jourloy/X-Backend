@@ -1,6 +1,6 @@
 package building_templates
 
-type BuildingTemplate struct {
+type template struct {
 	MaxDurability int  `json:"maxDurability"`
 	Durability    int  `json:"durability"`
 	MaxStorage    int  `json:"maxStorage"`
@@ -10,52 +10,56 @@ type BuildingTemplate struct {
 	CanTrade      bool `json:"canTrade"`
 }
 
-var Townhall = BuildingTemplate{
-	MaxDurability: 1000,
-	Durability:    1000,
-	MaxStorage:    200,
-	UsedStorage:   0,
-	Level:         0,
-	AttackRange:   10,
-	CanTrade:      true,
-}
+var BuildingTemplates = map[string]template{}
 
-var Tower = BuildingTemplate{
-	MaxDurability: 500,
-	Durability:    500,
-	MaxStorage:    100,
-	UsedStorage:   0,
-	Level:         0,
-	AttackRange:   20,
-	CanTrade:      false,
-}
+func init() {
+	BuildingTemplates[`townhall`] = template{
+		MaxDurability: 1000,
+		Durability:    1000,
+		MaxStorage:    200,
+		UsedStorage:   0,
+		Level:         0,
+		AttackRange:   10,
+		CanTrade:      true,
+	}
 
-var Wall = BuildingTemplate{
-	MaxDurability: 500,
-	Durability:    500,
-	MaxStorage:    0,
-	UsedStorage:   0,
-	Level:         0,
-	AttackRange:   0,
-	CanTrade:      false,
-}
+	BuildingTemplates[`tower`] = template{
+		MaxDurability: 500,
+		Durability:    500,
+		MaxStorage:    100,
+		UsedStorage:   0,
+		Level:         0,
+		AttackRange:   20,
+		CanTrade:      false,
+	}
 
-var Storage = BuildingTemplate{
-	MaxDurability: 500,
-	Durability:    500,
-	MaxStorage:    1000,
-	UsedStorage:   0,
-	Level:         0,
-	AttackRange:   0,
-	CanTrade:      false,
-}
+	BuildingTemplates[`wall`] = template{
+		MaxDurability: 500,
+		Durability:    500,
+		MaxStorage:    0,
+		UsedStorage:   0,
+		Level:         0,
+		AttackRange:   0,
+		CanTrade:      false,
+	}
 
-var Market = BuildingTemplate{
-	MaxDurability: 500,
-	Durability:    500,
-	MaxStorage:    1000,
-	UsedStorage:   0,
-	Level:         0,
-	AttackRange:   0,
-	CanTrade:      true,
+	BuildingTemplates[`storage`] = template{
+		MaxDurability: 500,
+		Durability:    500,
+		MaxStorage:    1000,
+		UsedStorage:   0,
+		Level:         0,
+		AttackRange:   0,
+		CanTrade:      false,
+	}
+
+	BuildingTemplates[`market`] = template{
+		MaxDurability: 500,
+		Durability:    500,
+		MaxStorage:    1000,
+		UsedStorage:   0,
+		Level:         0,
+		AttackRange:   0,
+		CanTrade:      true,
+	}
 }

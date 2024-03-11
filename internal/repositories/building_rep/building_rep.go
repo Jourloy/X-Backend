@@ -9,6 +9,7 @@ import (
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
+	building_templates "github.com/jourloy/X-Backend/internal/templates/buildings"
 )
 
 var (
@@ -51,7 +52,16 @@ func (r *BuildingRepository) Create(create *repositories.BuildingCreate) (*repos
 		SectorID:  create.SectorID,
 	}
 
-	// ШАБЛОНЫ
+	// Шаблон
+	template := building_templates.BuildingTemplates[create.Type]
+
+	building.MaxDurability = template.MaxDurability
+	building.Durability = template.Durability
+	building.MaxStorage = template.MaxStorage
+	building.UsedStorage = template.UsedStorage
+	building.Level = template.Level
+	building.AttackRange = template.AttackRange
+	building.CanTrade = template.CanTrade
 
 	res := r.db.Create(&building)
 	if res.Error != nil {

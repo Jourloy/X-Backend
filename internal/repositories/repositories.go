@@ -322,12 +322,13 @@ type Building struct {
 	Type string `json:"type"`
 
 	// Динамические поля, задаются шаблоном
-	MaxDurability int `json:"maxDurability"`
-	Durability    int `json:"durability"`
-	MaxStorage    int `json:"maxStorage"`
-	UsedStorage   int `json:"usedStorage"`
-	Level         int `json:"level"`
-	AttackRange   int `json:"attackRange"`
+	MaxDurability int  `json:"maxDurability"`
+	Durability    int  `json:"durability"`
+	MaxStorage    int  `json:"maxStorage"`
+	UsedStorage   int  `json:"usedStorage"`
+	Level         int  `json:"level"`
+	AttackRange   int  `json:"attackRange"`
+	CanTrade      bool `json:"catTrade"`
 
 	// Дети
 	Items      []Item      `json:"items" gorm:"foreignKey:ParentID"`
@@ -363,6 +364,7 @@ type BuildingGet struct {
 	UsedStorage   *float64 `json:"usedStorage,omitempty"`
 	Level         *float64 `json:"level,omitempty"`
 	AttackRange   *float64 `json:"attackRange,omitempty"`
+	CanTrade      *bool    `json:"canTrade,omitempty"`
 	SectorID      *string  `json:"sectorId,omitempty"`
 	AccountID     *string  `json:"accountId,omitempty"`
 	Limit         *int     `json:"limit,omitempty"`
