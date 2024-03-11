@@ -13,7 +13,7 @@ type Example struct {
 	ID string `json:"id" gorm:"primarykey"`
 
 	// Динамические поля
-	Name string `json:"name"
+	Name string `json:"name"`
 
 	// Дети
 	Childs []Child `json:"childs"`
