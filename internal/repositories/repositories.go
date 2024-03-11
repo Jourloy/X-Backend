@@ -272,6 +272,43 @@ type Operation struct {
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
+// Структура создания операции
+type OperationCreate struct {
+	Price      int    `json:"price"`
+	Amount     int    `json:"amount"`
+	Type       string `json:"type"`
+	Name       string `json:"name"`
+	IsResource bool   `json:"isResource"`
+	IsItem     bool   `json:"isItem"`
+	BuildingID string `json:"buildingID"`
+	SectorID   string `json:"sectorId"`
+	AccountID  string `json:"accountId"`
+}
+
+// Структура поиска операции
+type OperationGet struct {
+	ID         *string  `json:"id,omitempty"`
+	Price      *int     `json:"price,omitempty"`
+	Amount     *int     `json:"amount,omitempty"`
+	Type       *string  `json:"type,omitempty"`
+	Name       *string  `json:"name,omitempty"`
+	IsResource *bool    `json:"isResource,omitempty"`
+	IsItem     *bool    `json:"isItem,omitempty"`
+	BuildingID *float64 `json:"buildingID,omitempty"`
+	SectorID   *string  `json:"sectorId,omitempty"`
+	AccountID  *string  `json:"accountId,omitempty"`
+	Limit      *int     `json:"limit,omitempty"`
+}
+
+// Репозиторий операции
+type OperationRepository interface {
+	Create(create *OperationCreate) (*Operation, error)
+	GetOne(query *OperationGet) (*Operation, error)
+	GetAll(query *OperationGet) (*[]Operation, error)
+	UpdateOne(operation *Operation) error
+	DeleteOne(operation *Operation) error
+}
+
 //////// Постройки ////////
 
 // Модель постройки

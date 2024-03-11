@@ -11,6 +11,7 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/building_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/creature_rep"
+	"github.com/jourloy/X-Backend/internal/repositories/operation_rep"
 	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 
 	"github.com/jourloy/X-Backend/internal/cache"
@@ -73,6 +74,7 @@ func initHandlers(r *gin.Engine) {
 	handlers.InitSector(r)
 	handlers.InitBuilding(r)
 	handlers.InitCreature(r)
+	handlers.InitOperation(r)
 }
 
 // Инициализация репозиториев
@@ -81,4 +83,5 @@ func initReps() {
 	sector_rep.Init()
 	creature_rep.Init()
 	building_rep.Init()
+	operation_rep.Init()
 }
