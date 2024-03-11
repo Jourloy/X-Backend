@@ -72,6 +72,7 @@ func initHandlers(r *gin.Engine) {
 	handlers.InitAccount(r)
 	handlers.InitSector(r)
 	handlers.InitBuilding(r)
+	handlers.InitCreature(r)
 }
 
 // Инициализация репозиториев

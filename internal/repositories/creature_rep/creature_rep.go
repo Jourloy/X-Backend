@@ -25,7 +25,7 @@ type CreatureRepository struct {
 	db gorm.DB
 }
 
-// Init создает репозиторий
+// Init создает репозиторий существа
 func Init() {
 	go migration()
 
