@@ -76,7 +76,7 @@ func (r *OperationRepository) GetOne(query *repositories.OperationGet) (*reposit
 		return nil, nil
 	}
 
-	// Есои ошибка
+	// Если ошибка
 	if res.Error != nil {
 		return nil, res.Error
 	}
@@ -95,7 +95,7 @@ func (r *OperationRepository) GetAll(query *repositories.OperationGet) (*[]repos
 		return nil, nil
 	}
 
-	// Есои ошибка
+	// Если ошибка
 	if res.Error != nil {
 		return nil, res.Error
 	}

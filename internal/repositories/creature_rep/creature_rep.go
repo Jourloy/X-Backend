@@ -96,7 +96,7 @@ func (r *CreatureRepository) GetOne(query *repositories.CreatureGet) (*repositor
 		return nil, nil
 	}
 
-	// Есои ошибка
+	// Если ошибка
 	if res.Error != nil {
 		return nil, res.Error
 	}
@@ -115,7 +115,7 @@ func (r *CreatureRepository) GetAll(query *repositories.CreatureGet) (*[]reposit
 		return nil, nil
 	}
 
-	// Есои ошибка
+	// Если ошибка
 	if res.Error != nil {
 		return nil, res.Error
 	}

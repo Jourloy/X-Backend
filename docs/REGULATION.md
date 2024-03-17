@@ -9,27 +9,33 @@
 ```golang
 // Модель примера
 type Example struct {
-	// Основа
-	ID string `json:"id" gorm:"primarykey"`
+	// Задается при создании
 
-	// Динамические поля
 	Name string `json:"name"`
 
+	// Задается по умолчанию
+
+	DefaultValue string `json:"-"`
+
 	// Дети
+
 	Childs []Child `json:"childs"`
 
 	// Родители
+
 	ExampleID string `json:"exmapleId"`
 	ParentID string `json:"parentId"
 
-	// Мета информация
-	CreatedAt  time.Time      `json:"-"`
-	UpdatedAt  time.Time      `json:"-"`
-	DeletedAt  gorm.DeletedAt `json:"-" gorm:"index"`
+	// Мета
+
+	ID        string         `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 ```
 
-Модель обязательно должна иметь структуру для создания. В нее помещаются все динамические поля, им прописывается JSON на случай, если это будет POST запрос
+Модель обязательно должна иметь структуру для создания. В нее помещаются все поля, которые задаются при создании
 
 ```golang
 type ExampleCreate struct {
@@ -37,21 +43,15 @@ type ExampleCreate struct {
 }
 ```
 
-У модели обязательно должна быть структура для поиска. В нее добавляется `Limit`, динамические поля и отношения. Все типы должны быть с `*`
+У модели обязательно должна быть структура для поиска. В нее добавляется `Limit`, а также все поля, где `json` не равен `-`. Все типы должны быть с `*`
 
 ```golang
 // Структура поиска примера
 type ExampleGet struct {
 	ID *string
-
-	// Динамические поля
 	Name *string
-
-	// Отношения
 	ExampleID *string
 	ParentID *string
-
-	// Обязательно
 	Limit *int
 }
 ```
@@ -61,10 +61,15 @@ type ExampleGet struct {
 ```golang
 // Репозиторий примера
 type ExampleRepository interface {
+	// Create создает модель
 	Create(example *ExampleCreate) (*Example, error)
+	// GetOne возвращает первую модель, попавший под условие
 	GetOne(query *ExampleGet) (*Example, error)
+	// GetAll возвращает все модели, попавшие под условие
 	GetAll(query *ExampleGet) (*[]Example, error)
+	// UpdateOne обновляет модель
 	UpdateOne(example *Example) error
+	// DeleteOne удаляет модель
 	DeleteOne(example *Example) error
 }
 ```

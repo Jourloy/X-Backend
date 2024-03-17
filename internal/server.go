@@ -58,13 +58,12 @@ func StartServer() {
 
 	// Инициализация хендлеров
 	initHandlers(r)
-
 	logger.Debug(`Handlers initialized`, `latency`, time.Since(tempTime))
 
 	// Запуск сервера
 	logger.Info(`Server started`, `port`, 3001, `latency (total)`, time.Since(totalTime))
 	if err := r.Run(`0.0.0.0:3001`); err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 }
 

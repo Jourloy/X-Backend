@@ -82,7 +82,7 @@ func (r *BuildingRepository) GetOne(query *repositories.BuildingGet) (*repositor
 		return nil, nil
 	}
 
-	// Есои ошибка
+	// Если ошибка
 	if res.Error != nil {
 		return nil, res.Error
 	}
@@ -101,7 +101,7 @@ func (r *BuildingRepository) GetAll(query *repositories.BuildingGet) (*[]reposit
 		return nil, nil
 	}
 
-	// Есои ошибка
+	// Если ошибка
 	if res.Error != nil {
 		return nil, res.Error
 	}
