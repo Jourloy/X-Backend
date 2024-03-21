@@ -1,11 +1,21 @@
 package plan_rep
 
 import (
+	"os"
+
+	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
+)
+
+var (
+	logger = log.NewWithOptions(os.Stderr, log.Options{
+		Prefix: `[plan-database]`,
+		Level:  log.DebugLevel,
+	})
 )
 
 var Repository repositories.IPlanRepository
@@ -16,8 +26,18 @@ type planRepository struct {
 
 // Init создает репозиторий планируемой постройки
 func Init() {
+	go migration()
+
 	Repository = &planRepository{
 		db: *storage.Database,
+	}
+}
+
+func migration() {
+	if err := storage.Database.AutoMigrate(
+		&repositories.Plan{},
+	); err != nil {
+		logger.Fatal(`Migration failed`)
 	}
 }
 

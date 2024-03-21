@@ -4,8 +4,8 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
+	creature_rep "github.com/jourloy/X-Backend/internal/modules/creature/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
-	"github.com/jourloy/X-Backend/internal/repositories/creature_rep"
 )
 
 type Service struct {
@@ -15,6 +15,7 @@ type Service struct {
 
 // Init создает сервис существа
 func Init() *Service {
+	creature_rep.Init()
 
 	creRep := creature_rep.Repository
 

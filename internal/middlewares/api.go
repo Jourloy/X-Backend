@@ -3,8 +3,8 @@ package middlewares
 import (
 	"github.com/gin-gonic/gin"
 
+	account_rep "github.com/jourloy/X-Backend/internal/modules/account/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
-	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
 )
 
 // Достает API ключ из заголовков и если есть - получает пользователя

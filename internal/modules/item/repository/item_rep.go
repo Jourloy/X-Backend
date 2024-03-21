@@ -1,11 +1,21 @@
 package item_rep
 
 import (
+	"os"
+
+	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
+)
+
+var (
+	logger = log.NewWithOptions(os.Stderr, log.Options{
+		Prefix: `[item-database]`,
+		Level:  log.DebugLevel,
+	})
 )
 
 var Repository repositories.IItemRepository
@@ -16,8 +26,18 @@ type ItemRepository struct {
 
 // Init создает репозиторий предмета
 func Init() {
+	go migration()
+
 	Repository = &ItemRepository{
 		db: *storage.Database,
+	}
+}
+
+func migration() {
+	if err := storage.Database.AutoMigrate(
+		&repositories.Item{},
+	); err != nil {
+		logger.Fatal(`Migration failed`)
 	}
 }
 

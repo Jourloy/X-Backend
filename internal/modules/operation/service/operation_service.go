@@ -6,11 +6,11 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
+	account_rep "github.com/jourloy/X-Backend/internal/modules/account/repository"
+	building_rep "github.com/jourloy/X-Backend/internal/modules/building/repository"
+	operation_rep "github.com/jourloy/X-Backend/internal/modules/operation/repository"
+	sector_rep "github.com/jourloy/X-Backend/internal/modules/sector/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
-	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/building_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/operation_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 )
 
 type Service struct {
@@ -23,6 +23,7 @@ type Service struct {
 
 // Init создает сервис операций
 func Init() *Service {
+	operation_rep.Init()
 
 	accountRep := account_rep.Repository
 	buildingRep := building_rep.Repository

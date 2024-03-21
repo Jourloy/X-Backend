@@ -1,11 +1,21 @@
 package node_rep
 
 import (
+	"os"
+
+	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
+)
+
+var (
+	logger = log.NewWithOptions(os.Stderr, log.Options{
+		Prefix: `[node-database]`,
+		Level:  log.DebugLevel,
+	})
 )
 
 var Repository repositories.NodeRepository
@@ -16,8 +26,18 @@ type NodeRepository struct {
 
 // Init создает репозиторий узла
 func Init() {
+	go migration()
+
 	Repository = &NodeRepository{
 		db: *storage.Database,
+	}
+}
+
+func migration() {
+	if err := storage.Database.AutoMigrate(
+		&repositories.Account{},
+	); err != nil {
+		logger.Fatal(`Migration failed`)
 	}
 }
 

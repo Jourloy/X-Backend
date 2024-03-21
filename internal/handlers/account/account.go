@@ -1,14 +1,18 @@
-package handlers
+package account_handler
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/jourloy/X-Backend/internal/guards"
 	"github.com/jourloy/X-Backend/internal/modules/account"
 )
 
-func InitAccount(r *gin.Engine) {
-	g := r.Group(`account`)
+func Init(r *gin.Engine) {
+	gMain := r.Group(`account`)
+	initAccount(gMain)
+}
 
+func initAccount(g *gin.RouterGroup) {
 	controller := account.Init()
 
 	g.POST(``, controller.Create)

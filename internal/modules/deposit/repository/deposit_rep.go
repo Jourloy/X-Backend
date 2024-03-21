@@ -1,11 +1,21 @@
 package deposit_rep
 
 import (
+	"os"
+
+	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/jourloy/X-Backend/internal/repositories"
 	"github.com/jourloy/X-Backend/internal/storage"
+)
+
+var (
+	logger = log.NewWithOptions(os.Stderr, log.Options{
+		Prefix: `[deposit-database]`,
+		Level:  log.DebugLevel,
+	})
 )
 
 var Repository repositories.IDepositRepository
@@ -16,8 +26,18 @@ type DepositRepository struct {
 
 // Init создает репозиторий залежей
 func Init() {
+	go migration()
+
 	Repository = &DepositRepository{
 		db: *storage.Database,
+	}
+}
+
+func migration() {
+	if err := storage.Database.AutoMigrate(
+		&repositories.Deposit{},
+	); err != nil {
+		logger.Fatal(`Migration failed`)
 	}
 }
 

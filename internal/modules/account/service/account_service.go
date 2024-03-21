@@ -4,23 +4,24 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
+	account_rep "github.com/jourloy/X-Backend/internal/modules/account/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
-	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
 )
 
 type Service struct {
-	aRep  repositories.AccountRepository
-	cache redis.Client
+	accountRep repositories.AccountRepository
+	cache      redis.Client
 }
 
 // Init создает сервис аккаунта
 func Init() *Service {
+	go account_rep.Init()
 
-	aRep := account_rep.Repository
+	accountRep := account_rep.Repository
 
 	return &Service{
-		aRep:  aRep,
-		cache: *cache.Client,
+		accountRep: accountRep,
+		cache:      *cache.Client,
 	}
 }
 
@@ -31,7 +32,7 @@ type createResp struct {
 
 // Create создает аккаунт
 func (s *Service) Create(body repositories.AccountCreate) createResp {
-	account, err := s.aRep.Create(&body)
+	account, err := s.accountRep.Create(&body)
 	return createResp{
 		Err:     err,
 		Account: account,
@@ -45,7 +46,7 @@ type getOneResp struct {
 
 // GetOne получает аккаунт по id
 func (s *Service) GetOne(query *repositories.AccountGet) getOneResp {
-	user, err := s.aRep.GetOne(query)
+	user, err := s.accountRep.GetOne(query)
 	return getOneResp{
 		Err:     err,
 		Account: *user,
@@ -58,7 +59,7 @@ type updateOneResp struct {
 
 // UpdateOne обновляет аккаунт
 func (s *Service) UpdateOne(body repositories.Account) updateOneResp {
-	err := s.aRep.UpdateOne(&body)
+	err := s.accountRep.UpdateOne(&body)
 	return updateOneResp{Err: err}
 }
 
@@ -68,6 +69,6 @@ type deleteOneResp struct {
 
 // DeleteOne удаляет аккаунт
 func (s *Service) DeleteOne(body repositories.Account) deleteOneResp {
-	err := s.aRep.DeleteOne(&body)
+	err := s.accountRep.DeleteOne(&body)
 	return deleteOneResp{Err: err}
 }

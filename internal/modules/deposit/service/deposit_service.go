@@ -6,9 +6,9 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
+	deposit_rep "github.com/jourloy/X-Backend/internal/modules/deposit/repository"
+	sector_rep "github.com/jourloy/X-Backend/internal/modules/sector/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
-	"github.com/jourloy/X-Backend/internal/repositories/deposit_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 )
 
 type Service struct {
@@ -19,6 +19,7 @@ type Service struct {
 
 // Init создает сервис залежи
 func Init() *Service {
+	deposit_rep.Init()
 
 	depRep := deposit_rep.Repository
 	secRep := sector_rep.Repository

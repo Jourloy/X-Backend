@@ -6,14 +6,14 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
+	deposit_rep "github.com/jourloy/X-Backend/internal/modules/deposit/repository"
+	node_rep "github.com/jourloy/X-Backend/internal/modules/node/repository"
+	sector_rep "github.com/jourloy/X-Backend/internal/modules/sector/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
-	"github.com/jourloy/X-Backend/internal/repositories/deposit_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/node_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 )
 
 type Service struct {
-	secRep     repositories.SectorRepository
+	sectorRep  repositories.SectorRepository
 	nodeRep    repositories.NodeRepository
 	depositRep repositories.IDepositRepository
 	cache      redis.Client
@@ -21,13 +21,14 @@ type Service struct {
 
 // Init создает сервис сектора
 func Init() *Service {
+	sector_rep.Init()
 
-	secRep := sector_rep.Repository
+	sectorRep := sector_rep.Repository
 	nodeRep := node_rep.Repository
 	depositRep := deposit_rep.Repository
 
 	return &Service{
-		secRep:     secRep,
+		sectorRep:  sectorRep,
 		nodeRep:    nodeRep,
 		depositRep: depositRep,
 		cache:      *cache.Client,
@@ -58,7 +59,7 @@ type createResp struct {
 
 // Генерация сектора
 func (s *Service) Create(body CreateOptions) createResp {
-	sector, err := s.secRep.Create(&repositories.SectorCreate{X: body.X, Y: body.Y})
+	sector, err := s.sectorRep.Create(&repositories.SectorCreate{X: body.X, Y: body.Y})
 	if err != nil {
 		return createResp{Err: err}
 	}
@@ -119,7 +120,7 @@ type getOneResp struct {
 
 // GetOne получает сектор по id
 func (s *Service) GetOne(id string) getOneResp {
-	sector, err := s.secRep.GetOne(&repositories.SectorGet{ID: &id})
+	sector, err := s.sectorRep.GetOne(&repositories.SectorGet{ID: &id})
 	if err != nil {
 		return getOneResp{Err: err}
 	}
@@ -135,7 +136,7 @@ type getAllResp struct {
 // GetAll возвращает все сектора
 func (s *Service) GetAll(query repositories.SectorGet) getAllResp {
 	// Получение секторов
-	sectors, err := s.secRep.GetAll(&query)
+	sectors, err := s.sectorRep.GetAll(&query)
 	if err != nil {
 		return getAllResp{Err: err}
 	}
@@ -152,7 +153,7 @@ type updateOneResp struct {
 
 // UpdateOne обновляет сектор
 func (s *Service) UpdateOne(body repositories.Sector) updateOneResp {
-	err := s.secRep.UpdateOne(&body)
+	err := s.sectorRep.UpdateOne(&body)
 	return updateOneResp{Err: err}
 }
 
@@ -162,6 +163,6 @@ type deleteOneResp struct {
 
 // DeleteOne удаляет сектор
 func (s *Service) DeleteOne(body repositories.Sector) deleteOneResp {
-	err := s.secRep.UpdateOne(&body)
+	err := s.sectorRep.UpdateOne(&body)
 	return deleteOneResp{Err: err}
 }

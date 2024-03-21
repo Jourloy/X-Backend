@@ -8,12 +8,6 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
 
-	"github.com/jourloy/X-Backend/internal/repositories/account_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/building_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/creature_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/operation_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
-
 	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/handlers"
 	"github.com/jourloy/X-Backend/internal/middlewares"
@@ -44,11 +38,6 @@ func StartServer() {
 	logger.Debug(`Cache initialized`, `latency`, time.Since(tempTime))
 	tempTime = time.Now()
 
-	// Инициализация репозиториев
-	initReps()
-	logger.Debug(`Repositories initialized`, `latency`, time.Since(tempTime))
-	tempTime = time.Now()
-
 	r := gin.New()
 
 	// Middlewares
@@ -57,7 +46,7 @@ func StartServer() {
 	r.Use(middlewares.API())
 
 	// Инициализация хендлеров
-	initHandlers(r)
+	handlers.Init(r)
 	logger.Debug(`Handlers initialized`, `latency`, time.Since(tempTime))
 
 	// Запуск сервера
@@ -65,22 +54,4 @@ func StartServer() {
 	if err := r.Run(`0.0.0.0:3001`); err != nil {
 		logger.Fatal(err)
 	}
-}
-
-// Инициализация групп
-func initHandlers(r *gin.Engine) {
-	handlers.InitAccount(r)
-	handlers.InitSector(r)
-	handlers.InitBuilding(r)
-	handlers.InitCreature(r)
-	handlers.InitOperation(r)
-}
-
-// Инициализация репозиториев
-func initReps() {
-	account_rep.Init()
-	sector_rep.Init()
-	creature_rep.Init()
-	building_rep.Init()
-	operation_rep.Init()
 }

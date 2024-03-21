@@ -4,23 +4,24 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
+	item_rep "github.com/jourloy/X-Backend/internal/modules/item/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
-	"github.com/jourloy/X-Backend/internal/repositories/item_rep"
 )
 
 type Service struct {
-	iteRep repositories.IItemRepository
-	cache  redis.Client
+	itemRep repositories.IItemRepository
+	cache   redis.Client
 }
 
 // Init создает сервис предмета
 func Init() *Service {
+	item_rep.Init()
 
-	iteRep := item_rep.Repository
+	itemRep := item_rep.Repository
 
 	return &Service{
-		iteRep: iteRep,
-		cache:  *cache.Client,
+		itemRep: itemRep,
+		cache:   *cache.Client,
 	}
 }
 
@@ -30,7 +31,7 @@ type createResp struct {
 
 // Create создает предмет
 func (s *Service) Create(body repositories.Item, parentID string, parentType string, accountID string) createResp {
-	s.iteRep.Create(&body)
+	s.itemRep.Create(&body)
 	return createResp{Err: nil}
 }
 
@@ -42,7 +43,7 @@ type getOneResp struct {
 // GetOne получает предмет по id
 func (s *Service) GetOne(id string) getOneResp {
 	item := repositories.Item{ID: id}
-	s.iteRep.GetOne(&item)
+	s.itemRep.GetOne(&item)
 	return getOneResp{
 		Err:  nil,
 		Item: item,
@@ -57,7 +58,7 @@ type getAllResp struct {
 // GetAll возвращает все предметы
 func (s *Service) GetAll(query repositories.ItemGetAll) getAllResp {
 	// Получение предметов
-	items := s.iteRep.GetAll(query)
+	items := s.itemRep.GetAll(query)
 
 	return getAllResp{
 		Err:   nil,
@@ -71,7 +72,7 @@ type updateOneResp struct {
 
 // UpdateOne обновляет предмет
 func (s *Service) UpdateOne(body repositories.Item) updateOneResp {
-	s.iteRep.UpdateOne(&body)
+	s.itemRep.UpdateOne(&body)
 	return updateOneResp{
 		Err: nil,
 	}
@@ -83,7 +84,7 @@ type deleteOneResp struct {
 
 // DeleteOne удаляет предмет
 func (s *Service) DeleteOne(body repositories.Item) deleteOneResp {
-	s.iteRep.DeleteOne(&body)
+	s.itemRep.DeleteOne(&body)
 	return deleteOneResp{
 		Err: nil,
 	}

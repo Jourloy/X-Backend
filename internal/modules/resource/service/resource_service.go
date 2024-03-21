@@ -6,28 +6,29 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
+	resource_rep "github.com/jourloy/X-Backend/internal/modules/resource/repository"
+	sector_rep "github.com/jourloy/X-Backend/internal/modules/sector/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
-	"github.com/jourloy/X-Backend/internal/repositories/resource_rep"
-	"github.com/jourloy/X-Backend/internal/repositories/sector_rep"
 )
 
 type ResourceService struct {
-	resRep repositories.IResourceRepository
-	secRep repositories.SectorRepository
-	accRep repositories.AccountRepository
-	cache  redis.Client
+	resourceRep repositories.IResourceRepository
+	sectorRep   repositories.SectorRepository
+	accRep      repositories.AccountRepository
+	cache       redis.Client
 }
 
 // Init создает сервис ресурса
 func Init() *ResourceService {
+	resource_rep.Init()
 
-	resRep := resource_rep.Repository
-	secRep := sector_rep.Repository
+	resourceRep := resource_rep.Repository
+	sectorRep := sector_rep.Repository
 
 	return &ResourceService{
-		resRep: resRep,
-		secRep: secRep,
-		cache:  *cache.Client,
+		resourceRep: resourceRep,
+		sectorRep:   sectorRep,
+		cache:       *cache.Client,
 	}
 }
 
@@ -47,7 +48,7 @@ func (s *ResourceService) Create(body repositories.Resource) createResp {
 	}
 
 	// Проверка существования сектора
-	sector, err := s.secRep.GetOne(&repositories.SectorGet{ID: &body.SectorID})
+	sector, err := s.sectorRep.GetOne(&repositories.SectorGet{ID: &body.SectorID})
 	if err != nil {
 		return createResp{Err: err}
 	}
@@ -56,7 +57,7 @@ func (s *ResourceService) Create(body repositories.Resource) createResp {
 		return createResp{Err: errors.New(`sector not found`)}
 	}
 
-	s.resRep.Create(&body)
+	s.resourceRep.Create(&body)
 	return createResp{Err: nil}
 }
 
@@ -68,7 +69,7 @@ type getOneResp struct {
 // GetOne получает ресурс по id
 func (s *ResourceService) GetOne(resourceID string) getOneResp {
 	resource := repositories.Resource{ID: resourceID}
-	s.resRep.GetOne(resource)
+	s.resourceRep.GetOne(resource)
 	return getOneResp{
 		Err:      nil,
 		Resource: resource,
@@ -82,7 +83,7 @@ type getAllResp struct {
 
 // GetAll возвращает все ресурсы
 func (s *ResourceService) GetAll(query repositories.ResourceGetAll) getAllResp {
-	resources := s.resRep.GetAll(query)
+	resources := s.resourceRep.GetAll(query)
 	return getAllResp{
 		Err:       nil,
 		Resources: resources,
@@ -95,7 +96,7 @@ type updateOneResp struct {
 
 // UpdateOne обновляет ресурс
 func (s *ResourceService) UpdateOne(body repositories.Resource) updateOneResp {
-	s.resRep.UpdateOne(&body)
+	s.resourceRep.UpdateOne(&body)
 	return updateOneResp{
 		Err: nil,
 	}
@@ -107,7 +108,7 @@ type deleteOneResp struct {
 
 // DeleteOne удаляет ресурс
 func (s *ResourceService) DeleteOne(body repositories.Resource) deleteOneResp {
-	s.resRep.UpdateOne(&body)
+	s.resourceRep.UpdateOne(&body)
 	return deleteOneResp{
 		Err: nil,
 	}
