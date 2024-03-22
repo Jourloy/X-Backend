@@ -11,7 +11,8 @@ func CheckAPI() gin.HandlerFunc {
 
 		// Если аккаунта нет
 		if !exist {
-			c.JSON(400, `api key is required`)
+			c.JSON(400, gin.H{`error`: `api key is required or account is not exist`})
+			c.Abort()
 			return
 		}
 

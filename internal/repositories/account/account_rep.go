@@ -60,6 +60,7 @@ func (r *AccountRepository) Create(create *repositories.AccountCreate) (*reposit
 		ID:       uuid.NewString(),
 		ApiKey:   uuid.NewString(),
 		Username: create.Username,
+		Race:     create.Race,
 		Balance:  0,
 		IsAdmin:  false,
 	}

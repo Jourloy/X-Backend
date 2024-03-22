@@ -26,6 +26,7 @@ type Account struct {
 
 type AccountCreate struct {
 	Username string `json:"username"`
+	Race     string `json:"race"`
 }
 
 type AccountGet struct {
@@ -33,6 +34,7 @@ type AccountGet struct {
 	ApiKey   *string `json:"apiKey"`
 	Username *string `json:"username"`
 	Balance  *int    `json:"balance"`
+	Race     *string `json:"race"`
 }
 
 type AccountRepository interface {

@@ -11,7 +11,8 @@ func CheckAdmin() gin.HandlerFunc {
 
 		// Если аккаунта нет
 		if !exist {
-			c.JSON(400, `api key is required`)
+			c.JSON(400, `api key is required or account is not exist`)
+			c.Abort()
 			return
 		}
 
@@ -20,12 +21,14 @@ func CheckAdmin() gin.HandlerFunc {
 		// Если аккаунт не валидный
 		if !ok {
 			c.JSON(400, `account is invalid`)
+			c.Abort()
 			return
 		}
 
 		// Если пользователь не админ
 		if !account.IsAdmin {
 			c.JSON(400, `only admin access`)
+			c.Abort()
 			return
 		}
 

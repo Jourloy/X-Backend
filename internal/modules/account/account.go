@@ -72,8 +72,8 @@ type GetResponse400 struct {
 func (s *Controller) GetMe(c *gin.Context) {
 	a, exist := c.Get(`account`)
 	if !exist {
-		c.JSON(400, GetResponse400{Error: `api key is required`})
-		logger.Error(`api key is required`)
+		c.JSON(400, GetResponse400{Error: `api key is required or account is not exist`})
+		logger.Error(`api key is required or account is not exist`)
 		return
 	}
 
