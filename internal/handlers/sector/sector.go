@@ -1,4 +1,4 @@
-package handlers
+package sector_handler
 
 import (
 	"github.com/gin-gonic/gin"
@@ -6,9 +6,12 @@ import (
 	"github.com/jourloy/X-Backend/internal/modules/sector"
 )
 
-func InitSector(r *gin.Engine) {
-	g := r.Group(`sector`)
+func Init(r *gin.Engine) {
+	gMain := r.Group(`sector`)
+	initSector(gMain)
+}
 
+func initSector(g *gin.RouterGroup) {
 	controller := sector.Init()
 
 	g.Use(guards.CheckAPI())

@@ -6,10 +6,10 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
-	account_rep "github.com/jourloy/X-Backend/internal/modules/account/repository"
-	building_rep "github.com/jourloy/X-Backend/internal/modules/building/repository"
-	sector_rep "github.com/jourloy/X-Backend/internal/modules/sector/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
+	account_rep "github.com/jourloy/X-Backend/internal/repositories/account"
+	building_rep "github.com/jourloy/X-Backend/internal/repositories/building"
+	sector_rep "github.com/jourloy/X-Backend/internal/repositories/sector"
 )
 
 type Service struct {

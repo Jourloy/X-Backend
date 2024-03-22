@@ -6,9 +6,9 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
-	deposit_rep "github.com/jourloy/X-Backend/internal/modules/deposit/repository"
-	sector_rep "github.com/jourloy/X-Backend/internal/modules/sector/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
+	deposit_rep "github.com/jourloy/X-Backend/internal/repositories/deposit"
+	sector_rep "github.com/jourloy/X-Backend/internal/repositories/sector"
 )
 
 type Service struct {

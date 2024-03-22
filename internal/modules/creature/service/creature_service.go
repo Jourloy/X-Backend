@@ -4,8 +4,8 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
-	creature_rep "github.com/jourloy/X-Backend/internal/modules/creature/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
+	creature_rep "github.com/jourloy/X-Backend/internal/repositories/creature"
 )
 
 type Service struct {

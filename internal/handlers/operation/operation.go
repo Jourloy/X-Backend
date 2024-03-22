@@ -1,4 +1,4 @@
-package handlers
+package operation_handler
 
 import (
 	"github.com/gin-gonic/gin"
@@ -7,9 +7,12 @@ import (
 	"github.com/jourloy/X-Backend/internal/modules/operation"
 )
 
-func InitOperation(r *gin.Engine) {
-	g := r.Group(`operation`)
+func Init(r *gin.Engine) {
+	gMain := r.Group(`operation`)
+	initOperation(gMain)
+}
 
+func initOperation(g *gin.RouterGroup) {
 	controller := operation.Init()
 
 	g.Use(guards.CheckAPI())

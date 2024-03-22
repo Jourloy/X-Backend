@@ -6,10 +6,10 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
-	account_rep "github.com/jourloy/X-Backend/internal/modules/account/repository"
-	plan_rep "github.com/jourloy/X-Backend/internal/modules/plan/repository"
-	sector_rep "github.com/jourloy/X-Backend/internal/modules/sector/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
+	account_rep "github.com/jourloy/X-Backend/internal/repositories/account"
+	plan_rep "github.com/jourloy/X-Backend/internal/repositories/plan"
+	sector_rep "github.com/jourloy/X-Backend/internal/repositories/sector"
 )
 
 type Service struct {
@@ -21,6 +21,7 @@ type Service struct {
 
 // Init создает сервис планируемой постройки
 func Init() *Service {
+	go plan_rep.Init()
 
 	plaRep := plan_rep.Repository
 	secRep := sector_rep.Repository

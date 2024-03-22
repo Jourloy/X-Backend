@@ -4,8 +4,8 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
-	item_rep "github.com/jourloy/X-Backend/internal/modules/item/repository"
 	"github.com/jourloy/X-Backend/internal/repositories"
+	item_rep "github.com/jourloy/X-Backend/internal/repositories/item"
 )
 
 type Service struct {
@@ -15,7 +15,7 @@ type Service struct {
 
 // Init создает сервис предмета
 func Init() *Service {
-	item_rep.Init()
+	go item_rep.Init()
 
 	itemRep := item_rep.Repository
 
