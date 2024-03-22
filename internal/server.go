@@ -11,6 +11,7 @@ import (
 	"github.com/jourloy/X-Backend/internal/cache"
 	"github.com/jourloy/X-Backend/internal/handlers"
 	"github.com/jourloy/X-Backend/internal/middlewares"
+	repositories_init "github.com/jourloy/X-Backend/internal/repositories/init"
 	"github.com/jourloy/X-Backend/internal/storage"
 )
 
@@ -31,6 +32,11 @@ func StartServer() {
 	// Инициализация хранилища
 	storage.InitDB()
 	logger.Debug(`Storage initialized`, `latency`, time.Since(tempTime))
+	tempTime = time.Now()
+
+	// Инициализация репозиториев
+	repositories_init.Init()
+	logger.Debug(`Repositories initialized`, `latency`, time.Since(tempTime))
 	tempTime = time.Now()
 
 	// Инициализация кэша

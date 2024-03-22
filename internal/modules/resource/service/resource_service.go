@@ -20,8 +20,6 @@ type ResourceService struct {
 
 // Init создает сервис ресурса
 func Init() *ResourceService {
-	resource_rep.Init()
-
 	resourceRep := resource_rep.Repository
 	sectorRep := sector_rep.Repository
 

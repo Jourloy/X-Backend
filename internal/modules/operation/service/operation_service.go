@@ -23,8 +23,6 @@ type Service struct {
 
 // Init создает сервис операций
 func Init() *Service {
-	operation_rep.Init()
-
 	accountRep := account_rep.Repository
 	buildingRep := building_rep.Repository
 	sectorRep := sector_rep.Repository

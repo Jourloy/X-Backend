@@ -19,8 +19,6 @@ type Service struct {
 
 // Init создает сервис залежи
 func Init() *Service {
-	deposit_rep.Init()
-
 	depRep := deposit_rep.Repository
 	secRep := sector_rep.Repository
 

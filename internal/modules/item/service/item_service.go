@@ -15,8 +15,6 @@ type Service struct {
 
 // Init создает сервис предмета
 func Init() *Service {
-	item_rep.Init()
-
 	itemRep := item_rep.Repository
 
 	return &Service{

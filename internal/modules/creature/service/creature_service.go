@@ -15,8 +15,6 @@ type Service struct {
 
 // Init создает сервис существа
 func Init() *Service {
-	creature_rep.Init()
-
 	creRep := creature_rep.Repository
 
 	return &Service{

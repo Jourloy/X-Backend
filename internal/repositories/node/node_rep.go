@@ -35,7 +35,7 @@ func Init() {
 
 func migration() {
 	if err := storage.Database.AutoMigrate(
-		&repositories.Account{},
+		&repositories.Node{},
 	); err != nil {
 		logger.Fatal(`Migration failed`)
 	}
