@@ -115,22 +115,22 @@ type Node struct {
 }
 
 // Модель поиска узла
-type NodeGetAll struct {
+type NodeGet struct {
 	X         *int
 	Y         *int
 	Walkable  *bool
 	Difficult *int
-	SectorID  string
+	SectorID  *string
 	Limit     *int
 }
 
 // Репозиторий сектора
 type NodeRepository interface {
-	Create(node *Node)
-	GetOne(node *Node)
-	GetAll(dest *[]Node, query NodeGetAll)
-	UpdateOne(node *Node)
-	DeleteOne(node *Node)
+	Create(node *Node) (*Node, error)
+	GetOne(node *NodeGet) (*Node, error)
+	GetAll(query *NodeGet) (*[]Node, error)
+	UpdateOne(node *Node) error
+	DeleteOne(node *Node) error
 }
 
 // Модель залежи ресурсов

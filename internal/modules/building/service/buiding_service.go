@@ -9,6 +9,7 @@ import (
 	"github.com/jourloy/X-Backend/internal/repositories"
 	account_rep "github.com/jourloy/X-Backend/internal/repositories/account"
 	building_rep "github.com/jourloy/X-Backend/internal/repositories/building"
+	node_rep "github.com/jourloy/X-Backend/internal/repositories/node"
 	sector_rep "github.com/jourloy/X-Backend/internal/repositories/sector"
 )
 
@@ -16,6 +17,7 @@ type Service struct {
 	accountRep  repositories.AccountRepository
 	sectorRep   repositories.SectorRepository
 	buildingRep repositories.BuildingRepository
+	nodeRep     repositories.NodeRepository
 	cache       redis.Client
 }
 
@@ -24,11 +26,13 @@ func Init() *Service {
 	accountRep := account_rep.Repository
 	sectorRep := sector_rep.Repository
 	buildingRep := building_rep.Repository
+	nodeRep := node_rep.Repository
 
 	return &Service{
 		accountRep:  accountRep,
 		sectorRep:   sectorRep,
 		buildingRep: buildingRep,
+		nodeRep:     nodeRep,
 		cache:       *cache.Client,
 	}
 }
@@ -124,4 +128,78 @@ type deleteOneResp struct {
 func (s *Service) DeleteOne(body repositories.Building) deleteOneResp {
 	err := s.buildingRep.DeleteOne(&body)
 	return deleteOneResp{Err: err}
+}
+
+type placeTownHallResponse struct {
+	Err      error
+	Code     int
+	Building *repositories.Building
+}
+
+func (s *Service) PlaceTownHall(body repositories.BuildingCreate) placeTownHallResponse {
+	// Проверка аккаунта
+	if account, err := s.accountRep.GetOne(&repositories.AccountGet{ID: &body.AccountID}); err != nil {
+		return placeTownHallResponse{
+			Err:  err,
+			Code: 400,
+		}
+	} else if account == nil {
+		return placeTownHallResponse{
+			Err:  errors.New(`account not found`),
+			Code: 404,
+		}
+	}
+
+	// Проверка сектора
+	if sector, err := s.sectorRep.GetOne(&repositories.SectorGet{ID: &body.SectorID}); err != nil {
+		return placeTownHallResponse{
+			Err:  err,
+			Code: 400,
+		}
+	} else if sector == nil {
+		return placeTownHallResponse{
+			Err:  errors.New(`sector not found`),
+			Code: 404,
+		}
+	}
+
+	// Проверка узла
+	if node, err := s.nodeRep.GetOne(&repositories.NodeGet{SectorID: &body.SectorID, X: &body.X, Y: &body.Y}); err != nil {
+		return placeTownHallResponse{
+			Err:  err,
+			Code: 400,
+		}
+	} else if node == nil {
+		return placeTownHallResponse{
+			Err:  errors.New(`node not found`),
+			Code: 404,
+		}
+	} else if !node.Walkable {
+		return placeTownHallResponse{
+			Err:  errors.New(`cannot place here`),
+			Code: 400,
+		}
+	}
+
+	// Проверка наличия townhall
+	t := `townhall`
+	if townhall, err := s.buildingRep.GetOne(&repositories.BuildingGet{Type: &t}); err != nil {
+		return placeTownHallResponse{
+			Err:  err,
+			Code: 400,
+		}
+	} else if townhall != nil {
+		return placeTownHallResponse{
+			Err:  errors.New(`townhall already exist in this sector`),
+			Code: 400,
+		}
+	}
+
+	building, err := s.buildingRep.Create(&body)
+
+	return placeTownHallResponse{
+		Code:     200,
+		Err:      err,
+		Building: building,
+	}
 }

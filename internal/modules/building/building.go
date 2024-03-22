@@ -146,3 +146,36 @@ func (s *Controller) DeleteOne(c *gin.Context) {
 
 	c.JSON(200, gin.H{`error`: ``})
 }
+
+type PlaceTownHallBody struct {
+	X         int    `json:"x"`
+	Y         int    `json:"y"`
+	Type      string `json:"type"`
+	SectorID  string `json:"sectorId"`
+	AccountID string `json:"accountId"`
+}
+
+// PlaceTownHall создает постройку
+func (s *Controller) PlaceTownHall(c *gin.Context) {
+	accountID := c.GetString(`accountID`)
+
+	// Парсинг body
+	var body PlaceTownHallBody
+	if err := tools.ParseBody(c, &body); err != nil {
+		logger.Error(`parse body error`)
+		c.JSON(400, gin.H{`error`: `parse body error`})
+		return
+	}
+
+	body.AccountID = accountID
+	body.Type = `townhall`
+
+	resp := s.service.Create(repositories.BuildingCreate(body))
+	if resp.Err != nil {
+		logger.Error(resp.Err)
+		c.JSON(resp.Code, gin.H{`error`: resp.Err.Error()})
+		return
+	}
+
+	c.JSON(resp.Code, gin.H{`error`: ``, `building`: resp.Building})
+}
