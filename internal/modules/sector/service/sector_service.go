@@ -24,7 +24,7 @@ var (
 type Service struct {
 	sectorRep  repositories.SectorRepository
 	nodeRep    repositories.NodeRepository
-	depositRep repositories.IDepositRepository
+	depositRep repositories.DepositRepository
 	cache      redis.Client
 }
 
@@ -109,14 +109,16 @@ func (s *Service) generateDeposits(sectorID string) {
 					resourceType = `stone`
 				}
 
-				deposit := repositories.Deposit{
+				deposit := repositories.DepositCreate{
 					X:        x,
 					Y:        y,
 					Type:     resourceType,
 					SectorID: sectorID,
 				}
 
-				s.depositRep.Create(&deposit)
+				if _, err := s.depositRep.Create(deposit); err != nil {
+					logger.Error(err)
+				}
 			}
 		}
 	}

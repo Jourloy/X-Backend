@@ -164,10 +164,11 @@ type Deposit struct {
 
 // Структура создания залежи
 type DepositCreate struct {
-	X      int    `form:"x" json:"x"`
-	Y      int    `form:"y" json:"y"`
-	Type   string `form:"type" json:"type"`
-	Amount int    `form:"amount" json:"amount"`
+	X        int    `form:"x" json:"x"`
+	Y        int    `form:"y" json:"y"`
+	Type     string `form:"type" json:"type"`
+	Amount   int    `form:"amount" json:"amount"`
+	SectorID string `form:"sectorId" json:"sectorId"`
 }
 
 // Структура поиска залежей
@@ -222,9 +223,13 @@ type Resource struct {
 
 // Структура создания ресурсов
 type ResourceCreate struct {
-	X    int    `form:"x" json:"x"`
-	Y    int    `form:"y" json:"y"`
-	Type string `form:"type" json:"type"`
+	X          int    `form:"x" json:"x"`
+	Y          int    `form:"y" json:"y"`
+	Type       string `form:"type" json:"type"`
+	ParentID   string `json:"parentId"`
+	ParentType string `json:"parentType"`
+	SectorID   string `json:"sectorId"`
+	CreatorID  string `json:"creatorId"`
 }
 
 // Структура поиска ресурсов
