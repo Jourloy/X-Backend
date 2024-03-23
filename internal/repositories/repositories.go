@@ -8,33 +8,37 @@ import (
 
 // Модель аккаунта
 type Account struct {
-	ID string `json:"id" gorm:"primarykey"`
+	// Задается при создании
 
-	// Динамические поля, задаются пользователем
 	Race     string `json:"race"`
 	Username string `json:"username"`
+
+	// Задается по умолчанию
 
 	ApiKey  string `json:"apiKey"`
 	Balance int    `json:"balance"`
 	IsAdmin bool   `json:"-"`
 
 	// Мета
+
+	ID        string         `json:"id" gorm:"primarykey"`
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 type AccountCreate struct {
-	Username string `json:"username"`
-	Race     string `json:"race"`
+	Username string `form:"username" json:"username"`
+	Race     string `form:"race" json:"race"`
 }
 
 type AccountGet struct {
-	ID       *string `json:"id"`
-	ApiKey   *string `json:"apiKey"`
-	Username *string `json:"username"`
-	Balance  *int    `json:"balance"`
-	Race     *string `json:"race"`
+	ID       *string `form:"id" json:"id"`
+	ApiKey   *string `form:"apiKey" json:"apiKey"`
+	Username *string `form:"username" json:"username"`
+	Balance  *int    `form:"balance" json:"balance"`
+	Race     *string `form:"race" json:"race"`
+	Limit    *int    `form:"limit" json:"limit"`
 }
 
 type AccountRepository interface {
@@ -46,46 +50,39 @@ type AccountRepository interface {
 
 // Модель сектора
 type Sector struct {
-	ID string `json:"id"`
+	// Задается при создании
 
-	// Глобальные координаты
 	X int `json:"x"`
 	Y int `json:"y"`
 
-	// Узлы
-	Nodes []Node `json:"nodes"`
+	// Дети
 
-	// Постройки
+	Nodes     []Node     `json:"nodes"`
 	Buildings []Building `json:"buildings"`
 	Plans     []Plan     `json:"plans"`
-
-	// Существа
 	Creatures []Creature `json:"creatures"`
-
-	// Ресурсы
 	Deposits  []Deposit  `json:"deposits"`
 	Resources []Resource `json:"resources" gorm:"foreignKey:ParentID"`
-
-	// Предметы
-	Items []Item `json:"items" gorm:"foreignKey:ParentID"`
+	Items     []Item     `json:"items" gorm:"foreignKey:ParentID"`
 
 	// Мета
+	ID        string         `json:"id" gorm:"primarykey"`
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 type SectorCreate struct {
-	X int `json:"x"`
-	Y int `json:"y"`
+	X int `form:"x" json:"x"`
+	Y int `form:"y" json:"y"`
 }
 
 // Структура поиска сектора
 type SectorGet struct {
-	ID    *string
-	X     *int
-	Y     *int
-	Limit *int
+	ID    *string `form:"id" json:"id"`
+	X     *int    `form:"x" json:"x"`
+	Y     *int    `form:"y" json:"y"`
+	Limit *int    `form:"limit" json:"limit"`
 }
 
 // Репозиторий сектора
@@ -99,37 +96,40 @@ type SectorRepository interface {
 
 // Модель узла
 type Node struct {
-	ID string `json:"id"`
+	// Задается при создании
 
-	X int `json:"x"`
-	Y int `json:"y"`
-
+	X         int  `json:"x"`
+	Y         int  `json:"y"`
 	Walkable  bool `json:"walkable"`
 	Difficult int  `json:"difficult"`
 
+	// Родители
+
 	SectorID string `json:"sectorId"`
 
+	// Мета
+	ID        string         `json:"id" gorm:"primarykey"`
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 type NodeCreate struct {
-	X         int    `json:"x"`
-	Y         int    `json:"y"`
-	Walkable  bool   `json:"walkable"`
-	Difficult int    `json:"difficult"`
-	SectorID  string `json:"sectorId"`
+	X         int    `form:"x" json:"x"`
+	Y         int    `form:"y" json:"y"`
+	Walkable  bool   `form:"walkable" json:"walkable"`
+	Difficult int    `form:"difficult" json:"difficult"`
+	SectorID  string `form:"sectorId" json:"sectorId"`
 }
 
 // Модель поиска узла
 type NodeGet struct {
-	X         *int
-	Y         *int
-	Walkable  *bool
-	Difficult *int
-	SectorID  *string
-	Limit     *int
+	X         *int    `form:"x" json:"x"`
+	Y         *int    `form:"y" json:"y"`
+	Walkable  *bool   `form:"walkable" json:"walkable"`
+	Difficult *int    `form:"difficult" json:"difficult"`
+	SectorID  *string `form:"sectorId" json:"sectorId"`
+	Limit     *int    `form:"limit" json:"limit"`
 }
 
 // Репозиторий сектора
@@ -141,81 +141,111 @@ type NodeRepository interface {
 	DeleteOne(node *Node) error
 }
 
-// Модель залежи ресурсов
+// Модель залежи
 type Deposit struct {
-	ID string `json:"id"`
+	// Задается при создании
 
-	X int `json:"x"`
-	Y int `json:"y"`
-
+	X      int    `json:"x"`
+	Y      int    `json:"y"`
 	Type   string `json:"type"`
 	Amount int    `json:"amount"`
 
+	// Родители
+
 	SectorID string `json:"sectorId"`
 
+	// Мета
+
+	ID        string         `json:"id" gorm:"primarykey"`
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
+// Структура создания залежи
+type DepositCreate struct {
+	X      int    `form:"x" json:"x"`
+	Y      int    `form:"y" json:"y"`
+	Type   string `form:"type" json:"type"`
+	Amount int    `form:"amount" json:"amount"`
+}
+
 // Структура поиска залежей
-type DepositGetAll struct {
-	Type   *string
-	Amount *int
-	X      *int
-	Y      *int
-	Limit  *int
+type DepositGet struct {
+	Type     *string `form:"type" json:"type"`
+	Amount   *int    `form:"amount" json:"amount"`
+	X        *int    `form:"x" json:"x"`
+	Y        *int    `form:"y" json:"y"`
+	SectorID *string `form:"sectorId" json:"sectorId"`
+	Limit    *int    `form:"limit" json:"limit"`
 }
 
 // Репозиторий залежей
-type IDepositRepository interface {
-	Create(deposit *Deposit)
-	GetOne(deposit *Deposit)
-	GetAll(query DepositGetAll, sectorID string) []Deposit
-	UpdateOne(deposit *Deposit)
-	DeleteOne(deposit *Deposit)
+type DepositRepository interface {
+	Create(create DepositCreate) (*Deposit, error)
+	GetOne(query DepositGet) (*Deposit, error)
+	GetAll(query DepositGet) (*[]Deposit, error)
+	UpdateOne(deposit *Deposit) error
+	DeleteOne(deposit *Deposit) error
 }
 
 // Модель ресурсов
 type Resource struct {
-	ID string `json:"id"`
+	// Задается при создании
 
-	X int `json:"x"`
-	Y int `json:"y"`
+	X    int    `json:"x"`
+	Y    int    `json:"y"`
+	Type string `json:"type"`
 
-	Type   string `json:"type"`
-	Amount int    `json:"amount"`
-	Weight int    `json:"weight"`
+	// Задается по умолчанию
+
+	Amount int `json:"amount"`
+
+	// Задается по шаблону
+
+	Weight int `json:"weight"`
+
+	// Родители
 
 	ParentID   string `json:"parentId"`
 	ParentType string `json:"parentType"`
 	SectorID   string `json:"sectorId"`
 	CreatorID  string `json:"creatorId"`
 
+	// Мета
+
+	ID        string         `json:"id" gorm:"primarykey"`
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
+// Структура создания ресурсов
+type ResourceCreate struct {
+	X    int    `form:"x" json:"x"`
+	Y    int    `form:"y" json:"y"`
+	Type string `form:"type" json:"type"`
+}
+
 // Структура поиска ресурсов
-type ResourceGetAll struct {
-	Type       *string
-	Amount     *int
-	Weight     *int
-	X          *int
-	Y          *int
-	ParentID   *string
-	ParentType *string
-	SectorID   *string
-	CreatorID  *string
-	Limit      *int
+type ResourceGet struct {
+	Type       *string `form:"type" json:"type`
+	Amount     *int    `form:"amount" json:"amount"`
+	Weight     *int    `form:"weight" json:"weight"`
+	X          *int    `form:"x" json:"x"`
+	Y          *int    `form:"y" json:"y"`
+	ParentID   *string `form:"parentId" json:"parentId"`
+	ParentType *string `form:"parentType" json:"parentType"`
+	SectorID   *string `form:"sectorId" json:"sectorId"`
+	CreatorID  *string `form:"creatorId" json:"creatorId"`
+	Limit      *int    `form:"limir" json:"limir"`
 }
 
 // Репозиторий ресурсов
-type IResourceRepository interface {
-	Create(resource *Resource)
-	GetOne(resource Resource)
-	GetAll(query ResourceGetAll) []Resource
+type ResourceRepository interface {
+	Create(create ResourceCreate) (*Resource, error)
+	GetOne(query ResourceGet) (*Resource, error)
+	GetAll(query ResourceGet) (*[]Resource, error)
 	UpdateOne(resource *Resource)
 	DeleteOne(resource *Resource)
 }
@@ -242,18 +272,18 @@ type Item struct {
 
 // Структура поиска предмета
 type ItemGetAll struct {
-	Type       *string
-	X          *int
-	Y          *int
-	ParentID   *string
-	ParentType *string
-	SectorID   *string
-	CreatorID  *string
-	Limit      *int
+	Type       *string `form:"" json:""`
+	X          *int    `form:"" json:""`
+	Y          *int    `form:"" json:""`
+	ParentID   *string `form:"" json:""`
+	ParentType *string `form:"" json:""`
+	SectorID   *string `form:"" json:""`
+	CreatorID  *string `form:"" json:""`
+	Limit      *int    `form:"" json:""`
 }
 
 // Репозиторий предмета
-type IItemRepository interface {
+type ItemRepository interface {
 	Create(item *Item)
 	GetOne(item *Item)
 	GetAll(query ItemGetAll) []Item
