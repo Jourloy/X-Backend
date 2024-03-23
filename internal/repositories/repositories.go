@@ -114,6 +114,14 @@ type Node struct {
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
+type NodeCreate struct {
+	X         int    `json:"x"`
+	Y         int    `json:"y"`
+	Walkable  bool   `json:"walkable"`
+	Difficult int    `json:"difficult"`
+	SectorID  string `json:"sectorId"`
+}
+
 // Модель поиска узла
 type NodeGet struct {
 	X         *int
@@ -126,8 +134,8 @@ type NodeGet struct {
 
 // Репозиторий сектора
 type NodeRepository interface {
-	Create(node *Node) (*Node, error)
-	GetOne(node *NodeGet) (*Node, error)
+	Create(create *NodeCreate) (*Node, error)
+	GetOne(query *NodeGet) (*Node, error)
 	GetAll(query *NodeGet) (*[]Node, error)
 	UpdateOne(node *Node) error
 	DeleteOne(node *Node) error

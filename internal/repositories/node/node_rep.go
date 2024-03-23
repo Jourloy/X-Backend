@@ -1,6 +1,7 @@
 package node_rep
 
 import (
+	"errors"
 	"os"
 
 	"github.com/charmbracelet/log"
@@ -42,40 +43,70 @@ func migration() {
 }
 
 // Create создает узел
-func (r *NodeRepository) Create(node *repositories.Node) {
-	node.ID = uuid.NewString()
-	r.db.Create(&node)
+func (r *NodeRepository) Create(create *repositories.NodeCreate) (*repositories.Node, error) {
+	node := repositories.Node{
+		ID:        uuid.NewString(),
+		X:         create.X,
+		Y:         create.Y,
+		Difficult: create.Difficult,
+		Walkable:  create.Walkable,
+		SectorID:  create.SectorID,
+	}
+
+	res := r.db.Create(&node)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &node, nil
 }
 
 // GetOne возвращает первый узел, попавший под условие
-func (r *NodeRepository) GetOne(node *repositories.Node) {
-	r.db.First(&node, node)
+func (r *NodeRepository) GetOne(query *repositories.NodeGet) (*repositories.Node, error) {
+	node := repositories.Node{}
+
+	res := r.db.First(&node, query)
+
+	// Если ничего не нашли
+	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+
+	// Если ошибка
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &node, nil
 }
 
 // GetAll возвращает все рынки
-func (r *NodeRepository) GetAll(dest *[]repositories.Node, query repositories.NodeGetAll) {
-	node := repositories.Node{
-		X:         *query.X,
-		Y:         *query.Y,
-		Walkable:  *query.Walkable,
-		Difficult: *query.Difficult,
-		SectorID:  query.SectorID,
+func (r *NodeRepository) GetAll(query *repositories.NodeGet) (*[]repositories.Node, error) {
+	nodes := []repositories.Node{}
+
+	res := r.db.Find(&nodes, query)
+
+	// Если ничего не нашли
+	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		return nil, nil
 	}
 
-	limit := -1
-	if query.Limit != nil {
-		limit = *query.Limit
+	// Если ошибка
+	if res.Error != nil {
+		return nil, res.Error
 	}
 
-	r.db.Model(node).Limit(limit).Find(&dest)
+	return &nodes, nil
 }
 
 // UpdateOne обновляет рынок
-func (r *NodeRepository) UpdateOne(node *repositories.Node) {
-	r.db.Save(&node)
+func (r *NodeRepository) UpdateOne(node *repositories.Node) error {
+	res := r.db.Save(&node)
+	return res.Error
 }
 
 // DeleteOne удаляет рынок
-func (r *NodeRepository) DeleteOne(node *repositories.Node) {
-	r.db.Delete(&node)
+func (r *NodeRepository) DeleteOne(node *repositories.Node) error {
+	res := r.db.Delete(&node, node)
+	return res.Error
 }

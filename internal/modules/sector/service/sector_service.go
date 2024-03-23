@@ -2,7 +2,9 @@ package sector_service
 
 import (
 	"math/rand"
+	"os"
 
+	"github.com/charmbracelet/log"
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/cache"
@@ -10,6 +12,13 @@ import (
 	deposit_rep "github.com/jourloy/X-Backend/internal/repositories/deposit"
 	node_rep "github.com/jourloy/X-Backend/internal/repositories/node"
 	sector_rep "github.com/jourloy/X-Backend/internal/repositories/sector"
+)
+
+var (
+	logger = log.NewWithOptions(os.Stderr, log.Options{
+		Prefix: `[sector-service]`,
+		Level:  log.DebugLevel,
+	})
 )
 
 type Service struct {
@@ -73,7 +82,7 @@ func (s *Service) Create(body CreateOptions) createResp {
 func (s *Service) generateNodes(sectorID string) {
 	for y := 0; y < 10; y++ {
 		for x := 0; x < 10; x++ {
-			node := repositories.Node{
+			node := repositories.NodeCreate{
 				X:         x,
 				Y:         y,
 				Walkable:  true,
@@ -81,7 +90,9 @@ func (s *Service) generateNodes(sectorID string) {
 				SectorID:  sectorID,
 			}
 
-			s.nodeRep.Create(&node)
+			if _, err := s.nodeRep.Create(&node); err != nil {
+				logger.Error(err)
+			}
 		}
 	}
 }

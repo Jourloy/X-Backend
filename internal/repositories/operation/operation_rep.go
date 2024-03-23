@@ -55,8 +55,6 @@ func (r *OperationRepository) Create(create *repositories.OperationCreate) (*rep
 		AccountID:  create.AccountID,
 	}
 
-	// ШАБЛОНЫ
-
 	res := r.db.Create(&operation)
 	if res.Error != nil {
 		return nil, res.Error
