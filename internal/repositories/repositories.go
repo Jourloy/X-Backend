@@ -229,7 +229,7 @@ type ResourceCreate struct {
 
 // Структура поиска ресурсов
 type ResourceGet struct {
-	Type       *string `form:"type" json:"type`
+	Type       *string `form:"type" json:"type"`
 	Amount     *int    `form:"amount" json:"amount"`
 	Weight     *int    `form:"weight" json:"weight"`
 	X          *int    `form:"x" json:"x"`
@@ -238,7 +238,7 @@ type ResourceGet struct {
 	ParentType *string `form:"parentType" json:"parentType"`
 	SectorID   *string `form:"sectorId" json:"sectorId"`
 	CreatorID  *string `form:"creatorId" json:"creatorId"`
-	Limit      *int    `form:"limir" json:"limir"`
+	Limit      *int    `form:"limit" json:"limit"`
 }
 
 // Репозиторий ресурсов
@@ -272,14 +272,14 @@ type Item struct {
 
 // Структура поиска предмета
 type ItemGetAll struct {
-	Type       *string `form:"" json:""`
-	X          *int    `form:"" json:""`
-	Y          *int    `form:"" json:""`
-	ParentID   *string `form:"" json:""`
-	ParentType *string `form:"" json:""`
-	SectorID   *string `form:"" json:""`
-	CreatorID  *string `form:"" json:""`
-	Limit      *int    `form:"" json:""`
+	Type       *string `form:"type" json:"type"`
+	X          *int    `form:"x" json:"x"`
+	Y          *int    `form:"y" json:"y"`
+	ParentID   *string `form:"parentId" json:"parentId"`
+	ParentType *string `form:"parentType" json:"parentType"`
+	SectorID   *string `form:"sectorID" json:"sectorID"`
+	CreatorID  *string `form:"creatorID" json:"creatorID"`
+	Limit      *int    `form:"limit" json:"limit"`
 }
 
 // Репозиторий предмета
@@ -315,30 +315,30 @@ type Operation struct {
 
 // Структура создания операции
 type OperationCreate struct {
-	Price      int    `json:"price"`
-	Amount     int    `json:"amount"`
-	Type       string `json:"type"`
-	Name       string `json:"name"`
-	IsResource bool   `json:"isResource"`
-	IsItem     bool   `json:"isItem"`
-	BuildingID string `json:"buildingID"`
-	SectorID   string `json:"sectorId"`
-	AccountID  string `json:"accountId"`
+	Price      int     `form:"price" json:"price"`
+	Amount     int     `form:"amount" json:"amount"`
+	Type       *string `form:"type" json:"type"`
+	Name       string  `form:"name" json:"name"`
+	IsResource bool    `form:"isResource" json:"isResource"`
+	IsItem     bool    `form:"isItem" json:"isItem"`
+	BuildingID string  `form:"buildingID" json:"buildingID"`
+	SectorID   string  `form:"sectorID" json:"sectorID"`
+	AccountID  string  `form:"accountID" json:"accountID"`
 }
 
 // Структура поиска операции
 type OperationGet struct {
-	ID         *string  `json:"id,omitempty"`
-	Price      *int     `json:"price,omitempty"`
-	Amount     *int     `json:"amount,omitempty"`
-	Type       *string  `json:"type,omitempty"`
-	Name       *string  `json:"name,omitempty"`
-	IsResource *bool    `json:"isResource,omitempty"`
-	IsItem     *bool    `json:"isItem,omitempty"`
-	BuildingID *float64 `json:"buildingID,omitempty"`
-	SectorID   *string  `json:"sectorId,omitempty"`
-	AccountID  *string  `json:"accountId,omitempty"`
-	Limit      *int     `json:"limit,omitempty"`
+	ID         *string  `form:"id" json:"id,omitempty"`
+	Price      *int     `form:"price" json:"price,omitempty"`
+	Amount     *int     `form:"amount" json:"amount,omitempty"`
+	Type       *string  `form:"type" json:"type,omitempty"`
+	Name       *string  `form:"name" json:"name,omitempty"`
+	IsResource *bool    `form:"isResource" json:"isResource,omitempty"`
+	IsItem     *bool    `form:"isItem" json:"isItem,omitempty"`
+	BuildingID *float64 `form:"buildingID" json:"buildingID,omitempty"`
+	SectorID   *string  `form:"sectorID" json:"sectorId,omitempty"`
+	AccountID  *string  `form:"accountID" json:"accountId,omitempty"`
+	Limit      *int     `form:"limit" json:"limit,omitempty"`
 }
 
 // Репозиторий операции
@@ -388,27 +388,27 @@ type Building struct {
 
 // Структура создания постройки
 type BuildingCreate struct {
-	X         int    `json:"x"`
-	Y         int    `json:"y"`
-	Type      string `json:"type"`
-	SectorID  string `json:"sectorId"`
-	AccountID string `json:"accountId"`
+	X         int    `form:"x" json:"x"`
+	Y         int    `form:"y" json:"y"`
+	Type      string `form:"type" json:"type"`
+	SectorID  string `form:"sectorID" json:"sectorId"`
+	AccountID string `form:"accountID" json:"accountId"`
 }
 
 // Структура поиска постройки
 type BuildingGet struct {
-	ID            *string  `json:"id,omitempty"`
-	Type          *string  `json:"type,omitempty"`
-	MaxDurability *int     `json:"maxDurability,omitempty"`
-	Durability    *int     `json:"durability,omitempty"`
-	MaxStorage    *float64 `json:"maxStorage,omitempty"`
-	UsedStorage   *float64 `json:"usedStorage,omitempty"`
-	Level         *float64 `json:"level,omitempty"`
-	AttackRange   *float64 `json:"attackRange,omitempty"`
-	CanTrade      *bool    `json:"canTrade,omitempty"`
-	SectorID      *string  `json:"sectorId,omitempty"`
-	AccountID     *string  `json:"accountId,omitempty"`
-	Limit         *int     `json:"limit,omitempty"`
+	ID            *string  `form:"id" json:"id,omitempty"`
+	Type          *string  `form:"type" json:"type,omitempty"`
+	MaxDurability *int     `form:"maxDurability" json:"maxDurability,omitempty"`
+	Durability    *int     `form:"durability" json:"durability,omitempty"`
+	MaxStorage    *float64 `form:"maxStorage" json:"maxStorage,omitempty"`
+	UsedStorage   *float64 `form:"usedStorage" json:"usedStorage,omitempty"`
+	Level         *float64 `form:"level" json:"level,omitempty"`
+	AttackRange   *float64 `form:"attackRange" json:"attackRange,omitempty"`
+	CanTrade      *bool    `form:"canTrade" json:"canTrade,omitempty"`
+	SectorID      *string  `form:"sectorId" json:"sectorId,omitempty"`
+	AccountID     *string  `form:"accountId" json:"accountId,omitempty"`
+	Limit         *int     `form:"limit" json:"limit,omitempty"`
 }
 
 // Репозиторий постройки
@@ -449,21 +449,21 @@ type Plan struct {
 
 // Структура создания планируемой постройки
 type PlanCreate struct {
-	X         int    `json:"x"`
-	Y         int    `json:"y"`
-	Type      string `json:"type"`
-	SectorID  string `json:"sectorId"`
-	AccountID string `json:"accountId"`
+	X         int    `form:"x" json:"x"`
+	Y         int    `form:"y" json:"y"`
+	Type      string `form:"type" json:"type"`
+	SectorID  string `form:"sectorId" json:"sectorId"`
+	AccountID string `form:"accountId" json:"accountId"`
 }
 
 // Структура поиска планируемой постройки
 type PlanGetAll struct {
-	MaxProgress *int
-	Progress    *int
-	Type        *string
-	Y           *int
-	X           *int
-	Limit       *int
+	MaxProgress *int    `form:"maxProgress" json:"maxProgress"`
+	Progress    *int    `form:"progress" json:"progress"`
+	Type        *string `form:"type" json:"type"`
+	Y           *int    `form:"y" json:"y"`
+	X           *int    `form:"x" json:"x"`
+	Limit       *int    `form:"limit" json:"limit"`
 }
 
 // Репозиторий планируемой постройки
@@ -516,35 +516,35 @@ type Creature struct {
 
 // Структура создания существа
 type CreatureCreate struct {
-	X         int    `json:"x"`
-	Y         int    `json:"y"`
-	Race      string `json:"race"`
-	IsWorker  bool   `json:"isWorker"`
-	IsTrader  bool   `json:"isTrader"`
-	IsWarrior bool   `json:"isWarrior"`
-	SectorID  string `json:"sectorId"`
-	AccountID string `json:"accountId"`
+	X         int    `form:"x" json:"x"`
+	Y         int    `form:"y" json:"y"`
+	Race      string `form:"race" json:"race"`
+	IsWorker  bool   `form:"isWorker" json:"isWorker"`
+	IsTrader  bool   `form:"isTrader" json:"isTrader"`
+	IsWarrior bool   `form:"isWarrior" json:"isWarrior"`
+	SectorID  string `form:"sectorId" json:"sectorId"`
+	AccountID string `form:"accountId" json:"accountId"`
 }
 
 // Структура поиска существа
 type CreatureGet struct {
-	ID                 *string  `json:"id,omitempty"`
-	Race               *string  `json:"race,omitempty"`
-	MaxStorage         *int     `json:"maxStorage,omitempty"`
-	UsedStorage        *int     `json:"usedStorage,omitempty"`
-	RequireCoins       *float64 `json:"requireCoins,omitempty"`
-	RequireFood        *float64 `json:"requireFood,omitempty"`
-	Fatigue            *float64 `json:"fatigue,omitempty"`
-	FatiguePerStep     *float64 `json:"fatiguePerStep,omitempty"`
-	FatigueModificator *float64 `json:"fatigueModificator,omitempty"`
-	MaxHealth          *int     `json:"maxHealth,omitempty"`
-	Health             *int     `json:"health,omitempty"`
-	IsWorker           *bool    `json:"isWorker,omitempty"`
-	IsTrader           *bool    `json:"isTrader,omitempty"`
-	IsWarrior          *bool    `json:"isWarrior,omitempty"`
-	SectorID           *string  `json:"sectorId,omitempty"`
-	AccountID          *string  `json:"accountId,omitempty"`
-	Limit              *int     `json:"limit,omitempty"`
+	ID                 *string  `form:"id" json:"id,omitempty"`
+	Race               *string  `form:"race" json:"race,omitempty"`
+	MaxStorage         *int     `form:"maxStorage" json:"maxStorage,omitempty"`
+	UsedStorage        *int     `form:"usedStorage" json:"usedStorage,omitempty"`
+	RequireCoins       *float64 `form:"requireCoins" json:"requireCoins,omitempty"`
+	RequireFood        *float64 `form:"requireFood" json:"requireFood,omitempty"`
+	Fatigue            *float64 `form:"fatigue" json:"fatigue,omitempty"`
+	FatiguePerStep     *float64 `form:"fatiguePerStep" json:"fatiguePerStep,omitempty"`
+	FatigueModificator *float64 `form:"fatigueModificator" json:"fatigueModificator,omitempty"`
+	MaxHealth          *int     `form:"maxHealth" json:"maxHealth,omitempty"`
+	Health             *int     `form:"health" json:"health,omitempty"`
+	IsWorker           *bool    `form:"isWorker" json:"isWorker,omitempty"`
+	IsTrader           *bool    `form:"isTrader" json:"isTrader,omitempty"`
+	IsWarrior          *bool    `form:"isWarrior" json:"isWarrior,omitempty"`
+	SectorID           *string  `form:"sectorId" json:"sectorId,omitempty"`
+	AccountID          *string  `form:"accountId" json:"accountId,omitempty"`
+	Limit              *int     `form:"limit" json:"limit,omitempty"`
 }
 
 // Репозиторий существа
