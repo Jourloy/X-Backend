@@ -1,6 +1,7 @@
 package deposit_rep
 
 import (
+	"errors"
 	"os"
 
 	"github.com/charmbracelet/log"
@@ -18,13 +19,13 @@ var (
 	})
 )
 
-var Repository repositories.IDepositRepository
+var Repository repositories.DepositRepository
 
 type DepositRepository struct {
 	db gorm.DB
 }
 
-// Init создает репозиторий залежей
+// Init создает репозиторий
 func Init() {
 	go migration()
 
@@ -41,41 +42,64 @@ func migration() {
 	}
 }
 
-// Create создает залежь
-func (r *DepositRepository) Create(deposit *repositories.Deposit) {
-	deposit.ID = uuid.NewString()
-	r.db.Create(&deposit)
-}
-
-// GetOne возвращает первую залежь, попавшую под условие
-func (r *DepositRepository) GetOne(deposit *repositories.Deposit) {
-	r.db.First(&deposit)
-}
-
-// GetAll возвращает все залежи
-func (r *DepositRepository) GetAll(query repositories.DepositGetAll, sectorID string) []repositories.Deposit {
-	var deposit = repositories.Deposit{
-		Type:     *query.Type,
-		Amount:   *query.Amount,
-		SectorID: sectorID,
-	}
-	var deposits = []repositories.Deposit{}
-
-	limit := -1
-	if query.Limit != nil {
-		limit = *query.Limit
+// Create создает аккаунт
+func (r *DepositRepository) Create(create *repositories.DepositCreate) (*repositories.Deposit, error) {
+	// Проверка, есть ли уже такой аккаунт
+	u, err := r.GetOne(&repositories.DepositGet{Username: &create.Username})
+	if err != nil {
+		return nil, err
 	}
 
-	r.db.Model(deposit).Limit(limit).Find(&deposits)
-	return deposits
+	// Если есть
+	if u != nil {
+		return nil, errors.New(`deposit already exist`)
+	}
+
+	// Создаем аккаунт
+	user := repositories.Deposit{
+		ID:       uuid.NewString(),
+		ApiKey:   uuid.NewString(),
+		Username: create.Username,
+		Race:     create.Race,
+		Balance:  0,
+		IsAdmin:  false,
+	}
+
+	res := r.db.Create(&user)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &user, nil
 }
 
-// UpdateOne обновляет залежь
-func (r *DepositRepository) UpdateOne(deposit *repositories.Deposit) {
-	r.db.Save(&deposit)
+// GetOne возвращает первый аккаунт, попавший под условие
+func (r *DepositRepository) GetOne(query *repositories.DepositGet) (*repositories.Deposit, error) {
+	deposit := repositories.Deposit{}
+
+	res := r.db.First(&deposit, query)
+
+	// Если ничего не нашли
+	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+
+	// Если ошибка
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &deposit, nil
 }
 
-// DeleteOne удаляет залежь
-func (r *DepositRepository) DeleteOne(deposit *repositories.Deposit) {
-	r.db.Delete(&deposit)
+// UpdateOne обновляет аккаунт
+func (r *DepositRepository) UpdateOne(deposit *repositories.Deposit) error {
+	res := r.db.Save(&deposit)
+	return res.Error
+}
+
+// DeleteOne удаляет аккаунт
+func (r *DepositRepository) DeleteOne(deposit *repositories.Deposit) error {
+	res := r.db.Delete(&deposit, deposit)
+	return res.Error
 }
