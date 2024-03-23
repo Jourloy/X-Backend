@@ -2,44 +2,62 @@ package internal
 
 import (
 	"io"
+	"os"
+	"time"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
 
 	"github.com/jourloy/X-Backend/internal/cache"
+	"github.com/jourloy/X-Backend/internal/handlers"
 	"github.com/jourloy/X-Backend/internal/middlewares"
+	repositories_init "github.com/jourloy/X-Backend/internal/repositories/init"
 	"github.com/jourloy/X-Backend/internal/storage"
 )
 
-func StartServer() {
-	gin.DefaultWriter = NewDebugWrite()
+var (
+	logger = log.NewWithOptions(os.Stderr, log.Options{
+		Prefix: `[gin]`,
+		Level:  log.DebugLevel,
+	})
+)
 
-	// Инициализация модулей
+func StartServer() {
+	totalTime := time.Now()
+	tempTime := time.Now()
+
+	// Выключаем логгер
+	gin.DefaultWriter = io.Discard
+
+	// Инициализация хранилища
 	storage.InitDB()
+	logger.Debug(`Storage initialized`, `latency`, time.Since(tempTime))
+	tempTime = time.Now()
+
+	// Инициализация репозиториев
+	repositories_init.Init()
+	logger.Debug(`Repositories initialized`, `latency`, time.Since(tempTime))
+	tempTime = time.Now()
+
+	// Инициализация кэша
 	cache.InitCache()
+	logger.Debug(`Cache initialized`, `latency`, time.Since(tempTime))
+	tempTime = time.Now()
 
 	r := gin.New()
 
 	// Middlewares
 	r.Use(middlewares.Logger())
 	r.Use(gin.Recovery())
+	r.Use(middlewares.API())
+
+	// Инициализация хендлеров
+	handlers.Init(r)
+	logger.Debug(`Handlers initialized`, `latency`, time.Since(tempTime))
 
 	// Запуск сервера
-	log.Info(`Server started on port 10000`)
-	if err := r.Run(`0.0.0.0:10000`); err != nil {
-		log.Fatal(err)
+	logger.Info(`Server started`, `port`, 3001, `latency (total)`, time.Since(totalTime))
+	if err := r.Run(`0.0.0.0:3001`); err != nil {
+		logger.Fatal(err)
 	}
-}
-
-type WriteFunc func([]byte) (int, error)
-
-func (fn WriteFunc) Write(data []byte) (int, error) {
-	return fn(data)
-}
-
-func NewDebugWrite() io.Writer {
-	return WriteFunc(func(data []byte) (int, error) {
-		// log.Debugf("%s", data)
-		return 0, nil
-	})
 }

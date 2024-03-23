@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"github.com/charmbracelet/log"
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jourloy/X-Backend/internal/config"
@@ -16,6 +15,4 @@ func InitCache() {
 		Password: ``,
 		DB:       0,
 	})
-
-	log.Info(`Cache connected`)
 }

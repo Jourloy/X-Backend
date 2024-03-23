@@ -1,10 +1,18 @@
 package middlewares
 
 import (
+	"os"
 	"time"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
+)
+
+var (
+	logger = log.NewWithOptions(os.Stderr, log.Options{
+		Prefix: `[request]`,
+		Level:  log.DebugLevel,
+	})
 )
 
 func Logger() gin.HandlerFunc {
@@ -18,7 +26,7 @@ func Logger() gin.HandlerFunc {
 		method := c.Request.Method
 		path := c.Request.URL.Path
 
-		log.Info(
+		logger.Info(
 			`Response`,
 			`method`, method,
 			`path`, path,
@@ -28,7 +36,7 @@ func Logger() gin.HandlerFunc {
 
 		// Если запрос длится более 300 миллисекунд
 		if time.Duration(latency.Milliseconds()) > 300 {
-			log.Warn(`Latency is over 300ms`)
+			logger.Warn(`Latency is over 300ms`)
 			// TODO: запись в БД или отправка webhook
 		}
 	}
