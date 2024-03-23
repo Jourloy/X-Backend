@@ -17,12 +17,7 @@ func initItem(g *gin.RouterGroup) {
 
 	g.Use(guards.CheckAPI())
 
-	g.GET(``, controller.GetOne)
-	g.GET(`all`, controller.GetAll)
-
 	g.Use(guards.CheckAdmin())
 
 	g.POST(``, controller.Create)
-	g.PATCH(``, controller.UpdateOne)
-	g.DELETE(``, controller.DeleteOne)
 }

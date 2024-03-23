@@ -12,7 +12,7 @@ import (
 )
 
 type Service struct {
-	depRep repositories.IDepositRepository
+	depRep repositories.DepositRepository
 	secRep repositories.SectorRepository
 	cache  redis.Client
 }
@@ -34,7 +34,7 @@ type createResp struct {
 }
 
 // Create создает рабочего
-func (s *Service) Create(body repositories.Deposit) createResp {
+func (s *Service) Create(body repositories.DepositCreate) createResp {
 	// Проверка существования сектора
 	sector, err := s.secRep.GetOne(&repositories.SectorGet{ID: &body.SectorID})
 	if err != nil {
@@ -45,56 +45,6 @@ func (s *Service) Create(body repositories.Deposit) createResp {
 		return createResp{Err: errors.New(`sector not found`)}
 	}
 
-	s.depRep.Create(&body)
+	s.depRep.Create(body)
 	return createResp{Err: nil}
-}
-
-type getOneResp struct {
-	Err     error
-	Deposit repositories.Deposit
-}
-
-func (s *Service) GetOne(id string, sectorID string) getOneResp {
-	deposit := repositories.Deposit{ID: id, SectorID: sectorID}
-	s.depRep.GetOne(&deposit)
-	return getOneResp{
-		Err:     nil,
-		Deposit: deposit,
-	}
-}
-
-type getAllResp struct {
-	Err      error
-	Deposits []repositories.Deposit
-}
-
-func (s *Service) GetAll(query repositories.DepositGetAll, accountID string) getAllResp {
-	// Получение работников
-	deposits := s.depRep.GetAll(query, accountID)
-	return getAllResp{
-		Err:      nil,
-		Deposits: deposits,
-	}
-}
-
-type updateOneResp struct {
-	Err error
-}
-
-func (s *Service) UpdateOne(body repositories.Deposit) updateOneResp {
-	s.depRep.UpdateOne(&body)
-	return updateOneResp{
-		Err: nil,
-	}
-}
-
-type deleteOneResp struct {
-	Err error
-}
-
-func (s *Service) DeleteOne(body repositories.Deposit) deleteOneResp {
-	s.depRep.DeleteOne(&body)
-	return deleteOneResp{
-		Err: nil,
-	}
 }
